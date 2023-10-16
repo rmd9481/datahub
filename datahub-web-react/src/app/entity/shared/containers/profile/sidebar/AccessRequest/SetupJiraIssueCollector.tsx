@@ -27,9 +27,11 @@ export const setupJiraIssueCollector = (customButtonId: string, entityUrn: strin
                 return envInfo;
             },
             fieldValues() {
-                const values: { summary?: string; fullname?: string; email?: string } = {};
+                const values: { summary?: string; description?: string; fullname?: string; email?: string } = {};
 
-                values.summary = getEntityUrn();
+                const urn = getEntityUrn();
+                values.summary = `Access Request for ${urn}`;
+                values.description = `http://localhost:9002/${urn.split(':')[2]}/${urn}`;
                 values.fullname = 'Enter Sharp Username';
                 values.email = 'email@sharp.com';
 
@@ -40,7 +42,8 @@ export const setupJiraIssueCollector = (customButtonId: string, entityUrn: strin
         window.ATL_JQ_PAGE_PROPS.fieldValues = function () {
             const values: { summary?: string; fullname?: string; email?: string } = {};
 
-            values.summary = getEntityUrn();
+            const urn = getEntityUrn();
+            values.summary = `localhost:9002/${urn.split(':')[2]}/${urn}`;
             values.fullname = 'Enter Sharp Username';
             values.email = 'email@sharp.com';
 
