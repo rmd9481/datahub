@@ -31,7 +31,8 @@ export const setupJiraIssueCollector = (customButtonId: string, entityUrn: strin
 
                 const urn = getEntityUrn();
                 values.summary = `Access Request for ${urn}`;
-                values.description = `http://localhost:9002/${urn.split(':')[2]}/${urn}`;
+                const encodedUrn = urn.replace(/\(/g, '%28').replace(/\)/g, '%29');
+                values.description = `https://datahub-frontend.sharp.com/${urn.split(':')[2]}/${encodedUrn}`;
                 values.fullname = 'Enter Sharp Username';
                 values.email = 'email@sharp.com';
 
@@ -40,10 +41,12 @@ export const setupJiraIssueCollector = (customButtonId: string, entityUrn: strin
         };
     } else {
         window.ATL_JQ_PAGE_PROPS.fieldValues = function () {
-            const values: { summary?: string; fullname?: string; email?: string } = {};
+            const values: { summary?: string; description?: string; fullname?: string; email?: string } = {};
 
             const urn = getEntityUrn();
-            values.summary = `localhost:9002/${urn.split(':')[2]}/${urn}`;
+            values.summary = `Access Request for ${urn}`;
+            const encodedUrn = urn.replace(/\(/g, '%28').replace(/\)/g, '%29');
+            values.description = `https://datahub-frontend.sharp.com/${urn.split(':')[2]}/${encodedUrn}`;
             values.fullname = 'Enter Sharp Username';
             values.email = 'email@sharp.com';
 
