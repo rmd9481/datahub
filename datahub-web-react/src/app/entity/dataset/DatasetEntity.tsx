@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DatabaseFilled, DatabaseOutlined } from '@ant-design/icons';
 import { Dataset, DatasetProperties, EntityType, OwnershipType, SearchResult } from '../../../types.generated';
 import { Entity, EntityCapabilityType, IconStyleType, PreviewType } from '../Entity';
+import { useAppConfig } from '../../useAppConfig';
 import { Preview } from './preview/Preview';
 import { EntityProfile } from '../shared/containers/profile/EntityProfile';
 import { GetDatasetQuery, useGetDatasetQuery, useUpdateDatasetMutation } from '../../../graphql/dataset.generated';
@@ -20,7 +21,6 @@ import ViewDefinitionTab from '../shared/tabs/Dataset/View/ViewDefinitionTab';
 import { SidebarViewDefinitionSection } from '../shared/containers/profile/sidebar/Dataset/View/SidebarViewDefinitionSection';
 import { getDataForEntityType } from '../shared/containers/profile/utils';
 import { SidebarDomainSection } from '../shared/containers/profile/sidebar/Domain/SidebarDomainSection';
-import { SidebarAccessRequestSection } from '../shared/containers/profile/sidebar/AccessRequest/SidebarAccessRequestSection';
 import { ValidationsTab } from '../shared/tabs/Dataset/Validations/ValidationsTab';
 import { OperationsTab } from './profile/OperationsTab';
 import { EntityMenuItems } from '../shared/EntityDropdown/EntityDropdown';
@@ -31,7 +31,9 @@ import { EmbedTab } from '../shared/tabs/Embed/EmbedTab';
 import EmbeddedProfile from '../shared/embed/EmbeddedProfile';
 import DataProductSection from '../shared/containers/profile/sidebar/DataProduct/DataProductSection';
 import { getDataProduct } from '../shared/utils';
+import AccessManagement from '../shared/tabs/Dataset/AccessManagement/AccessManagement';
 import { matchedFieldPathsRenderer } from '../../search/matches/matchedFieldPathsRenderer';
+import { getLastUpdatedMs } from './shared/utils';
 
 const SUBTYPES = {
     VIEW: 'view',
@@ -69,6 +71,8 @@ export class DatasetEntity implements Entity<Dataset> {
     };
 
     isSearchEnabled = () => true;
+
+    appconfig = useAppConfig;
 
     isBrowseEnabled = () => true;
 
@@ -177,6 +181,14 @@ export class DatasetEntity implements Entity<Dataset> {
                         },
                     },
                 },
+                {
+                    name: 'Access Management',
+                    component: AccessManagement,
+                    display: {
+                        visible: (_, _1) => this.appconfig().config.featureFlags.showAccessManagement,
+                        enabled: (_, _2) => true,
+                    },
+                },
             ]}
             sidebarSections={[
                 {
@@ -211,9 +223,6 @@ export class DatasetEntity implements Entity<Dataset> {
                 },
                 {
                     component: SidebarDomainSection,
-                },
-                {
-                    component: SidebarAccessRequestSection,
                 },
                 {
                     component: DataProductSection,
@@ -302,9 +311,7 @@ export class DatasetEntity implements Entity<Dataset> {
                 rowCount={(data as any).lastProfile?.length && (data as any).lastProfile[0].rowCount}
                 columnCount={(data as any).lastProfile?.length && (data as any).lastProfile[0].columnCount}
                 sizeInBytes={(data as any).lastProfile?.length && (data as any).lastProfile[0].sizeInBytes}
-                lastUpdatedMs={
-                    (data as any).lastOperation?.length && (data as any).lastOperation[0].lastUpdatedTimestamp
-                }
+                lastUpdatedMs={getLastUpdatedMs(data.properties, (data as any)?.lastOperation)}
                 health={data.health}
                 degree={(result as any).degree}
                 paths={(result as any).paths}
