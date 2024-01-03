@@ -11,7 +11,6 @@ import { SidebarAboutSection } from '../shared/containers/profile/sidebar/AboutS
 import { SidebarTagsSection } from '../shared/containers/profile/sidebar/SidebarTagsSection';
 import { SidebarOwnerSection } from '../shared/containers/profile/sidebar/Ownership/sidebar/SidebarOwnerSection';
 import { SidebarDomainSection } from '../shared/containers/profile/sidebar/Domain/SidebarDomainSection';
-import { SidebarAccessRequestSection } from '../shared/containers/profile/sidebar/AccessRequest/SidebarAccessRequestSection';
 import { DocumentationTab } from '../shared/tabs/Documentation/DocumentationTab';
 import { FeatureTableTab } from '../shared/tabs/ML/MlFeatureFeatureTableTab';
 import { LineageTab } from '../shared/tabs/Lineage/LineageTab';
@@ -106,9 +105,6 @@ export class MLFeatureEntity implements Entity<MlFeature> {
                 },
                 {
                     component: SidebarDomainSection,
-                },
-                {
-                    component: SidebarAccessRequestSection,
                 },
                 {
                     component: DataProductSection,
