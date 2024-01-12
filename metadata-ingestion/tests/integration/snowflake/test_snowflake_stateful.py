@@ -31,7 +31,6 @@ def stateful_pipeline_config(include_tables: bool) -> PipelineConfig:
                 match_fully_qualified_names=True,
                 schema_pattern=AllowDenyPattern(allow=["test_db.test_schema"]),
                 include_tables=include_tables,
-                incremental_lineage=False,
                 stateful_ingestion=StatefulStaleMetadataRemovalConfig.parse_obj(
                     {
                         "enabled": True,
@@ -50,7 +49,7 @@ def stateful_pipeline_config(include_tables: bool) -> PipelineConfig:
 
 
 @freeze_time(FROZEN_TIME)
-def test_stale_metadata_removal(mock_datahub_graph):
+def test_tableau_stateful(mock_datahub_graph):
     with mock.patch(
         "datahub.ingestion.source.state_provider.datahub_ingestion_checkpointing_provider.DataHubGraph",
         mock_datahub_graph,

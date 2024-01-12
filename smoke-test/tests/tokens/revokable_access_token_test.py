@@ -1,11 +1,15 @@
 import os
-from time import sleep
-
 import pytest
 import requests
+from time import sleep
 
-from tests.utils import (get_admin_credentials, get_frontend_url,
-                         wait_for_healthcheck_util, wait_for_writes_to_sync)
+from tests.utils import (
+    get_frontend_url,
+    wait_for_healthcheck_util,
+    get_admin_credentials,
+    wait_for_writes_to_sync,
+)
+
 
 # Disable telemetry
 os.environ["DATAHUB_TELEMETRY_ENABLED"] = "false"

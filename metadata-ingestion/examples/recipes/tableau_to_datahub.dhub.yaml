@@ -18,4 +18,3 @@ sink:
   type: "datahub-rest"
   config:
     server: "http://localhost:8080"
-    token: token_value  # optional

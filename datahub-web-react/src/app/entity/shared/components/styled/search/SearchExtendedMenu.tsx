@@ -45,7 +45,7 @@ export default function SearchExtendedMenu({
 
     const menu = (
         <Menu>
-            <MenuItem key="0" data-testid="download-as-csv-menu-item">
+            <MenuItem key="0">
                 <DownloadAsCsvButton
                     isDownloadingCsv={isDownloadingCsv}
                     setShowDownloadAsCsvModal={setShowDownloadAsCsvModal}
@@ -75,7 +75,7 @@ export default function SearchExtendedMenu({
                 totalResults={totalResults}
             />
             <Dropdown overlay={menu} trigger={['click']}>
-                <MenuIcon data-testid="three-dot-menu" />
+                <MenuIcon />
             </Dropdown>
         </>
     );

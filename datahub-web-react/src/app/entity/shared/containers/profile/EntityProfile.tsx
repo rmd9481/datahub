@@ -4,6 +4,7 @@ import { MutationHookOptions, MutationTuple, QueryHookOptions, QueryResult } fro
 import styled from 'styled-components/macro';
 import { useHistory } from 'react-router';
 import { EntityType, Exact } from '../../../../../types.generated';
+import { Message } from '../../../../shared/Message';
 import {
     getEntityPath,
     getOnboardingStepIdsForEntityType,
@@ -44,7 +45,6 @@ import {
     LINEAGE_GRAPH_TIME_FILTER_ID,
 } from '../../../../onboarding/config/LineageGraphOnboardingConfig';
 import { useAppConfig } from '../../../../useAppConfig';
-import { useUpdateDomainEntityDataOnChange } from '../../../../domain/utils';
 
 type Props<T, U> = {
     urn: string;
@@ -212,7 +212,6 @@ export const EntityProfile = <T, U>({
         useGetDataForProfile({ urn, entityType, useEntityQuery, getOverrideProperties });
 
     useUpdateGlossaryEntityDataOnChange(entityData, entityType);
-    useUpdateDomainEntityDataOnChange(entityData, entityType);
 
     const maybeUpdateEntity = useUpdateQuery?.({
         onCompleted: () => refetch(),
@@ -238,7 +237,6 @@ export const EntityProfile = <T, U>({
                 visible: () => true,
                 enabled: () => true,
             },
-            getDynamicName: () => '',
         })) || [];
 
     const visibleTabs = [...sortedTabs, ...autoRenderTabs].filter((tab) =>
@@ -274,6 +272,7 @@ export const EntityProfile = <T, U>({
                 }}
             >
                 <>
+                    {loading && <Message type="loading" content="Loading..." style={{ marginTop: '10%' }} />}
                     {(error && <ErrorSection />) ||
                         (!loading && (
                             <CompactProfile>
@@ -322,6 +321,7 @@ export const EntityProfile = <T, U>({
                         banner
                     />
                 )}
+                {loading && <Message type="loading" content="Loading..." style={{ marginTop: '10%' }} />}
                 {(error && <ErrorSection />) || (
                     <ContentContainer>
                         {isLineageMode ? (

@@ -214,10 +214,7 @@ class TestPipeline(object):
                 "transformers": [
                     {
                         "type": "simple_add_dataset_ownership",
-                        "config": {
-                            "owner_urns": ["urn:li:corpuser:foo"],
-                            "ownership_type": "urn:li:ownershipType:__system__technical_owner",
-                        },
+                        "config": {"owner_urns": ["urn:li:corpuser:foo"]},
                     }
                 ],
                 "sink": {"type": "tests.test_helpers.sink_helpers.RecordingSink"},

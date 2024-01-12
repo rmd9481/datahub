@@ -4,6 +4,7 @@ import com.linkedin.mxe.SystemMetadata;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+
 @AllArgsConstructor
 @Data
 public class SystemMetadataEntry {

@@ -6,4 +6,5 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class MissingEntityAspect extends EntityAspect {}
+public class MissingEntityAspect extends EntityAspect {
+}

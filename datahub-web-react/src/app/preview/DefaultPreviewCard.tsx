@@ -14,10 +14,10 @@ import {
     CorpUser,
     Deprecation,
     Domain,
+    ParentNodesResult,
     EntityPath,
     DataProduct,
     Health,
-    Entity,
 } from '../../types.generated';
 import TagTermGroup from '../shared/tags/TagTermGroup';
 import { ANTD_GRAY } from '../entity/shared/constants';
@@ -114,7 +114,6 @@ const TagContainer = styled.div`
     margin-left: 0px;
     margin-top: 3px;
     flex-wrap: wrap;
-    margin-right: 8px;
 `;
 
 const TagSeparator = styled.div`
@@ -192,7 +191,7 @@ interface Props {
     // how the listed node is connected to the source node
     degree?: number;
     parentContainers?: ParentContainersResult | null;
-    parentEntities?: Entity[] | null;
+    parentNodes?: ParentNodesResult | null;
     previewType?: Maybe<PreviewType>;
     paths?: EntityPath[];
     health?: Health[];
@@ -232,7 +231,7 @@ export default function DefaultPreviewCard({
     onClick,
     degree,
     parentContainers,
-    parentEntities,
+    parentNodes,
     platforms,
     logoUrls,
     previewType,
@@ -281,7 +280,7 @@ export default function DefaultPreviewCard({
                         typeIcon={typeIcon}
                         entityType={type}
                         parentContainers={parentContainers?.containers}
-                        parentEntities={parentEntities}
+                        parentNodes={parentNodes?.nodes}
                         parentContainersRef={contentRef}
                         areContainersTruncated={isContentTruncated}
                     />

@@ -1,7 +1,5 @@
 package com.linkedin.datahub.graphql.resolvers.test;
 
-import static com.linkedin.datahub.graphql.authorization.AuthorizationUtils.*;
-
 import com.linkedin.data.template.RecordTemplate;
 import com.linkedin.data.template.SetMode;
 import com.linkedin.datahub.graphql.QueryContext;
@@ -17,9 +15,14 @@ import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
+import static com.linkedin.datahub.graphql.authorization.AuthorizationUtils.*;
+
+
 public class TestUtils {
 
-  /** Returns true if the authenticated user is able to manage tests. */
+  /**
+   * Returns true if the authenticated user is able to manage tests.
+   */
   public static boolean canManageTests(@Nonnull QueryContext context) {
     return isAuthorized(context, Optional.empty(), PoliciesConfig.MANAGE_TESTS_PRIVILEGE);
   }
@@ -35,12 +38,11 @@ public class TestUtils {
     final EntityResponse entityResponse = new EntityResponse();
     final EnvelopedAspectMap aspectMap = new EnvelopedAspectMap();
     for (Map.Entry<String, RecordTemplate> entry : aspects.entrySet()) {
-      aspectMap.put(
-          entry.getKey(), new EnvelopedAspect().setValue(new Aspect(entry.getValue().data())));
+      aspectMap.put(entry.getKey(), new EnvelopedAspect().setValue(new Aspect(entry.getValue().data())));
     }
     entityResponse.setAspects(aspectMap);
     return entityResponse;
   }
 
-  private TestUtils() {}
+  private TestUtils() { }
 }

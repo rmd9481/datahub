@@ -11,10 +11,10 @@ node {
   }
 
   // Version of node to use.
-  version = '21.2.0'
+  version = '16.8.0'
 
   // Version of Yarn to use.
-  yarnVersion = '1.22.1'
+  yarnVersion = '1.22.0'
 
   // Base URL for fetching node distributions (set nodeDistBaseUrl if you have a mirror).
   if (project.hasProperty('nodeDistBaseUrl')) {
@@ -30,12 +30,11 @@ node {
   yarnWorkDir = file("${project.projectDir}/.gradle/yarn")
 
   // Set the work directory where node_modules should be located
-  nodeProjectDir = file("${project.projectDir}")
+  nodeModulesDir = file("${project.projectDir}")
 
 }
 
 task yarnInstall(type: YarnTask) {
   println  "Root directory:  ${project.rootDir}";
-  environment = ['NODE_OPTIONS': '--openssl-legacy-provider']
   args = ['install', '--cwd', "${project.rootDir}/smoke-test/tests/cypress"]
 }

@@ -8,7 +8,10 @@ import com.linkedin.metadata.entity.ebean.EbeanAspectV2;
 import io.ebean.Database;
 import java.util.function.Function;
 
-/** Optional step for removing Aspect V2 table. */
+
+/**
+ * Optional step for removing Aspect V2 table.
+ */
 public class ClearAspectV2TableStep implements UpgradeStep {
 
   private final Database _server;

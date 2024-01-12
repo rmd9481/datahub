@@ -69,13 +69,7 @@
               }, {
                 "name" : "runId",
                 "type" : "string",
-                "doc" : "The original run id that produced the metadata. Populated in case of batch-ingestion.",
-                "default" : "no-run-id-provided",
-                "optional" : true
-              }, {
-                "name" : "lastRunId",
-                "type" : "string",
-                "doc" : "The last run id that produced the metadata. Populated in case of batch-ingestion.",
+                "doc" : "The run id that produced the metadata. Populated in case of batch-ingestion.",
                 "default" : "no-run-id-provided",
                 "optional" : true
               }, {
@@ -3993,7 +3987,6 @@
     "path" : "/aspects",
     "schema" : "com.linkedin.metadata.aspect.VersionedAspect",
     "doc" : "Single unified resource for fetching, updating, searching, & browsing DataHub entities\n\ngenerated from: com.linkedin.metadata.resources.entity.AspectResource",
-    "resourceClass" : "com.linkedin.metadata.resources.entity.AspectResource",
     "collection" : {
       "identifier" : {
         "name" : "aspectsId",
@@ -4002,7 +3995,6 @@
       "supports" : [ "get" ],
       "methods" : [ {
         "method" : "get",
-        "javaMethodName" : "get",
         "doc" : "Retrieves the value for an entity that is made up of latest versions of specified aspects.\n TODO: Get rid of this and migrate to getAspect.",
         "parameters" : [ {
           "name" : "aspect",
@@ -4016,7 +4008,6 @@
       } ],
       "actions" : [ {
         "name" : "getCount",
-        "javaMethodName" : "getCount",
         "parameters" : [ {
           "name" : "aspect",
           "type" : "string"
@@ -4028,7 +4019,6 @@
         "returns" : "int"
       }, {
         "name" : "getTimeseriesAspectValues",
-        "javaMethodName" : "getTimeseriesAspectValues",
         "parameters" : [ {
           "name" : "urn",
           "type" : "string"
@@ -4066,7 +4056,6 @@
         "returns" : "com.linkedin.aspect.GetTimeseriesAspectValuesResponse"
       }, {
         "name" : "ingestProposal",
-        "javaMethodName" : "ingestProposal",
         "parameters" : [ {
           "name" : "proposal",
           "type" : "com.linkedin.mxe.MetadataChangeProposal"
@@ -4078,7 +4067,6 @@
         "returns" : "string"
       }, {
         "name" : "restoreIndices",
-        "javaMethodName" : "restoreIndices",
         "parameters" : [ {
           "name" : "aspect",
           "type" : "string",

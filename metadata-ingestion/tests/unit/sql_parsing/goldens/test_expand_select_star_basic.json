@@ -8,13 +8,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "total_agg",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "DOUBLE"
+                "column": "total_agg"
             },
             "upstreams": [
                 {
@@ -26,13 +20,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "orderkey",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "DECIMAL"
+                "column": "orderkey"
             },
             "upstreams": [
                 {
@@ -44,13 +32,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "custkey",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "DECIMAL"
+                "column": "custkey"
             },
             "upstreams": [
                 {
@@ -62,13 +44,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "orderstatus",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "TEXT"
+                "column": "orderstatus"
             },
             "upstreams": [
                 {
@@ -80,13 +56,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "totalprice",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "FLOAT"
+                "column": "totalprice"
             },
             "upstreams": [
                 {
@@ -98,13 +68,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "orderdate",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.DateType": {}
-                    }
-                },
-                "native_column_type": "DATE"
+                "column": "orderdate"
             },
             "upstreams": [
                 {
@@ -116,13 +80,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "orderpriority",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "TEXT"
+                "column": "orderpriority"
             },
             "upstreams": [
                 {
@@ -134,13 +92,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "clerk",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "TEXT"
+                "column": "clerk"
             },
             "upstreams": [
                 {
@@ -152,13 +104,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "shippriority",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "DECIMAL"
+                "column": "shippriority"
             },
             "upstreams": [
                 {
@@ -170,13 +116,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "comment",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "TEXT"
+                "column": "comment"
             },
             "upstreams": [
                 {

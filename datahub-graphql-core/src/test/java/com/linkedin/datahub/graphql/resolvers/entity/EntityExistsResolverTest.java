@@ -1,12 +1,13 @@
 package com.linkedin.datahub.graphql.resolvers.entity;
 
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
-
 import com.linkedin.metadata.entity.EntityService;
 import graphql.schema.DataFetchingEnvironment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
+
 
 public class EntityExistsResolverTest {
   private static final String ENTITY_URN_STRING = "urn:li:corpuser:test";

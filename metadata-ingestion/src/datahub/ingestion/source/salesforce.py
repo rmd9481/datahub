@@ -83,7 +83,7 @@ class SalesforceProfilingConfig(ConfigModel):
 
 
 class SalesforceConfig(DatasetSourceConfigMixin):
-    platform: str = "salesforce"
+    platform = "salesforce"
 
     auth: SalesforceAuthType = SalesforceAuthType.USERNAME_PASSWORD
 

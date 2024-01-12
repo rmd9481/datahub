@@ -5,13 +5,13 @@ import com.linkedin.datahub.graphql.types.mappers.ModelMapper;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
+
 /**
  * Maps Pegasus {@link RecordTemplate} objects to objects conforming to the GQL schema.
  *
- * <p>To be replaced by auto-generated mappers implementations
+ * To be replaced by auto-generated mappers implementations
  */
-public class SiblingsMapper
-    implements ModelMapper<com.linkedin.common.Siblings, SiblingProperties> {
+public class SiblingsMapper implements ModelMapper<com.linkedin.common.Siblings, SiblingProperties> {
 
   public static final SiblingsMapper INSTANCE = new SiblingsMapper();
 
@@ -23,8 +23,10 @@ public class SiblingsMapper
   public SiblingProperties apply(@Nonnull final com.linkedin.common.Siblings siblings) {
     final SiblingProperties result = new SiblingProperties();
     result.setIsPrimary(siblings.isPrimary());
-    result.setSiblings(
-        siblings.getSiblings().stream().map(UrnToEntityMapper::map).collect(Collectors.toList()));
+    result.setSiblings(siblings.getSiblings()
+        .stream()
+        .map(UrnToEntityMapper::map)
+        .collect(Collectors.toList()));
     return result;
   }
 }

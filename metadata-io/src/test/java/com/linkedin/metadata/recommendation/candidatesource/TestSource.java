@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+
 @Getter
 @RequiredArgsConstructor
 public class TestSource implements RecommendationSource {
@@ -35,14 +36,13 @@ public class TestSource implements RecommendationSource {
   }
 
   @Override
-  public boolean isEligible(
-      @Nonnull Urn userUrn, @Nonnull RecommendationRequestContext requestContext) {
+  public boolean isEligible(@Nonnull Urn userUrn, @Nonnull RecommendationRequestContext requestContext) {
     return eligible;
   }
 
   @Override
-  public List<RecommendationContent> getRecommendations(
-      @Nonnull Urn userUrn, @Nonnull RecommendationRequestContext requestContext) {
+  public List<RecommendationContent> getRecommendations(@Nonnull Urn userUrn,
+      @Nonnull RecommendationRequestContext requestContext) {
     return contents;
   }
 }

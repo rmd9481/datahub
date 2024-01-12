@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Zoom } from '@visx/zoom';
+import { Zoom } from '@vx/zoom';
 import { MockedProvider } from '@apollo/client/testing';
 import {
     dataset3WithLineage,

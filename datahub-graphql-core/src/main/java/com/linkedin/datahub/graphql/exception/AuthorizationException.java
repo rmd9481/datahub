@@ -1,6 +1,9 @@
 package com.linkedin.datahub.graphql.exception;
 
-/** Exception thrown when authentication fails. */
+
+/**
+ * Exception thrown when authentication fails.
+ */
 public class AuthorizationException extends DataHubGraphQLException {
 
   public AuthorizationException(String message) {

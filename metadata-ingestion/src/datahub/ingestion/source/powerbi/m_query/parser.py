@@ -56,7 +56,7 @@ def get_upstream_tables(
     ctx: PipelineContext,
     config: PowerBiDashboardSourceConfig,
     parameters: Dict[str, str] = {},
-) -> List[resolver.Lineage]:
+) -> List[resolver.DataPlatformTable]:
     if table.expression is None:
         logger.debug(f"Expression is none for table {table.full_name}")
         return []

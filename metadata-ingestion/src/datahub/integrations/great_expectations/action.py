@@ -35,10 +35,7 @@ import datahub.emitter.mce_builder as builder
 from datahub.cli.cli_utils import get_boolean_env_variable
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
 from datahub.emitter.rest_emitter import DatahubRestEmitter
-from datahub.emitter.serialization_helper import pre_json_transform
-from datahub.ingestion.source.sql.sqlalchemy_uri_mapper import (
-    get_platform_from_sqlalchemy_uri,
-)
+from datahub.ingestion.source.sql.sql_common import get_platform_from_sqlalchemy_uri
 from datahub.metadata.com.linkedin.pegasus2avro.assertion import (
     AssertionInfo,
     AssertionResult,
@@ -254,15 +251,13 @@ class DataHubValidationAction(ValidationAction):
             # possibly for each validation run
             assertionUrn = builder.make_assertion_urn(
                 builder.datahub_guid(
-                    pre_json_transform(
-                        {
-                            "platform": GE_PLATFORM_NAME,
-                            "nativeType": expectation_type,
-                            "nativeParameters": kwargs,
-                            "dataset": assertion_datasets[0],
-                            "fields": assertion_fields,
-                        }
-                    )
+                    {
+                        "platform": GE_PLATFORM_NAME,
+                        "nativeType": expectation_type,
+                        "nativeParameters": kwargs,
+                        "dataset": assertion_datasets[0],
+                        "fields": assertion_fields,
+                    }
                 )
             )
             logger.debug(
@@ -641,7 +636,7 @@ class DataHubValidationAction(ValidationAction):
                 ].batch_request.runtime_parameters["query"]
                 partitionSpec = PartitionSpecClass(
                     type=PartitionTypeClass.QUERY,
-                    partition=f"Query_{builder.datahub_guid(pre_json_transform(query))}",
+                    partition=f"Query_{builder.datahub_guid(query)}",
                 )
 
                 batchSpec = BatchSpec(

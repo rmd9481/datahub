@@ -6,6 +6,7 @@ import com.linkedin.metadata.models.annotation.TimeseriesFieldAnnotation;
 import lombok.NonNull;
 import lombok.Value;
 
+
 @Value
 public class TimeseriesFieldSpec implements FieldSpec {
   @NonNull PathSpec path;

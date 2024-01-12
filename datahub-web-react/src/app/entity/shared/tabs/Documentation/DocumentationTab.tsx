@@ -60,7 +60,6 @@ export const DocumentationTab = ({ properties }: { properties?: Props }) => {
                     <TabToolbar>
                         <div>
                             <Button
-                                data-testid="edit-documentation-button"
                                 type="text"
                                 onClick={() => routeToTab({ tabName: 'Documentation', tabParams: { editing: true } })}
                             >

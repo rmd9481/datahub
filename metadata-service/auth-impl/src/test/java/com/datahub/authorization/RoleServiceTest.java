@@ -1,7 +1,5 @@
 package com.datahub.authorization;
 
-import static org.mockito.Mockito.*;
-
 import com.datahub.authentication.Actor;
 import com.datahub.authentication.ActorType;
 import com.datahub.authentication.Authentication;
@@ -11,6 +9,9 @@ import com.linkedin.common.urn.Urn;
 import com.linkedin.entity.client.EntityClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.mockito.Mockito.*;
+
 
 public class RoleServiceTest {
   private static final String ROLE_URN_STRING = "urn:li:dataHubRole:Admin";
@@ -34,23 +35,21 @@ public class RoleServiceTest {
 
   @Test
   public void testBatchAssignRoleNoActorExists() throws Exception {
-    when(_entityClient.exists(
-            eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION)))
-        .thenReturn(false);
+    when(_entityClient.exists(eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION))).thenReturn(
+        false);
 
-    _roleService.batchAssignRoleToActors(
-        ImmutableList.of(FIRST_ACTOR_URN_STRING), roleUrn, SYSTEM_AUTHENTICATION);
+    _roleService.batchAssignRoleToActors(ImmutableList.of(FIRST_ACTOR_URN_STRING),
+        roleUrn,
+        SYSTEM_AUTHENTICATION);
     verify(_entityClient, never()).ingestProposal(any(), eq(SYSTEM_AUTHENTICATION), eq(false));
   }
 
   @Test
   public void testBatchAssignRoleSomeActorExists() throws Exception {
-    when(_entityClient.exists(
-            eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION)))
-        .thenReturn(true);
+    when(_entityClient.exists(eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION))).thenReturn(
+        true);
 
-    _roleService.batchAssignRoleToActors(
-        ImmutableList.of(FIRST_ACTOR_URN_STRING, SECOND_ACTOR_URN_STRING),
+    _roleService.batchAssignRoleToActors(ImmutableList.of(FIRST_ACTOR_URN_STRING, SECOND_ACTOR_URN_STRING),
         roleUrn,
         SYSTEM_AUTHENTICATION);
     verify(_entityClient, times(1)).ingestProposal(any(), eq(SYSTEM_AUTHENTICATION), eq(false));
@@ -58,15 +57,12 @@ public class RoleServiceTest {
 
   @Test
   public void testBatchAssignRoleAllActorsExist() throws Exception {
-    when(_entityClient.exists(
-            eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION)))
-        .thenReturn(true);
-    when(_entityClient.exists(
-            eq(Urn.createFromString(SECOND_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION)))
-        .thenReturn(true);
+    when(_entityClient.exists(eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION))).thenReturn(
+        true);
+    when(_entityClient.exists(eq(Urn.createFromString(SECOND_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION))).thenReturn(
+        true);
 
-    _roleService.batchAssignRoleToActors(
-        ImmutableList.of(FIRST_ACTOR_URN_STRING, SECOND_ACTOR_URN_STRING),
+    _roleService.batchAssignRoleToActors(ImmutableList.of(FIRST_ACTOR_URN_STRING, SECOND_ACTOR_URN_STRING),
         roleUrn,
         SYSTEM_AUTHENTICATION);
     verify(_entityClient, times(2)).ingestProposal(any(), eq(SYSTEM_AUTHENTICATION), eq(false));
@@ -74,12 +70,10 @@ public class RoleServiceTest {
 
   @Test
   public void testAssignNullRoleToActorAllActorsExist() throws Exception {
-    when(_entityClient.exists(
-            eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION)))
-        .thenReturn(true);
+    when(_entityClient.exists(eq(Urn.createFromString(FIRST_ACTOR_URN_STRING)), eq(SYSTEM_AUTHENTICATION))).thenReturn(
+        true);
 
-    _roleService.batchAssignRoleToActors(
-        ImmutableList.of(FIRST_ACTOR_URN_STRING), null, SYSTEM_AUTHENTICATION);
+    _roleService.batchAssignRoleToActors(ImmutableList.of(FIRST_ACTOR_URN_STRING), null, SYSTEM_AUTHENTICATION);
     verify(_entityClient, times(1)).ingestProposal(any(), eq(SYSTEM_AUTHENTICATION), eq(false));
   }
 }

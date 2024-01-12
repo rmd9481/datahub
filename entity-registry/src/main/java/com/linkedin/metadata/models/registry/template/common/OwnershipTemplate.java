@@ -1,7 +1,5 @@
 package com.linkedin.metadata.models.registry.template.common;
 
-import static com.linkedin.metadata.Constants.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.linkedin.common.AuditStamp;
 import com.linkedin.common.OwnerArray;
@@ -11,6 +9,9 @@ import com.linkedin.data.template.RecordTemplate;
 import com.linkedin.metadata.models.registry.template.CompoundKeyTemplate;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
+
+import static com.linkedin.metadata.Constants.*;
+
 
 public class OwnershipTemplate extends CompoundKeyTemplate<Ownership> {
 
@@ -36,10 +37,9 @@ public class OwnershipTemplate extends CompoundKeyTemplate<Ownership> {
   public Ownership getDefault() {
     Ownership ownership = new Ownership();
     ownership.setOwners(new OwnerArray());
-    ownership.setLastModified(
-        new AuditStamp()
-            .setTime(System.currentTimeMillis())
-            .setActor(UrnUtils.getUrn(SYSTEM_ACTOR)));
+    ownership.setLastModified(new AuditStamp()
+        .setTime(System.currentTimeMillis())
+        .setActor(UrnUtils.getUrn(SYSTEM_ACTOR)));
 
     return ownership;
   }
@@ -47,14 +47,12 @@ public class OwnershipTemplate extends CompoundKeyTemplate<Ownership> {
   @Nonnull
   @Override
   public JsonNode transformFields(JsonNode baseNode) {
-    return arrayFieldToMap(
-        baseNode, OWNERS_FIELD_NAME, Arrays.asList(OWNER_FIELD_NAME, TYPE_FIELD_NAME));
+    return arrayFieldToMap(baseNode, OWNERS_FIELD_NAME, Arrays.asList(OWNER_FIELD_NAME, TYPE_FIELD_NAME));
   }
 
   @Nonnull
   @Override
   public JsonNode rebaseFields(JsonNode patched) {
-    return transformedMapToArray(
-        patched, OWNERS_FIELD_NAME, Arrays.asList(OWNER_FIELD_NAME, TYPE_FIELD_NAME));
+    return transformedMapToArray(patched, OWNERS_FIELD_NAME, Arrays.asList(OWNER_FIELD_NAME, TYPE_FIELD_NAME));
   }
 }

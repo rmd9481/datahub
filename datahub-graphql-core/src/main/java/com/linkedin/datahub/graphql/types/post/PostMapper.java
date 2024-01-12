@@ -1,7 +1,5 @@
 package com.linkedin.datahub.graphql.types.post;
 
-import static com.linkedin.metadata.Constants.*;
-
 import com.linkedin.data.DataMap;
 import com.linkedin.datahub.graphql.generated.AuditStamp;
 import com.linkedin.datahub.graphql.generated.EntityType;
@@ -17,6 +15,9 @@ import com.linkedin.entity.EntityResponse;
 import com.linkedin.entity.EnvelopedAspectMap;
 import com.linkedin.post.PostInfo;
 import javax.annotation.Nonnull;
+
+import static com.linkedin.metadata.Constants.*;
+
 
 public class PostMapper implements ModelMapper<EntityResponse, Post> {
 

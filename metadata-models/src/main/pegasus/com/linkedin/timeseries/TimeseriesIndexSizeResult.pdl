@@ -22,8 +22,5 @@ record TimeseriesIndexSizeResult{
   /**
    * Size
    */
-   @deprecated = "use sizeInMb instead"
   sizeMb: float = 0
-
-  sizeInMb: double = 0
 }

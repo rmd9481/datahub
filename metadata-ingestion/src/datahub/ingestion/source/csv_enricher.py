@@ -45,7 +45,6 @@ from datahub.metadata.schema_classes import (
     TagAssociationClass,
 )
 from datahub.utilities.urns.dataset_urn import DatasetUrn
-from datahub.utilities.urns.field_paths import get_simple_field_path_from_v2_field_path
 from datahub.utilities.urns.urn import Urn, guess_entity_type
 
 DATASET_ENTITY_TYPE = DatasetUrn.ENTITY_TYPE
@@ -130,9 +129,11 @@ class CSVEnricherSource(Source):
         # Map from entity urn to a list of SubResourceRow.
         self.editable_schema_metadata_map: Dict[str, List[SubResourceRow]] = {}
         self.should_overwrite: bool = self.config.write_semantics == "OVERRIDE"
-
-        if not self.should_overwrite:
-            self.ctx.require_graph(operation="The csv-enricher's PATCH semantics flag")
+        if not self.should_overwrite and not self.ctx.graph:
+            raise ConfigurationError(
+                "With PATCH semantics, the csv-enricher source requires a datahub_api to connect to. "
+                "Consider using the datahub-rest sink or provide a datahub_api: configuration on your ingestion recipe."
+            )
 
     def get_resource_glossary_terms_work_unit(
         self,
@@ -437,7 +438,9 @@ class CSVEnricherSource(Source):
         field_match = False
         for field_info in current_editable_schema_metadata.editableSchemaFieldInfo:
             if (
-                get_simple_field_path_from_v2_field_path(field_info.fieldPath)
+                DatasetUrn.get_simple_field_path_from_v2_field_path(
+                    field_info.fieldPath
+                )
                 == field_path
             ):
                 # we have some editable schema metadata for this field

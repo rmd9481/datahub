@@ -1,9 +1,14 @@
 package com.linkedin.common.urn;
 
+import com.linkedin.common.FabricType;
 import com.linkedin.data.template.Custom;
 import com.linkedin.data.template.DirectCoercer;
 import com.linkedin.data.template.TemplateOutputCastException;
+
+import java.lang.reflect.Array;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
+
 
 public final class GlossaryTermUrn extends Urn {
 
@@ -37,8 +42,7 @@ public final class GlossaryTermUrn extends Urn {
         try {
           return new GlossaryTermUrn((String) key.getAs(0, String.class));
         } catch (Exception var3) {
-          throw new URISyntaxException(
-              urn.toString(), "Invalid URN Parameter: '" + var3.getMessage());
+          throw new URISyntaxException(urn.toString(), "Invalid URN Parameter: '" + var3.getMessage());
         }
       }
     }
@@ -49,20 +53,19 @@ public final class GlossaryTermUrn extends Urn {
   }
 
   static {
-    Custom.registerCoercer(
-        new DirectCoercer<GlossaryTermUrn>() {
-          public Object coerceInput(GlossaryTermUrn object) throws ClassCastException {
-            return object.toString();
-          }
+    Custom.registerCoercer(new DirectCoercer<GlossaryTermUrn>() {
+      public Object coerceInput(GlossaryTermUrn object) throws ClassCastException {
+        return object.toString();
+      }
 
-          public GlossaryTermUrn coerceOutput(Object object) throws TemplateOutputCastException {
-            try {
-              return GlossaryTermUrn.createFromString((String) object);
-            } catch (URISyntaxException e) {
-              throw new TemplateOutputCastException("Invalid URN syntax: " + e.getMessage(), e);
-            }
-          }
-        },
-        GlossaryTermUrn.class);
+      public GlossaryTermUrn coerceOutput(Object object) throws TemplateOutputCastException {
+        try {
+          return GlossaryTermUrn.createFromString((String) object);
+        } catch (URISyntaxException e) {
+          throw new TemplateOutputCastException("Invalid URN syntax: " + e.getMessage(), e);
+        }
+      }
+    }, GlossaryTermUrn.class);
   }
+
 }

@@ -1,7 +1,5 @@
 package com.linkedin.datahub.graphql.resolvers.ingest;
 
-import static org.testng.Assert.*;
-
 import com.datahub.authorization.AuthorizationRequest;
 import com.datahub.authorization.AuthorizationResult;
 import com.datahub.plugins.auth.authorization.Authorizer;
@@ -9,6 +7,7 @@ import com.linkedin.datahub.graphql.QueryContext;
 import java.util.Optional;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 public class IngestionAuthUtilsTest {
 
@@ -17,9 +16,11 @@ public class IngestionAuthUtilsTest {
     QueryContext mockContext = Mockito.mock(QueryContext.class);
     Authorizer mockAuthorizer = Mockito.mock(Authorizer.class);
 
-    AuthorizationRequest request =
-        new AuthorizationRequest(
-            "urn:li:corpuser:authorized", "MANAGE_INGESTION", Optional.empty());
+    AuthorizationRequest request = new AuthorizationRequest(
+        "urn:li:corpuser:authorized",
+        "MANAGE_INGESTION",
+        Optional.empty()
+    );
 
     AuthorizationResult result = Mockito.mock(AuthorizationResult.class);
     Mockito.when(result.getType()).thenReturn(AuthorizationResult.Type.ALLOW);
@@ -36,9 +37,11 @@ public class IngestionAuthUtilsTest {
     QueryContext mockContext = Mockito.mock(QueryContext.class);
     Authorizer mockAuthorizer = Mockito.mock(Authorizer.class);
 
-    AuthorizationRequest request =
-        new AuthorizationRequest(
-            "urn:li:corpuser:unauthorized", "MANAGE_INGESTION", Optional.empty());
+    AuthorizationRequest request = new AuthorizationRequest(
+        "urn:li:corpuser:unauthorized",
+        "MANAGE_INGESTION",
+        Optional.empty()
+    );
 
     AuthorizationResult result = Mockito.mock(AuthorizationResult.class);
     Mockito.when(result.getType()).thenReturn(AuthorizationResult.Type.DENY);
@@ -55,8 +58,11 @@ public class IngestionAuthUtilsTest {
     QueryContext mockContext = Mockito.mock(QueryContext.class);
     Authorizer mockAuthorizer = Mockito.mock(Authorizer.class);
 
-    AuthorizationRequest request =
-        new AuthorizationRequest("urn:li:corpuser:authorized", "MANAGE_SECRETS", Optional.empty());
+    AuthorizationRequest request = new AuthorizationRequest(
+        "urn:li:corpuser:authorized",
+        "MANAGE_SECRETS",
+        Optional.empty()
+    );
 
     AuthorizationResult result = Mockito.mock(AuthorizationResult.class);
     Mockito.when(result.getType()).thenReturn(AuthorizationResult.Type.ALLOW);
@@ -73,9 +79,11 @@ public class IngestionAuthUtilsTest {
     QueryContext mockContext = Mockito.mock(QueryContext.class);
     Authorizer mockAuthorizer = Mockito.mock(Authorizer.class);
 
-    AuthorizationRequest request =
-        new AuthorizationRequest(
-            "urn:li:corpuser:unauthorized", "MANAGE_SECRETS", Optional.empty());
+    AuthorizationRequest request = new AuthorizationRequest(
+        "urn:li:corpuser:unauthorized",
+        "MANAGE_SECRETS",
+        Optional.empty()
+    );
 
     AuthorizationResult result = Mockito.mock(AuthorizationResult.class);
     Mockito.when(result.getType()).thenReturn(AuthorizationResult.Type.DENY);

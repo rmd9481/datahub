@@ -30,8 +30,6 @@ from datahub.ingestion.source.snowflake.snowflake_report import SnowflakeV2Repor
 from tests.integration.snowflake.common import FROZEN_TIME, default_query_results
 from tests.test_helpers import mce_helpers
 
-pytestmark = pytest.mark.integration_batch_2
-
 
 def random_email():
     return (
@@ -57,6 +55,7 @@ def random_cloud_region():
     )
 
 
+@pytest.mark.integration
 def test_snowflake_basic(pytestconfig, tmp_path, mock_time, mock_datahub_graph):
     test_resources_dir = pytestconfig.rootpath / "tests/integration/snowflake"
 
@@ -87,18 +86,18 @@ def test_snowflake_basic(pytestconfig, tmp_path, mock_time, mock_datahub_graph):
             confidence_level_threshold=0.58,
             info_types_config={
                 "Age": InfoTypeConfig(
-                    prediction_factors_and_weights=PredictionFactorsAndWeights(
-                        name=0, values=1, description=0, datatype=0
+                    Prediction_Factors_and_Weights=PredictionFactorsAndWeights(
+                        Name=0, Values=1, Description=0, Datatype=0
                     )
                 ),
                 "CloudRegion": InfoTypeConfig(
-                    prediction_factors_and_weights=PredictionFactorsAndWeights(
-                        name=0,
-                        description=0,
-                        datatype=0,
-                        values=1,
+                    Prediction_Factors_and_Weights=PredictionFactorsAndWeights(
+                        Name=0,
+                        Description=0,
+                        Datatype=0,
+                        Values=1,
                     ),
-                    values=ValuesFactorConfig(
+                    Values=ValuesFactorConfig(
                         prediction_type="regex",
                         regex=[
                             r"(af|ap|ca|eu|me|sa|us)-(central|north|(north(?:east|west))|south|south(?:east|west)|east|west)-\d+"
@@ -125,7 +124,6 @@ def test_snowflake_basic(pytestconfig, tmp_path, mock_time, mock_datahub_graph):
                         validate_upstreams_against_patterns=False,
                         include_operational_stats=True,
                         email_as_user_identifier=True,
-                        incremental_lineage=False,
                         start_time=datetime(2022, 6, 6, 0, 0, 0, 0).replace(
                             tzinfo=timezone.utc
                         ),
@@ -142,7 +140,6 @@ def test_snowflake_basic(pytestconfig, tmp_path, mock_time, mock_datahub_graph):
                                     type="datahub", config=datahub_classifier_config
                                 )
                             ],
-                            max_workers=1,
                         ),
                         profiling=GEProfilingConfig(
                             enabled=True,
@@ -186,6 +183,7 @@ def test_snowflake_basic(pytestconfig, tmp_path, mock_time, mock_datahub_graph):
 
 
 @freeze_time(FROZEN_TIME)
+@pytest.mark.integration
 def test_snowflake_private_link(pytestconfig, tmp_path, mock_time, mock_datahub_graph):
     test_resources_dir = pytestconfig.rootpath / "tests/integration/snowflake"
 
@@ -212,12 +210,10 @@ def test_snowflake_private_link(pytestconfig, tmp_path, mock_time, mock_datahub_
                         include_technical_schema=True,
                         include_table_lineage=True,
                         include_column_lineage=False,
-                        include_views=True,
-                        include_view_lineage=True,
+                        include_views=False,
+                        include_view_lineage=False,
                         include_usage_stats=False,
-                        incremental_lineage=False,
                         include_operational_stats=False,
-                        platform_instance="instance1",
                         start_time=datetime(2022, 6, 6, 0, 0, 0, 0).replace(
                             tzinfo=timezone.utc
                         ),

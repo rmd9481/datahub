@@ -57,7 +57,7 @@ class DatahubEmitterOperator(DatahubBaseOperator):
             datahub_conn_id=datahub_conn_id,
             **kwargs,
         )
-        self.metadata = mces
+        self.mces = mces
 
     def execute(self, context):
-        self.generic_hook.get_underlying_hook().emit(self.metadata)
+        self.generic_hook.get_underlying_hook().emit_mces(self.mces)

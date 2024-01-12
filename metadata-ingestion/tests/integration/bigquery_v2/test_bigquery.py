@@ -4,10 +4,8 @@ from unittest.mock import patch
 from freezegun import freeze_time
 from google.cloud.bigquery.table import TableListItem
 
-from datahub.ingestion.source.bigquery_v2.bigquery import BigqueryV2Source
 from datahub.ingestion.source.bigquery_v2.bigquery_schema import (
     BigqueryDataset,
-    BigQuerySchemaApi,
     BigqueryTable,
 )
 from tests.test_helpers import mce_helpers
@@ -17,9 +15,15 @@ FROZEN_TIME = "2022-02-03 07:00:00"
 
 
 @freeze_time(FROZEN_TIME)
-@patch.object(BigQuerySchemaApi, "get_tables_for_dataset")
-@patch.object(BigqueryV2Source, "get_core_table_details")
-@patch.object(BigQuerySchemaApi, "get_datasets_for_project_id")
+@patch(
+    "datahub.ingestion.source.bigquery_v2.bigquery_schema.BigQueryDataDictionary.get_tables_for_dataset"
+)
+@patch(
+    "datahub.ingestion.source.bigquery_v2.bigquery.BigqueryV2Source.get_core_table_details"
+)
+@patch(
+    "datahub.ingestion.source.bigquery_v2.bigquery_schema.BigQueryDataDictionary.get_datasets_for_project_id"
+)
 @patch("google.cloud.bigquery.Client")
 def test_bigquery_v2_ingest(
     client,

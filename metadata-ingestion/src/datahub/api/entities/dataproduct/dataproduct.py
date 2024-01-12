@@ -2,15 +2,25 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import pydantic
 from ruamel.yaml import YAML
 
 import datahub.emitter.mce_builder as builder
 from datahub.configuration.common import ConfigModel
-from datahub.emitter.generic_emitter import Emitter
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
+from datahub.emitter.rest_emitter import DatahubRestEmitter
 from datahub.ingestion.graph.client import DataHubGraph
 from datahub.metadata.schema_classes import (
     AuditStampClass,
@@ -32,6 +42,9 @@ from datahub.metadata.schema_classes import (
 from datahub.specific.dataproduct import DataProductPatchBuilder
 from datahub.utilities.registries.domain_registry import DomainRegistry
 from datahub.utilities.urns.urn import Urn
+
+if TYPE_CHECKING:
+    from datahub.emitter.kafka_emitter import DatahubKafkaEmitter
 
 
 def patch_list(
@@ -104,7 +117,7 @@ class DataProduct(ConfigModel):
 
     id: str
     domain: str
-    _resolved_domain_urn: Optional[str] = None
+    _resolved_domain_urn: Optional[str]
     assets: Optional[List[str]] = None
     display_name: Optional[str] = None
     owners: Optional[List[Union[str, Ownership]]] = None
@@ -212,6 +225,7 @@ class DataProduct(ConfigModel):
     def generate_mcp(
         self, upsert: bool
     ) -> Iterable[Union[MetadataChangeProposalWrapper, MetadataChangeProposalClass]]:
+
         if self._resolved_domain_urn is None:
             raise Exception(
                 f"Unable to generate MCP-s because we were unable to resolve the domain {self.domain} to an urn."
@@ -268,7 +282,7 @@ class DataProduct(ConfigModel):
 
     def emit(
         self,
-        emitter: Emitter,
+        emitter: Union[DatahubRestEmitter, "DatahubKafkaEmitter"],
         upsert: bool,
         callback: Optional[Callable[[Exception, str], None]] = None,
     ) -> None:
@@ -426,6 +440,7 @@ class DataProduct(ConfigModel):
         original_dataproduct: DataProduct,
         output_file: Path,
     ) -> bool:
+
         update_needed = False
         if not original_dataproduct._original_yaml_dict:
             raise Exception("Original Data Product was not loaded from yaml")
@@ -508,6 +523,7 @@ class DataProduct(ConfigModel):
         self,
         file: Path,
     ) -> None:
+
         with open(file, "w") as fp:
             yaml = YAML(typ="rt")  # default, if not specfied, is 'rt' (round-trip)
             yaml.indent(mapping=2, sequence=4, offset=2)

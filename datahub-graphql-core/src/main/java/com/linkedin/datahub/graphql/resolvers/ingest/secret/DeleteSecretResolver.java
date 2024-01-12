@@ -9,7 +9,10 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.concurrent.CompletableFuture;
 
-/** Hard deletes a particular DataHub secret. Requires the MANAGE_SECRETS privilege. */
+
+/**
+ * Hard deletes a particular DataHub secret. Requires the MANAGE_SECRETS privilege.
+ */
 public class DeleteSecretResolver implements DataFetcher<CompletableFuture<String>> {
 
   private final EntityClient _entityClient;
@@ -24,19 +27,15 @@ public class DeleteSecretResolver implements DataFetcher<CompletableFuture<Strin
     if (IngestionAuthUtils.canManageSecrets(context)) {
       final String secretUrn = environment.getArgument("urn");
       final Urn urn = Urn.createFromString(secretUrn);
-      return CompletableFuture.supplyAsync(
-          () -> {
-            try {
-              _entityClient.deleteEntity(urn, context.getAuthentication());
-              return secretUrn;
-            } catch (Exception e) {
-              throw new RuntimeException(
-                  String.format("Failed to perform delete against secret with urn %s", secretUrn),
-                  e);
-            }
-          });
+      return CompletableFuture.supplyAsync(() -> {
+        try {
+          _entityClient.deleteEntity(urn, context.getAuthentication());
+          return secretUrn;
+        } catch (Exception e) {
+          throw new RuntimeException(String.format("Failed to perform delete against secret with urn %s", secretUrn), e);
+        }
+      });
     }
-    throw new AuthorizationException(
-        "Unauthorized to perform this action. Please contact your DataHub administrator.");
+    throw new AuthorizationException("Unauthorized to perform this action. Please contact your DataHub administrator.");
   }
 }

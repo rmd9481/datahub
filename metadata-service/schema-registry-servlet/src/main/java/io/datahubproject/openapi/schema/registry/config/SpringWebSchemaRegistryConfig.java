@@ -1,7 +1,6 @@
 package io.datahubproject.openapi.schema.registry.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +12,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+
 @EnableWebMvc
-@OpenAPIDefinition(
-    info = @Info(title = "DataHub OpenAPI", version = "1.0.0"),
-    servers = {@Server(url = "/schema-registry/", description = "Schema Registry Server URL")})
+@OpenAPIDefinition(servers = {@Server(url = "/schema-registry/", description = "Schema Registry Server URL")})
 @Configuration
 public class SpringWebSchemaRegistryConfig implements WebMvcConfigurer {
 

@@ -1,8 +1,10 @@
 ---
 description: Learn how to upload and use the Acryl DataHub Chrome extension (beta) locally before it's available on the Chrome store.
 ---
+import FeatureAvailability from '@site/src/components/FeatureAvailability';
 
 # Acryl DataHub Chrome Extension
+<FeatureAvailability saasOnly />
 
 ## Installing the Extension
 

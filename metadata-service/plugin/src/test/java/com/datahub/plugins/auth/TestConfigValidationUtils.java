@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import org.testng.annotations.Test;
 
+
 @Test
 public class TestConfigValidationUtils {
 

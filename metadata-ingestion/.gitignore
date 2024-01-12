@@ -8,7 +8,6 @@ bq_credentials.json
 junit.*.xml
 /tmp
 *.bak
-custom-package/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -6,6 +6,7 @@ import com.linkedin.datahub.graphql.generated.ScrollResults;
 import com.linkedin.metadata.search.SearchResultMetadata;
 import java.util.stream.Collectors;
 
+
 public class UrnScrollResultsMapper<T extends RecordTemplate, E extends Entity> {
   public static <T extends RecordTemplate, E extends Entity> ScrollResults map(
       com.linkedin.metadata.search.ScrollResult scrollResult) {
@@ -24,12 +25,8 @@ public class UrnScrollResultsMapper<T extends RecordTemplate, E extends Entity> 
     result.setTotal(input.getNumEntities());
 
     final SearchResultMetadata searchResultMetadata = input.getMetadata();
-    result.setSearchResults(
-        input.getEntities().stream().map(MapperUtils::mapResult).collect(Collectors.toList()));
-    result.setFacets(
-        searchResultMetadata.getAggregations().stream()
-            .map(MapperUtils::mapFacet)
-            .collect(Collectors.toList()));
+    result.setSearchResults(input.getEntities().stream().map(MapperUtils::mapResult).collect(Collectors.toList()));
+    result.setFacets(searchResultMetadata.getAggregations().stream().map(MapperUtils::mapFacet).collect(Collectors.toList()));
 
     return result;
   }

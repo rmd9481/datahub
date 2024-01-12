@@ -5,8 +5,10 @@ import com.linkedin.data.template.DirectCoercer;
 import com.linkedin.data.template.TemplateOutputCastException;
 import java.net.URISyntaxException;
 
+
 public abstract class BaseUrnCoercer<T extends Urn> implements DirectCoercer<T> {
-  public BaseUrnCoercer() {}
+  public BaseUrnCoercer() {
+  }
 
   public Object coerceInput(T object) throws ClassCastException {
     return object.toString();

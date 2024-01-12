@@ -3,10 +3,9 @@ from typing import Any, Dict, Optional, Tuple, Type, cast
 import pytest
 from pydantic import ValidationError
 
-from datahub.configuration.common import ConfigModel
+from datahub.configuration.common import ConfigModel, DynamicTypedConfig
 from datahub.ingestion.graph.client import DatahubClientConfig
 from datahub.ingestion.source.state.stateful_ingestion_base import (
-    DynamicTypedStateProviderConfig,
     StatefulIngestionConfig,
 )
 from datahub.ingestion.source.state_provider.datahub_ingestion_checkpointing_provider import (
@@ -24,6 +23,7 @@ datahub_client_configs: Dict[str, Any] = {
     },
     "simple": {},
     "default": {},
+    "none": None,
 }
 
 
@@ -81,6 +81,13 @@ checkpointing_provider_config_test_params: Dict[
         ),
         False,
     ),
+    # None
+    "checkpointing_bad_config": (
+        DatahubIngestionStateProviderConfig,
+        datahub_client_configs["none"],
+        None,
+        True,
+    ),
 }
 
 
@@ -112,7 +119,7 @@ stateful_ingestion_config_test_params: Dict[
             max_checkpoint_state_size=1024,
             ignore_old_state=True,
             ignore_new_state=True,
-            state_provider=DynamicTypedStateProviderConfig(
+            state_provider=DynamicTypedConfig(
                 type="datahub",
                 config=datahub_client_configs["full"],
             ),
@@ -141,7 +148,7 @@ stateful_ingestion_config_test_params: Dict[
             max_checkpoint_state_size=2**24,
             ignore_old_state=False,
             ignore_new_state=False,
-            state_provider=DynamicTypedStateProviderConfig(type="datahub"),
+            state_provider=DynamicTypedConfig(type="datahub", config=None),
         ),
         False,
     ),

@@ -22,11 +22,7 @@ class MetadataWorkUnit(WorkUnit):
     metadata: Union[
         MetadataChangeEvent, MetadataChangeProposal, MetadataChangeProposalWrapper
     ]
-
-    # A workunit creator can determine if this workunit is allowed to fail.
-    # TODO: This flag was initially added during the rollout of the subType aspect
-    # to improve backwards compatibility, but is not really needed anymore and so
-    # should be removed.
+    # A workunit creator can determine if this workunit is allowed to fail
     treat_errors_as_warnings: bool = False
 
     # When this is set to false, this MWU will be ignored by automatic helpers

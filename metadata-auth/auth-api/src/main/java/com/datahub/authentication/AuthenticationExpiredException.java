@@ -2,6 +2,7 @@ package com.datahub.authentication;
 
 import com.datahub.plugins.auth.authentication.Authenticator;
 
+
 /**
  * An {@link Exception} thrown when an {@link Authenticator} is unable to be resolve an instance of
  * {@link Authentication} for the current request.

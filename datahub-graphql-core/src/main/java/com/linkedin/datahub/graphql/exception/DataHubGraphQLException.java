@@ -2,6 +2,7 @@ package com.linkedin.datahub.graphql.exception;
 
 import graphql.GraphQLException;
 
+
 public class DataHubGraphQLException extends GraphQLException {
 
   private final DataHubGraphQLErrorCode code;

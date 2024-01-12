@@ -13,8 +13,11 @@ from tabulate import tabulate
 from datahub.cli import cli_utils
 from datahub.configuration.datetimes import ClickDatetime
 from datahub.emitter.aspect import ASPECT_MAP, TIMESERIES_ASPECT_MAP
-from datahub.ingestion.graph.client import DataHubGraph, get_default_graph
-from datahub.ingestion.graph.filters import RemovedStatusFilter
+from datahub.ingestion.graph.client import (
+    DataHubGraph,
+    RemovedStatusFilter,
+    get_default_graph,
+)
 from datahub.telemetry import telemetry
 from datahub.upgrade import upgrade
 from datahub.utilities.perf_timer import PerfTimer

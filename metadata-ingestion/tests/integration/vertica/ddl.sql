@@ -1,4 +1,5 @@
-
+\set AUTOCOMMIT on
+ALTER USER dbadmin IDENTIFIED BY 'abc123';
 
 -- Create a Top-k projection
 CREATE TABLE readings (meter_id INT, reading_date TIMESTAMP, reading_value FLOAT);
@@ -34,16 +35,12 @@ SELECT tokenize(phrase) OVER () FROM phrases;
 
 -- Create a temp table
 
--- CREATE TEMPORARY TABLE sampletemp (a int, b int) ON COMMIT PRESERVE ROWS;
--- INSERT INTO sampletemp VALUES(1,2);
+CREATE TEMPORARY TABLE sampletemp (a int, b int) ON COMMIT PRESERVE ROWS;
+INSERT INTO sampletemp VALUES(1,2);
 
 -- Create partition key
--- ALTER TABLE store.store_orders_fact PARTITION BY date_ordered::DATE GROUP BY DATE_TRUNC('month', (date_ordered)::DATE);
--- SELECT PARTITION_TABLE('store.store_orders_fact');
--- CREATE PROJECTION ytd_orders AS SELECT * FROM store.store_orders_fact ORDER BY date_ordered
---     ON PARTITION RANGE BETWEEN date_trunc('year',now())::date AND NULL;
-
-
-
-
+ALTER TABLE store.store_orders_fact PARTITION BY date_ordered::DATE GROUP BY DATE_TRUNC('month', (date_ordered)::DATE);
+SELECT PARTITION_TABLE('store.store_orders_fact');
+CREATE PROJECTION ytd_orders AS SELECT * FROM store.store_orders_fact ORDER BY date_ordered
+    ON PARTITION RANGE BETWEEN date_trunc('year',now())::date AND NULL;
 SELECT start_refresh();

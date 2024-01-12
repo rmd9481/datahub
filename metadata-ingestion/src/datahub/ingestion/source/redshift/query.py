@@ -1,6 +1,6 @@
 from datetime import datetime
 
-redshift_datetime_format = "%Y-%m-%d %H:%M:%S"
+from datahub.ingestion.source.sql.redshift import redshift_datetime_format
 
 
 class RedshiftQuery:
@@ -179,18 +179,14 @@ SELECT  schemaname as schema_name,
 
     additional_table_metadata: str = """
         select
-            ti.database,
-            ti.schema,
+            database,
+            schema,
             "table",
             size,
             tbl_rows,
             estimated_visible_rows,
             skew_rows,
-            last_accessed,
-            case
-                when smi.name is not null then 1
-                else 0
-            end as is_materialized
+            last_accessed
         from
             pg_catalog.svv_table_info as ti
         left join (
@@ -202,12 +198,8 @@ SELECT  schemaname as schema_name,
             group by
                 tbl) as la on
             (la.tbl = ti.table_id)
-        left join stv_mv_info smi on
-            smi.db_name = ti.database
-            and smi.schema = ti.schema
-            and smi.name = ti.table
-            ;
-"""
+       ;
+    """
 
     @staticmethod
     def stl_scan_based_lineage_query(

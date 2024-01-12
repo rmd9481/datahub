@@ -1,8 +1,12 @@
 import pytest
 import tenacity
-
-from tests.utils import (delete_urns_from_file, get_frontend_url, get_gms_url,
-                         get_sleep_info, ingest_file_via_rest)
+from tests.utils import (
+    delete_urns_from_file,
+    get_frontend_url,
+    get_gms_url,
+    ingest_file_via_rest,
+    get_sleep_info,
+)
 
 sleep_sec, sleep_times = get_sleep_info()
 
@@ -236,7 +240,4 @@ def test_set_unset_domain(frontend_session, ingest_cleanup_data):
 
     assert res_data
     assert res_data["data"]["dataset"]["domain"]["domain"]["urn"] == domain_urn
-    assert (
-        res_data["data"]["dataset"]["domain"]["domain"]["properties"]["name"]
-        == "Engineering"
-    )
+    assert res_data["data"]["dataset"]["domain"]["domain"]["properties"]["name"] == "Engineering"

@@ -1,8 +1,5 @@
 package com.linkedin.datahub.graphql.resolvers.settings.view;
 
-import static com.linkedin.datahub.graphql.TestUtils.*;
-import static org.testng.Assert.*;
-
 import com.datahub.authentication.Authentication;
 import com.linkedin.common.urn.Urn;
 import com.linkedin.common.urn.UrnUtils;
@@ -17,6 +14,10 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import static com.linkedin.datahub.graphql.TestUtils.*;
+import static org.testng.Assert.*;
+
+
 public class GlobalViewsSettingsResolverTest {
 
   private static final Urn TEST_URN = UrnUtils.getUrn("urn:li:dataHubView:test-id");
@@ -24,7 +25,9 @@ public class GlobalViewsSettingsResolverTest {
 
   @Test
   public void testGetSuccessNullSettings() throws Exception {
-    SettingsService mockService = initSettingsService(null);
+    SettingsService mockService = initSettingsService(
+        null
+    );
     GlobalViewsSettingsResolver resolver = new GlobalViewsSettingsResolver(mockService);
 
     QueryContext mockContext = getMockAllowContext(TEST_USER_URN.toString());
@@ -39,7 +42,9 @@ public class GlobalViewsSettingsResolverTest {
 
   @Test
   public void testGetSuccessEmptySettings() throws Exception {
-    SettingsService mockService = initSettingsService(new GlobalViewsSettings());
+    SettingsService mockService = initSettingsService(
+        new GlobalViewsSettings()
+    );
     GlobalViewsSettingsResolver resolver = new GlobalViewsSettingsResolver(mockService);
 
     QueryContext mockContext = getMockAllowContext(TEST_USER_URN.toString());
@@ -48,13 +53,16 @@ public class GlobalViewsSettingsResolverTest {
 
     com.linkedin.datahub.graphql.generated.GlobalViewsSettings result = resolver.get(mockEnv).get();
 
-    Assert.assertNull(result.getDefaultView());
+    Assert.assertNull(
+        result.getDefaultView()
+    );
   }
 
   @Test
   public void testGetSuccessExistingSettings() throws Exception {
-    SettingsService mockService =
-        initSettingsService(new GlobalViewsSettings().setDefaultView(TEST_URN));
+    SettingsService mockService = initSettingsService(
+        new GlobalViewsSettings().setDefaultView(TEST_URN)
+    );
     GlobalViewsSettingsResolver resolver = new GlobalViewsSettingsResolver(mockService);
 
     QueryContext mockContext = getMockAllowContext(TEST_USER_URN.toString());
@@ -63,15 +71,17 @@ public class GlobalViewsSettingsResolverTest {
 
     com.linkedin.datahub.graphql.generated.GlobalViewsSettings result = resolver.get(mockEnv).get();
 
-    Assert.assertEquals(result.getDefaultView(), TEST_URN.toString());
+    Assert.assertEquals(
+        result.getDefaultView(),
+        TEST_URN.toString()
+    );
   }
 
   @Test
   public void testGetException() throws Exception {
     SettingsService mockService = Mockito.mock(SettingsService.class);
-    Mockito.doThrow(RuntimeException.class)
-        .when(mockService)
-        .getGlobalSettings(Mockito.any(Authentication.class));
+    Mockito.doThrow(RuntimeException.class).when(mockService).getGlobalSettings(
+        Mockito.any(Authentication.class));
 
     GlobalViewsSettingsResolver resolver = new GlobalViewsSettingsResolver(mockService);
 
@@ -84,7 +94,9 @@ public class GlobalViewsSettingsResolverTest {
 
   @Test
   public void testGetUnauthorized() throws Exception {
-    SettingsService mockService = initSettingsService(new GlobalViewsSettings());
+    SettingsService mockService = initSettingsService(
+        new GlobalViewsSettings()
+    );
     UpdateGlobalViewsSettingsResolver resolver = new UpdateGlobalViewsSettingsResolver(mockService);
 
     // Execute resolver
@@ -95,10 +107,13 @@ public class GlobalViewsSettingsResolverTest {
     assertThrows(CompletionException.class, () -> resolver.get(mockEnv).join());
   }
 
-  private static SettingsService initSettingsService(GlobalViewsSettings existingViewSettings) {
+  private static SettingsService initSettingsService(
+      GlobalViewsSettings existingViewSettings
+  ) {
     SettingsService mockService = Mockito.mock(SettingsService.class);
 
-    Mockito.when(mockService.getGlobalSettings(Mockito.any(Authentication.class)))
+    Mockito.when(mockService.getGlobalSettings(
+        Mockito.any(Authentication.class)))
         .thenReturn(new GlobalSettingsInfo().setViews(existingViewSettings, SetMode.IGNORE_NULL));
 
     return mockService;

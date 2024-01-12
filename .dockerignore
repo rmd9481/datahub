@@ -1,7 +1,6 @@
 **/node_modules/
-*/build/
-*/*/build/
-*/venv/
+datahub-frontend/build/
+metadata-ingestion/venv/
 out
 **/*.class
 # Have to copy gradle/wrapper/gradle-wrapper.jar, can't exclude ALL jars

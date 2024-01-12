@@ -3,18 +3,10 @@ name: documentation
 on:
   pull_request:
     branches:
-      - "**"
-    paths:
-      - "metadata-ingestion/**"
-      - "metadata-models/**"
-      - "docs-website/**"
+      - master
   push:
     branches:
       - master
-    paths:
-      - "metadata-ingestion/**"
-      - "metadata-models/**"
-      - "docs-website/**"
   # release:
   #   types: [published, edited]
 
@@ -27,16 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           distribution: "zulu"
-          java-version: 17
-      - uses: gradle/gradle-build-action@v2
+          java-version: 11
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-          cache: pip
       - name: Install Python dependencies
         run: ./metadata-ingestion/scripts/install_deps.sh
       - name: Build Docs

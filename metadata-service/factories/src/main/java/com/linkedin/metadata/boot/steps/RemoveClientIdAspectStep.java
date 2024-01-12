@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 @RequiredArgsConstructor
 public class RemoveClientIdAspectStep implements BootstrapStep {
@@ -32,8 +33,7 @@ public class RemoveClientIdAspectStep implements BootstrapStep {
         return;
       }
       // Remove invalid telemetry aspect
-      _entityService.deleteAspect(
-          TelemetryUtils.CLIENT_ID_URN, INVALID_TELEMETRY_ASPECT_NAME, new HashMap<>(), true);
+      _entityService.deleteAspect(TelemetryUtils.CLIENT_ID_URN, INVALID_TELEMETRY_ASPECT_NAME, new HashMap<>(), true);
 
       BootstrapStep.setUpgradeResult(REMOVE_UNKNOWN_ASPECTS_URN, _entityService);
     } catch (Exception e) {
@@ -48,4 +48,5 @@ public class RemoveClientIdAspectStep implements BootstrapStep {
   public ExecutionMode getExecutionMode() {
     return ExecutionMode.ASYNC;
   }
+
 }

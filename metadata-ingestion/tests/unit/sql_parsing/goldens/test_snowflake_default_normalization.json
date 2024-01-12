@@ -11,13 +11,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:snowflake,long_tail_companions.analytics.active_customer_ltv,PROD)",
-                "column": "user_fk",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "DECIMAL(38, 0)"
+                "column": "user_fk"
             },
             "upstreams": [
                 {
@@ -29,13 +23,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:snowflake,long_tail_companions.analytics.active_customer_ltv,PROD)",
-                "column": "email",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "VARCHAR(16777216)"
+                "column": "email"
             },
             "upstreams": [
                 {
@@ -47,13 +35,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:snowflake,long_tail_companions.analytics.active_customer_ltv,PROD)",
-                "column": "last_purchase_date",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.DateType": {}
-                    }
-                },
-                "native_column_type": "DATE"
+                "column": "last_purchase_date"
             },
             "upstreams": [
                 {
@@ -65,13 +47,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:snowflake,long_tail_companions.analytics.active_customer_ltv,PROD)",
-                "column": "lifetime_purchase_amount",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "DECIMAL"
+                "column": "lifetime_purchase_amount"
             },
             "upstreams": [
                 {
@@ -83,13 +59,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:snowflake,long_tail_companions.analytics.active_customer_ltv,PROD)",
-                "column": "lifetime_purchase_count",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "BIGINT"
+                "column": "lifetime_purchase_count"
             },
             "upstreams": [
                 {
@@ -101,13 +71,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:snowflake,long_tail_companions.analytics.active_customer_ltv,PROD)",
-                "column": "average_purchase_amount",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "DECIMAL"
+                "column": "average_purchase_amount"
             },
             "upstreams": [
                 {

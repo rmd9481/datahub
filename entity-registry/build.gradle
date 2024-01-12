@@ -1,13 +1,10 @@
-plugins {
-  id 'pegasus'
-  id 'java-library'
-}
+apply plugin: 'pegasus'
+apply plugin: 'java-library'
 
 dependencies {
   implementation spec.product.pegasus.data
   implementation spec.product.pegasus.generator
   api project(path: ':metadata-models')
-  api project(path: ':metadata-models', configuration: "dataTemplate")
   implementation externalDependency.slf4jApi
   compileOnly externalDependency.lombok
   implementation externalDependency.guava

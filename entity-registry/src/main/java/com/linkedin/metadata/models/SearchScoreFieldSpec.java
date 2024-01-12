@@ -6,6 +6,7 @@ import com.linkedin.metadata.models.annotation.SearchScoreAnnotation;
 import lombok.NonNull;
 import lombok.Value;
 
+
 @Value
 public class SearchScoreFieldSpec implements FieldSpec {
   @NonNull PathSpec path;

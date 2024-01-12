@@ -6,6 +6,7 @@ import com.linkedin.metadata.recommendation.RecommendationRequestContext;
 import java.util.List;
 import javax.annotation.Nonnull;
 
+
 public interface RecommendationModuleRanker {
   /**
    * Rank and return the final list of modules
@@ -16,9 +17,6 @@ public interface RecommendationModuleRanker {
    * @param limit Max number of modules to return
    * @return ranked list of modules
    */
-  List<RecommendationModule> rank(
-      @Nonnull List<RecommendationModule> candidates,
-      @Nonnull Urn userUrn,
-      @Nonnull RecommendationRequestContext requestContext,
-      int limit);
+  List<RecommendationModule> rank(@Nonnull List<RecommendationModule> candidates, @Nonnull Urn userUrn,
+      @Nonnull RecommendationRequestContext requestContext, int limit);
 }

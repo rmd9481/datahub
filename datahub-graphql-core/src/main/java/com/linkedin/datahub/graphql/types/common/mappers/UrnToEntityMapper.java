@@ -1,7 +1,5 @@
 package com.linkedin.datahub.graphql.types.common.mappers;
 
-import static com.linkedin.metadata.Constants.*;
-
 import com.linkedin.common.urn.Urn;
 import com.linkedin.datahub.graphql.generated.Assertion;
 import com.linkedin.datahub.graphql.generated.Chart;
@@ -37,7 +35,10 @@ import com.linkedin.datahub.graphql.generated.Test;
 import com.linkedin.datahub.graphql.types.mappers.ModelMapper;
 import javax.annotation.Nonnull;
 
-public class UrnToEntityMapper implements ModelMapper<com.linkedin.common.urn.Urn, Entity> {
+import static com.linkedin.metadata.Constants.*;
+
+
+public class UrnToEntityMapper implements ModelMapper<com.linkedin.common.urn.Urn, Entity>  {
   public static final UrnToEntityMapper INSTANCE = new UrnToEntityMapper();
 
   public static Entity map(@Nonnull final com.linkedin.common.urn.Urn urn) {

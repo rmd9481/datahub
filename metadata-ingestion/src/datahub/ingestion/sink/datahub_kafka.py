@@ -9,6 +9,7 @@ from datahub.metadata.com.linkedin.pegasus2avro.mxe import (
     MetadataChangeEvent,
     MetadataChangeProposal,
 )
+from datahub.metadata.schema_classes import MetadataChangeProposalClass
 
 
 class KafkaSinkConfig(KafkaEmitterConfig):
@@ -57,21 +58,27 @@ class DatahubKafkaSink(Sink[KafkaSinkConfig, SinkReport]):
         ],
         write_callback: WriteCallback,
     ) -> None:
-        callback = _KafkaCallback(
-            self.report, record_envelope, write_callback
-        ).kafka_callback
-        try:
-            record = record_envelope.record
-            self.emitter.emit(
+        record = record_envelope.record
+        if isinstance(record, MetadataChangeEvent):
+            self.emitter.emit_mce_async(
                 record,
-                callback=callback,
+                callback=_KafkaCallback(
+                    self.report, record_envelope, write_callback
+                ).kafka_callback,
             )
-        except Exception as err:
-            # In case we throw an exception while trying to emit the record,
-            # catch it and report the failure. This might happen if the schema
-            # registry is down or otherwise misconfigured, in which case we'd
-            # fail when serializing the record.
-            callback(err, f"Failed to write record: {err}")
+        elif isinstance(
+            record, (MetadataChangeProposalWrapper, MetadataChangeProposalClass)
+        ):
+            self.emitter.emit_mcp_async(
+                record,
+                callback=_KafkaCallback(
+                    self.report, record_envelope, write_callback
+                ).kafka_callback,
+            )
+        else:
+            raise ValueError(
+                f"The datahub-kafka sink only supports MetadataChangeEvent/MetadataChangeProposal[Wrapper] classes, not {type(record)}"
+            )
 
     def close(self) -> None:
         self.emitter.flush()

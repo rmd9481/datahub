@@ -3,6 +3,7 @@ package com.linkedin.datahub.graphql;
 import com.linkedin.usage.UsageTimeRange;
 import lombok.Data;
 
+
 @Data
 public class UsageStatsKey {
   private String resource;

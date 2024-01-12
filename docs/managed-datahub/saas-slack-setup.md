@@ -1,6 +1,6 @@
 import FeatureAvailability from '@site/src/components/FeatureAvailability';
 
-# Configure Slack For Notifications
+# Configure Slack Notifications
 
 <FeatureAvailability saasOnly />
 

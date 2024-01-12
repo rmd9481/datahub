@@ -1,24 +1,23 @@
 import React from 'react';
-import { Domain, EntityType, Owner, SearchInsight } from '../../../../types.generated';
+import { EntityType, Owner, SearchInsight } from '../../../../types.generated';
 import DefaultPreviewCard from '../../../preview/DefaultPreviewCard';
 import { useEntityRegistry } from '../../../useEntityRegistry';
-import DomainEntitiesSnippet from './DomainEntitiesSnippet';
-import DomainIcon from '../../../domain/DomainIcon';
+import { IconStyleType } from '../../Entity';
 
 export const Preview = ({
-    domain,
     urn,
     name,
     description,
     owners,
+    count,
     insights,
     logoComponent,
 }: {
-    domain: Domain;
     urn: string;
     name: string;
     description?: string | null;
     owners?: Array<Owner> | null;
+    count?: number | null;
     insights?: Array<SearchInsight> | null;
     logoComponent?: JSX.Element;
 }): JSX.Element => {
@@ -30,19 +29,11 @@ export const Preview = ({
             urn={urn}
             description={description || ''}
             type="Domain"
-            typeIcon={
-                <DomainIcon
-                    style={{
-                        fontSize: 14,
-                        color: '#BFBFBF',
-                    }}
-                />
-            }
+            typeIcon={entityRegistry.getIcon(EntityType.Domain, 14, IconStyleType.ACCENT)}
             owners={owners}
             insights={insights}
             logoComponent={logoComponent}
-            parentEntities={domain.parentDomains?.domains}
-            snippet={<DomainEntitiesSnippet domain={domain} />}
+            entityCount={count || undefined}
         />
     );
 };

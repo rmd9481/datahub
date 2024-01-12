@@ -2,8 +2,6 @@ const logInFilter = function (pathname, req) {
   return pathname.match('^/logIn') && req.method === 'POST';
 };
 
-const proxyTarget = process.env.REACT_APP_PROXY_TARGET || 'http://localhost:9002';
-
 if (process.env.REACT_APP_MOCK === 'true' || process.env.REACT_APP_MOCK === 'cy') {
     // no proxy needed, MirageJS will intercept all http requests
     module.exports = function () {};
@@ -15,21 +13,21 @@ if (process.env.REACT_APP_MOCK === 'true' || process.env.REACT_APP_MOCK === 'cy'
         app.use(
             '/logIn',
             createProxyMiddleware(logInFilter, {
-                target: proxyTarget,
+                target: 'http://localhost:9002',
                 changeOrigin: true,
             }),
         );
         app.use(
             '/authenticate',
             createProxyMiddleware({
-                target: proxyTarget,
+                target: 'http://localhost:9002',
                 changeOrigin: true,
             }),
         );
         app.use(
             '/api/v2/graphql',
             createProxyMiddleware({
-                target: proxyTarget,
+                target: 'http://localhost:9002',
                 changeOrigin: true,
             }),
         );

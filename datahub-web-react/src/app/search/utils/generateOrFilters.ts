@@ -26,26 +26,20 @@ function generateInputWithNestedFilters(filters: FacetFilterInput[], nestedFilte
 export function generateOrFilters(
     unionType: UnionType,
     filters: FacetFilterInput[],
-    excludedFilterFields: string[] = [],
+    nestedFilters: FacetFilterInput[] = [],
 ): AndFilterInput[] {
-    if ((filters?.length || 0) === 0) {
+    if ((filters?.length || 0) === 0 && nestedFilters.length === 0) {
         return [];
     }
-    const nonNestedFilters = filters.filter(
-        (f) => !f.field.includes(FILTER_DELIMITER) && !excludedFilterFields?.includes(f.field),
-    );
-    const nestedFilters = filters.filter(
-        (f) => f.field.includes(FILTER_DELIMITER) && !excludedFilterFields?.includes(f.field),
-    );
 
     if (unionType === UnionType.OR) {
         const orFiltersWithNestedFilters = generateInputWithNestedFilters([], nestedFilters);
-        const orFilters = nonNestedFilters.map((filter) => ({
+        const orFilters = filters.map((filter) => ({
             and: [filter],
         }));
         return [...orFilters, ...orFiltersWithNestedFilters];
     }
-    const andFiltersWithNestedFilters = generateInputWithNestedFilters(nonNestedFilters, nestedFilters);
+    const andFiltersWithNestedFilters = generateInputWithNestedFilters(filters, nestedFilters);
 
     if (andFiltersWithNestedFilters.length) {
         return andFiltersWithNestedFilters;
@@ -53,7 +47,7 @@ export function generateOrFilters(
 
     return [
         {
-            and: nonNestedFilters,
+            and: filters,
         },
     ];
 }

@@ -4,7 +4,6 @@ namespace com.linkedin.assertion
  * The function that is applied to the aggregation input (schema, rows, column values) before evaluating an operator.
  */
 enum AssertionStdAggregation {
-
   /**
   * Assertion is applied on number of rows.
   */
@@ -21,7 +20,7 @@ enum AssertionStdAggregation {
   COLUMN_COUNT
 
   /**
-  * Assertion is applied on individual column value. (No aggregation)
+  * Assertion is applied on individual column value.
   */
   IDENTITY
 
@@ -42,13 +41,6 @@ enum AssertionStdAggregation {
 
   /**
   * Assertion is applied on proportion of distinct values in column
-  */
-  UNIQUE_PROPORTION
-
-  /**
-  * Assertion is applied on proportion of distinct values in column
-  *
-  * Deprecated! Use UNIQUE_PROPORTION instead.
   */
   UNIQUE_PROPOTION
 

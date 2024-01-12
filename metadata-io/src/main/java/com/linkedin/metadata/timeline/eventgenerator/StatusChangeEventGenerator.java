@@ -11,31 +11,28 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/** Differ responsible for determining whether an entity has been soft-deleted or soft-created. */
+
+/**
+ * Differ responsible for determining whether an entity has been soft-deleted or soft-created.
+ */
 public class StatusChangeEventGenerator extends EntityChangeEventGenerator<Status> {
   @Override
-  public List<ChangeEvent> getChangeEvents(
-      @Nonnull Urn urn,
-      @Nonnull String entity,
-      @Nonnull String aspect,
-      @Nonnull Aspect<Status> from,
-      @Nonnull Aspect<Status> to,
-      @Nonnull AuditStamp auditStamp) {
+  public List<ChangeEvent> getChangeEvents(@Nonnull Urn urn, @Nonnull String entity, @Nonnull String aspect,
+      @Nonnull Aspect<Status> from, @Nonnull Aspect<Status> to, @Nonnull AuditStamp auditStamp) {
     return computeDiffs(from.getValue(), to.getValue(), urn.toString(), auditStamp);
   }
 
-  private List<ChangeEvent> computeDiffs(
-      Status baseStatus, Status targetStatus, String entityUrn, AuditStamp auditStamp) {
+  private List<ChangeEvent> computeDiffs(Status baseStatus, Status targetStatus, String entityUrn,
+      AuditStamp auditStamp) {
 
     // If the new status is "removed", then return a soft-deletion event.
     if (isRemoved(targetStatus)) {
       return Collections.singletonList(
           ChangeEvent.builder()
-              .category(ChangeCategory.LIFECYCLE)
-              .operation(ChangeOperation.SOFT_DELETE)
-              .auditStamp(auditStamp)
-              .entityUrn(entityUrn)
-              .build());
+            .category(ChangeCategory.LIFECYCLE)
+            .operation(ChangeOperation.SOFT_DELETE)
+            .auditStamp(auditStamp)
+            .entityUrn(entityUrn).build());
     }
 
     // If the new status is "unremoved", then return an reinstatement event.
@@ -45,8 +42,7 @@ public class StatusChangeEventGenerator extends EntityChangeEventGenerator<Statu
               .category(ChangeCategory.LIFECYCLE)
               .operation(ChangeOperation.REINSTATE)
               .auditStamp(auditStamp)
-              .entityUrn(entityUrn)
-              .build());
+              .entityUrn(entityUrn).build());
     }
 
     return Collections.emptyList();

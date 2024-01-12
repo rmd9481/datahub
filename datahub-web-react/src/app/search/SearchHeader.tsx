@@ -107,8 +107,6 @@ export const SearchHeader = ({
                     combineSiblings
                     fixAutoComplete
                     showQuickFilters
-                    showViewAllResults
-                    showCommandK
                 />
             </LogoSearchContainer>
             <NavGroup>

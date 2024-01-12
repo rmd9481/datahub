@@ -1,6 +1,0 @@
-
-openapi: "3.0.0"
-info:
-  title: Entity API
-  description: This is a service for DataHub Entities.
-  version: v2

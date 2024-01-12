@@ -41,11 +41,7 @@ export default function UpdateDescriptionModal({ title, description, original, o
             footer={
                 <>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button
-                        onClick={() => onSubmit(updatedDesc)}
-                        disabled={updatedDesc === description}
-                        data-testid="description-modal-update-button"
-                    >
+                    <Button onClick={() => onSubmit(updatedDesc)} disabled={updatedDesc === description}>
                         Update
                     </Button>
                 </>

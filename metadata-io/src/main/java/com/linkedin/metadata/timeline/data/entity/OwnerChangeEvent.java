@@ -27,7 +27,8 @@ public class OwnerChangeEvent extends ChangeEvent {
       SemanticChangeType semVerChange,
       String description,
       Urn ownerUrn,
-      OwnershipType ownerType) {
+      OwnershipType ownerType
+  ) {
     super(
         entityUrn,
         category,
@@ -35,9 +36,11 @@ public class OwnerChangeEvent extends ChangeEvent {
         modifier,
         ImmutableMap.of(
             "ownerUrn", ownerUrn.toString(),
-            "ownerType", ownerType.toString()),
+            "ownerType", ownerType.toString()
+        ),
         auditStamp,
         semVerChange,
-        description);
+        description
+    );
   }
 }

@@ -10,12 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
 
+
 /**
- * A general purpose differ which simply determines whether an entity has been created or hard
- * deleted.
+ * A general purpose differ which simply determines whether an entity has been created or hard deleted.
  */
-public class EntityKeyChangeEventGenerator<K extends RecordTemplate>
-    extends EntityChangeEventGenerator<K> {
+public class EntityKeyChangeEventGenerator<K extends RecordTemplate> extends EntityChangeEventGenerator<K> {
   @Override
   public List<ChangeEvent> getChangeEvents(
       @Nonnull Urn urn,

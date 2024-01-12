@@ -100,9 +100,6 @@ query getChart($urn: String!) {
             canEditLineage
             canEditEmbed
         }
-        subTypes {
-            typeNames
-        }
     }
 }
 

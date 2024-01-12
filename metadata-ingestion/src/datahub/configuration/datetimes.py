@@ -65,8 +65,6 @@ def parse_absolute_time(input: str) -> datetime:
 
 
 def parse_relative_timespan(input: str) -> timedelta:
-    raw_input = input
-
     neg = False
     input = input.strip()
 
@@ -81,7 +79,7 @@ def parse_relative_timespan(input: str) -> timedelta:
     if neg:
         delta = -delta
 
-    logger.debug(f'Parsed "{raw_input}" as {delta}.')
+    logger.debug(f'Parsed "{input}" as {delta}.')
     return delta
 
 

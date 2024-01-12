@@ -1,7 +1,5 @@
 package mock;
 
-import static com.linkedin.metadata.Constants.*;
-
 import com.linkedin.common.BrowsePaths;
 import com.linkedin.common.BrowsePathsV2;
 import com.linkedin.common.DataPlatformInstance;
@@ -29,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.linkedin.metadata.Constants.*;
+
+
 public class MockEntitySpec implements EntitySpec {
 
   private String _name;
@@ -40,8 +41,7 @@ public class MockEntitySpec implements EntitySpec {
     if (DATASET_ENTITY_NAME.equals(name)) {
       _aspectTypeMap.put(BROWSE_PATHS_ASPECT_NAME, getAspectSpec(BROWSE_PATHS_ASPECT_NAME));
       _aspectTypeMap.put(BROWSE_PATHS_V2_ASPECT_NAME, getAspectSpec(BROWSE_PATHS_V2_ASPECT_NAME));
-      _aspectTypeMap.put(
-          DATA_PLATFORM_INSTANCE_ASPECT_NAME, getAspectSpec(DATA_PLATFORM_INSTANCE_ASPECT_NAME));
+      _aspectTypeMap.put(DATA_PLATFORM_INSTANCE_ASPECT_NAME, getAspectSpec(DATA_PLATFORM_INSTANCE_ASPECT_NAME));
     }
   }
 
@@ -81,23 +81,16 @@ public class MockEntitySpec implements EntitySpec {
     return null;
   }
 
-  public <T extends RecordTemplate> AspectSpec createAspectSpec(T type, String name) {
-    return new MockAspectSpec(
-        new AspectAnnotation(name, false, false, null),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        type.schema(),
-        (Class<RecordTemplate>) type.getClass().asSubclass(RecordTemplate.class));
+   public <T extends RecordTemplate> AspectSpec createAspectSpec(T type, String name) {
+    return new MockAspectSpec(new AspectAnnotation(name, false, false, null),
+        Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+        Collections.emptyList(), type.schema(), (Class<RecordTemplate>) type.getClass().asSubclass(RecordTemplate.class));
   }
 
   @Override
   public List<AspectSpec> getAspectSpecs() {
-    return ASPECT_TYPE_MAP.keySet().stream()
-        .map(name -> createAspectSpec(ASPECT_TYPE_MAP.get(name), name))
-        .collect(Collectors.toList());
+    return ASPECT_TYPE_MAP.keySet().stream().map(name -> createAspectSpec(ASPECT_TYPE_MAP.get(name), name)).collect(
+        Collectors.toList());
   }
 
   @Override
@@ -125,7 +118,6 @@ public class MockEntitySpec implements EntitySpec {
     ASPECT_TYPE_MAP.put(BROWSE_PATHS_V2_ASPECT_NAME, new BrowsePathsV2());
     ASPECT_TYPE_MAP.put(DATA_PLATFORM_INSTANCE_ASPECT_NAME, new DataPlatformInstance());
   }
-
   @Override
   public AspectSpec getAspectSpec(String name) {
     return createAspectSpec(ASPECT_TYPE_MAP.get(name), name);

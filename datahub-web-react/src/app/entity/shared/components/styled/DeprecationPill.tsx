@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Divider, message, Modal, Popover, Tooltip, Typography } from 'antd';
 import { blue } from '@ant-design/colors';
@@ -8,8 +8,6 @@ import { Deprecation } from '../../../../../types.generated';
 import { getLocaleTimezone } from '../../../../shared/time/timeUtils';
 import { ANTD_GRAY } from '../../constants';
 import { useBatchUpdateDeprecationMutation } from '../../../../../graphql/mutations.generated';
-import { Editor } from '../../tabs/Documentation/components/editor/Editor';
-import StripMarkdownText, { removeMarkdown } from './StripMarkdownText';
 
 const DeprecatedContainer = styled.div`
     height: 18px;
@@ -40,6 +38,11 @@ const DeprecatedTitle = styled(Typography.Text)`
     font-weight: bold;
 `;
 
+const DeprecatedSubTitle = styled(Typography.Text)`
+    display: block;
+    margin-bottom: 5px;
+`;
+
 const LastEvaluatedAtLabel = styled.div`
     padding: 0;
     margin: 0;
@@ -67,64 +70,28 @@ const IconGroup = styled.div`
     }
 `;
 
-const DescriptionContainer = styled.div`
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    min-height: 22px;
-    margin-bottom: 14px;
-`;
-const StyledViewer = styled(Editor)`
-    padding-right: 8px;
-    display: block;
-
-    .remirror-editor.ProseMirror {
-        padding: 0;
-    }
-`;
-
-const ExpandedActions = styled.div`
-    height: 10px;
-`;
-const ReadLessText = styled(Typography.Link)`
-    margin-right: 4px;
-`;
 type Props = {
     urn: string;
     deprecation: Deprecation;
     refetch?: () => void;
     showUndeprecate: boolean | null;
 };
-const ABBREVIATED_LIMIT = 80;
 
 export const DeprecationPill = ({ deprecation, urn, refetch, showUndeprecate }: Props) => {
     const [batchUpdateDeprecationMutation] = useBatchUpdateDeprecationMutation();
-    const [expanded, setExpanded] = useState(false);
-    const overLimit = deprecation?.note && removeMarkdown(deprecation?.note).length > 80;
     /**
      * Deprecation Decommission Timestamp
      */
     const localeTimezone = getLocaleTimezone();
-
-    let decommissionTimeSeconds;
-    if (deprecation.decommissionTime) {
-        if (deprecation.decommissionTime < 943920000000) {
-            // Time is set in way past if it was milli-second so considering this as set in seconds
-            decommissionTimeSeconds = deprecation.decommissionTime;
-        } else {
-            decommissionTimeSeconds = deprecation.decommissionTime / 1000;
-        }
-    }
     const decommissionTimeLocal =
-        (decommissionTimeSeconds &&
+        (deprecation.decommissionTime &&
             `Scheduled to be decommissioned on ${moment
-                .unix(decommissionTimeSeconds)
+                .unix(deprecation.decommissionTime)
                 .format('DD/MMM/YYYY')} (${localeTimezone})`) ||
         undefined;
     const decommissionTimeGMT =
-        decommissionTimeSeconds && moment.unix(decommissionTimeSeconds).utc().format('dddd, DD/MMM/YYYY HH:mm:ss z');
+        deprecation.decommissionTime &&
+        moment.unix(deprecation.decommissionTime).utc().format('dddd, DD/MMM/YYYY HH:mm:ss z');
 
     const hasDetails = deprecation.note !== '' || deprecation.decommissionTime !== null;
     const isDividerNeeded = deprecation.note !== '' && deprecation.decommissionTime !== null;
@@ -155,56 +122,14 @@ export const DeprecationPill = ({ deprecation, urn, refetch, showUndeprecate }: 
 
     return (
         <Popover
-            overlayStyle={{ maxWidth: 480 }}
+            overlayStyle={{ maxWidth: 240 }}
             placement="right"
             content={
                 hasDetails ? (
                     <>
                         {deprecation?.note !== '' && <DeprecatedTitle>Deprecation note</DeprecatedTitle>}
                         {isDividerNeeded && <ThinDivider />}
-                        <DescriptionContainer>
-                            {expanded || !overLimit ? (
-                                <>
-                                    {
-                                        deprecation?.note && deprecation?.note !== '' &&
-                                        <>
-                                            <StyledViewer content={deprecation.note} readOnly />
-                                            <ExpandedActions>
-                                                {overLimit && (
-                                                    <ReadLessText
-                                                        onClick={() => {
-                                                            setExpanded(false);
-                                                        }}
-                                                    >
-                                                        Read Less
-                                                    </ReadLessText>
-                                                )}
-                                            </ExpandedActions>
-                                        </>
-                                    }
-                                </>
-                            ) : (
-                                <>
-                                    <StripMarkdownText
-                                        limit={ABBREVIATED_LIMIT}
-                                        readMore={
-                                            <>
-                                                <Typography.Link
-                                                    onClick={() => {
-                                                        setExpanded(true);
-                                                    }}
-                                                >
-                                                    Read More
-                                                </Typography.Link>
-                                            </>
-                                        }
-                                        shouldWrap
-                                    >
-                                        {deprecation.note}
-                                    </StripMarkdownText>
-                                </>
-                            )}
-                        </DescriptionContainer>
+                        {deprecation?.note !== '' && <DeprecatedSubTitle>{deprecation.note}</DeprecatedSubTitle>}
                         {deprecation?.decommissionTime !== null && (
                             <Typography.Text type="secondary">
                                 <Tooltip placement="right" title={decommissionTimeGMT}>

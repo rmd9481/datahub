@@ -84,9 +84,6 @@ fragment runRelationshipResults on EntityRelationshipsResult {
                 dataPlatformInstance {
                     ...dataPlatformInstanceFields
                 }
-                subTypes {
-                    typeNames
-                }
                 editableProperties {
                     description
                 }

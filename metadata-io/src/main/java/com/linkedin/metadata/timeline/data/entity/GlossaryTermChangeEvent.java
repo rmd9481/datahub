@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
+
 @EqualsAndHashCode(callSuper = true)
 @Value
 @NonFinal
@@ -27,15 +28,19 @@ public class GlossaryTermChangeEvent extends ChangeEvent {
       AuditStamp auditStamp,
       SemanticChangeType semVerChange,
       String description,
-      Urn termUrn) {
+      Urn termUrn
+  ) {
     super(
         entityUrn,
         category,
         operation,
         modifier,
-        ImmutableMap.of("termUrn", termUrn.toString()),
+        ImmutableMap.of(
+            "termUrn", termUrn.toString()
+        ),
         auditStamp,
         semVerChange,
-        description);
+        description
+    );
   }
 }

@@ -7,11 +7,12 @@ import com.linkedin.data.schema.validator.Validator;
 import com.linkedin.data.schema.validator.ValidatorContext;
 import java.net.URISyntaxException;
 
+
 /**
  * Rest.li Validator responsible for ensuring that {@link Urn} objects are well-formed.
  *
- * <p>Note that this validator does not validate the integrity of strongly typed urns, or validate
- * Urn objects against their associated key aspect.
+ * Note that this validator does not validate the integrity of strongly typed urns,
+ * or validate Urn objects against their associated key aspect.
  */
 public class UrnValidator implements Validator {
   @Override
@@ -21,11 +22,7 @@ public class UrnValidator implements Validator {
       try {
         Urn.createFromString((String) context.dataElement().getValue());
       } catch (URISyntaxException e) {
-        context.addResult(
-            new Message(
-                context.dataElement().path(),
-                "\"Provided urn %s\" is invalid",
-                context.dataElement().getValue()));
+        context.addResult(new Message(context.dataElement().path(), "\"Provided urn %s\" is invalid", context.dataElement().getValue()));
         context.setHasFix(false);
       }
     }

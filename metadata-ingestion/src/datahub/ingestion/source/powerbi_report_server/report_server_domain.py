@@ -12,21 +12,21 @@ from datahub.metadata.schema_classes import OwnerClass
 class CatalogItem(BaseModel):
     id: str = Field(alias="Id")
     name: str = Field(alias="Name")
-    description: Optional[str] = Field(None, alias="Description")
+    description: Optional[str] = Field(alias="Description")
     path: str = Field(alias="Path")
-    type: Any = Field(None, alias="Type")
+    type: Any = Field(alias="Type")
     hidden: bool = Field(alias="Hidden")
     size: int = Field(alias="Size")
-    modified_by: Optional[str] = Field(None, alias="ModifiedBy")
-    modified_date: Optional[datetime] = Field(None, alias="ModifiedDate")
-    created_by: Optional[str] = Field(None, alias="CreatedBy")
-    created_date: Optional[datetime] = Field(None, alias="CreatedDate")
-    parent_folder_id: Optional[str] = Field(None, alias="ParentFolderId")
-    content_type: Optional[str] = Field(None, alias="ContentType")
+    modified_by: Optional[str] = Field(alias="ModifiedBy")
+    modified_date: Optional[datetime] = Field(alias="ModifiedDate")
+    created_by: Optional[str] = Field(alias="CreatedBy")
+    created_date: Optional[datetime] = Field(alias="CreatedDate")
+    parent_folder_id: Optional[str] = Field(alias="ParentFolderId")
+    content_type: Optional[str] = Field(alias="ContentType")
     content: str = Field(alias="Content")
     is_favorite: bool = Field(alias="IsFavorite")
-    user_info: Any = Field(None, alias="UserInfo")
-    display_name: Optional[str] = Field(None, alias="DisplayName")
+    user_info: Any = Field(alias="UserInfo")
+    display_name: Optional[str] = Field(alias="DisplayName")
     has_data_sources: bool = Field(default=False, alias="HasDataSources")
     data_sources: Optional[List["DataSource"]] = Field(
         default_factory=list, alias="DataSources"
@@ -72,12 +72,12 @@ class DataSet(CatalogItem):
 
 
 class DataModelDataSource(BaseModel):
-    auth_type: Optional[str] = Field(None, alias="AuthType")
+    auth_type: Optional[str] = Field(alias="AuthType")
     supported_auth_types: List[Optional[str]] = Field(alias="SupportedAuthTypes")
     kind: str = Field(alias="Kind")
     model_connection_name: str = Field(alias="ModelConnectionName")
     secret: str = Field(alias="Secret")
-    type: Optional[str] = Field(None, alias="Type")
+    type: Optional[str] = Field(alias="Type")
     username: str = Field(alias="Username")
 
 
@@ -135,23 +135,21 @@ class DataSource(CatalogItem):
     is_enabled: bool = Field(alias="IsEnabled")
     connection_string: str = Field(alias="ConnectionString")
     data_model_data_source: Optional[DataModelDataSource] = Field(
-        None, alias="DataModelDataSource"
+        alias="DataModelDataSource"
     )
-    data_source_sub_type: Optional[str] = Field(None, alias="DataSourceSubType")
-    data_source_type: Optional[str] = Field(None, alias="DataSourceType")
+    data_source_sub_type: Optional[str] = Field(alias="DataSourceSubType")
+    data_source_type: Optional[str] = Field(alias="DataSourceType")
     is_original_connection_string_expression_based: bool = Field(
         alias="IsOriginalConnectionStringExpressionBased"
     )
     is_connection_string_overridden: bool = Field(alias="IsConnectionStringOverridden")
-    credentials_by_user: Optional[CredentialsByUser] = Field(
-        None, alias="CredentialsByUser"
-    )
+    credentials_by_user: Optional[CredentialsByUser] = Field(alias="CredentialsByUser")
     credentials_in_server: Optional[CredentialsInServer] = Field(
-        None, alias="CredentialsInServer"
+        alias="CredentialsInServer"
     )
     is_reference: bool = Field(alias="IsReference")
-    subscriptions: Optional[Subscription] = Field(None, alias="Subscriptions")
-    meta_data: Optional[MetaData] = Field(None, alias="MetaData")
+    subscriptions: Optional[Subscription] = Field(alias="Subscriptions")
+    meta_data: Optional[MetaData] = Field(alias="MetaData")
 
     def __members(self):
         return (self.id,)
@@ -276,15 +274,15 @@ class Owner(BaseModel):
 class CorpUserEditableInfo(BaseModel):
     display_name: str = Field(alias="displayName")
     title: str
-    about_me: Optional[str] = Field(None, alias="aboutMe")
-    teams: Optional[List[str]] = None
-    skills: Optional[List[str]] = None
-    picture_link: Optional[str] = Field(None, alias="pictureLink")
+    about_me: Optional[str] = Field(alias="aboutMe")
+    teams: Optional[List[str]]
+    skills: Optional[List[str]]
+    picture_link: Optional[str] = Field(alias="pictureLink")
 
 
 class CorpUserEditableProperties(CorpUserEditableInfo):
-    slack: Optional[str] = None
-    phone: Optional[str] = None
+    slack: Optional[str]
+    phone: Optional[str]
     email: str
 
 
@@ -307,21 +305,21 @@ class EntityRelationshipsResult(BaseModel):
     start: int
     count: int
     total: int
-    relationships: Optional[EntityRelationship] = None
+    relationships: Optional[EntityRelationship]
 
 
 class CorpUserProperties(BaseModel):
     active: bool
     display_name: str = Field(alias="displayName")
     email: str
-    title: Optional[str] = None
-    manager: Optional["CorpUser"] = None
-    department_id: Optional[int] = Field(None, alias="departmentId")
-    department_name: Optional[str] = Field(None, alias="departmentName")
-    first_name: Optional[str] = Field(None, alias="firstName")
-    last_name: Optional[str] = Field(None, alias="lastName")
-    full_name: Optional[str] = Field(None, alias="fullName")
-    country_code: Optional[str] = Field(None, alias="countryCode")
+    title: Optional[str]
+    manager: Optional["CorpUser"]
+    department_id: Optional[int] = Field(alias="departmentId")
+    department_name: Optional[str] = Field(alias="departmentName")
+    first_name: Optional[str] = Field(alias="firstName")
+    last_name: Optional[str] = Field(alias="lastName")
+    full_name: Optional[str] = Field(alias="fullName")
+    country_code: Optional[str] = Field(alias="countryCode")
 
 
 class CorpUser(BaseModel):
@@ -330,13 +328,13 @@ class CorpUser(BaseModel):
     username: str
     properties: CorpUserProperties
     editable_properties: Optional[CorpUserEditableProperties] = Field(
-        None, alias="editableProperties"
+        alias="editableProperties"
     )
-    status: Optional[CorpUserStatus] = None
-    tags: Optional[GlobalTags] = None
-    relationships: Optional[EntityRelationshipsResult] = None
-    editableInfo: Optional[CorpUserEditableInfo] = Field(None, alias="editableInfo")
-    global_tags: Optional[GlobalTags] = Field(None, alias="globalTags")
+    status: Optional[CorpUserStatus]
+    tags: Optional[GlobalTags]
+    relationships: Optional[EntityRelationshipsResult]
+    editableInfo: Optional[CorpUserEditableInfo] = Field(alias="editableInfo")
+    global_tags: Optional[GlobalTags] = Field(alias="globalTags")
 
     def get_urn_part(self):
         return "{}".format(self.username)
@@ -355,7 +353,7 @@ class CorpUser(BaseModel):
 
 class OwnershipData(BaseModel):
     existing_owners: Optional[List[OwnerClass]] = []
-    owner_to_add: Optional[CorpUser] = None
+    owner_to_add: Optional[CorpUser]
 
     class Config:
         arbitrary_types_allowed = True

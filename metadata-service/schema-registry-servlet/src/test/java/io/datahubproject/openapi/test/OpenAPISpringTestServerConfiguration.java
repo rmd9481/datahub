@@ -6,12 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.DispatcherServlet;
 
+
 @TestConfiguration
-@ComponentScan(
-    basePackages = {
-      "io.datahubproject.openapi.schema.registry",
-      "com.linkedin.metadata.schema.registry"
-    })
+@ComponentScan(basePackages = {"io.datahubproject.openapi.schema.registry", "com.linkedin.metadata.schema.registry"})
 public class OpenAPISpringTestServerConfiguration {
 
   @Bean
@@ -20,8 +17,7 @@ public class OpenAPISpringTestServerConfiguration {
   }
 
   @Bean
-  public ServletRegistrationBean<DispatcherServlet> servletRegistrationBean(
-      DispatcherServlet dispatcherServlet) {
+  public ServletRegistrationBean<DispatcherServlet> servletRegistrationBean(DispatcherServlet dispatcherServlet) {
     return new ServletRegistrationBean<>(dispatcherServlet, "/");
   }
 }

@@ -1,12 +1,13 @@
 package com.linkedin.metadata.models.registry.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Value;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+
 
 @Value
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
@@ -17,6 +18,4 @@ public class Entity {
   String doc;
   String keyAspect;
   List<String> aspects;
-
-  @Nullable String category;
 }

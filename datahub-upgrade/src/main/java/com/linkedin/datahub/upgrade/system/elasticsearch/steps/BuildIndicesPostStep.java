@@ -1,8 +1,5 @@
 package com.linkedin.datahub.upgrade.system.elasticsearch.steps;
 
-import static com.linkedin.datahub.upgrade.system.elasticsearch.util.IndexUtils.INDEX_BLOCKS_WRITE_SETTING;
-import static com.linkedin.datahub.upgrade.system.elasticsearch.util.IndexUtils.getAllReindexConfigs;
-
 import com.google.common.collect.ImmutableMap;
 import com.linkedin.datahub.upgrade.UpgradeContext;
 import com.linkedin.datahub.upgrade.UpgradeStep;
@@ -16,10 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opensearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.opensearch.client.RequestOptions;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.elasticsearch.client.RequestOptions;
+
+import static com.linkedin.datahub.upgrade.system.elasticsearch.util.IndexUtils.INDEX_BLOCKS_WRITE_SETTING;
+import static com.linkedin.datahub.upgrade.system.elasticsearch.util.IndexUtils.getAllReindexConfigs;
+
 
 @RequiredArgsConstructor
 @Slf4j
@@ -43,9 +45,8 @@ public class BuildIndicesPostStep implements UpgradeStep {
     return (context) -> {
       try {
 
-        List<ReindexConfig> indexConfigs =
-            getAllReindexConfigs(_services).stream()
-                .filter(ReindexConfig::requiresReindex)
+        List<ReindexConfig> indexConfigs = getAllReindexConfigs(_services)
+                .stream().filter(ReindexConfig::requiresReindex)
                 .collect(Collectors.toList());
 
         // Reset write blocking
@@ -55,26 +56,12 @@ public class BuildIndicesPostStep implements UpgradeStep {
 
           request.settings(indexSettings);
           boolean ack =
-              _esComponents
-                  .getSearchClient()
-                  .indices()
-                  .putSettings(request, RequestOptions.DEFAULT)
-                  .isAcknowledged();
-          log.info(
-              "Updated index {} with new settings. Settings: {}, Acknowledged: {}",
-              indexConfig.name(),
-              indexSettings,
-              ack);
+              _esComponents.getSearchClient().indices().putSettings(request, RequestOptions.DEFAULT).isAcknowledged();
+          log.info("Updated index {} with new settings. Settings: {}, Acknowledged: {}", indexConfig.name(), indexSettings, ack);
 
           if (ack) {
-            ack =
-                IndexUtils.validateWriteBlock(
-                    _esComponents.getSearchClient(), indexConfig.name(), false);
-            log.info(
-                "Validated index {} with new settings. Settings: {}, Acknowledged: {}",
-                indexConfig.name(),
-                indexSettings,
-                ack);
+            ack = IndexUtils.validateWriteBlock(_esComponents.getSearchClient(), indexConfig.name(), false);
+            log.info("Validated index {} with new settings. Settings: {}, Acknowledged: {}", indexConfig.name(), indexSettings, ack);
           }
 
           if (!ack) {

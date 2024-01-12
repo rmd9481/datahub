@@ -7,9 +7,6 @@ from datahub.emitter.mce_builder import make_dataset_urn, make_tag_urn
 from datahub.ingestion.sink.file import write_metadata_file
 from datahub.metadata.schema_classes import (
     DatasetLineageTypeClass,
-    FineGrainedLineageClass,
-    FineGrainedLineageDownstreamTypeClass,
-    FineGrainedLineageUpstreamTypeClass,
     GenericAspectClass,
     MetadataChangeProposalClass,
     TagAssociationClass,
@@ -54,19 +51,6 @@ def test_complex_dataset_patch(
                     platform="hive", name="fct_users_created_upstream", env="PROD"
                 ),
                 type=DatasetLineageTypeClass.TRANSFORMED,
-            )
-        )
-        .add_fine_grained_upstream_lineage(
-            fine_grained_lineage=FineGrainedLineageClass(
-                upstreamType=FineGrainedLineageUpstreamTypeClass.DATASET,
-                upstreams=[
-                    make_dataset_urn(
-                        platform="hive", name="fct_users_created_upstream", env="PROD"
-                    )
-                ],
-                downstreamType=FineGrainedLineageDownstreamTypeClass.FIELD_SET,
-                transformOperation="TRANSFORM",
-                confidenceScore=1.0,
             )
         )
     )
