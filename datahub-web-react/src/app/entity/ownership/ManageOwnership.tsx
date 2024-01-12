@@ -6,9 +6,6 @@ import { OwnershipList } from './OwnershipList';
 const PageContainer = styled.div`
     padding-top: 20px;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
 `;
 
 const PageHeaderContainer = styled.div`
@@ -23,11 +20,7 @@ const PageTitle = styled(Typography.Title)`
     }
 `;
 
-const ListContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-`;
+const ListContainer = styled.div``;
 
 /**
  * Component used for displaying the 'Manage Ownership' experience.

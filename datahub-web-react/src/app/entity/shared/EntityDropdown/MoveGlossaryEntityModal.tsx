@@ -64,7 +64,6 @@ function MoveGlossaryEntityModal(props: Props) {
 
     return (
         <Modal
-            data-testid="move-glossary-entity-modal"
             title="Move"
             visible
             onCancel={onClose}
@@ -73,9 +72,7 @@ function MoveGlossaryEntityModal(props: Props) {
                     <Button onClick={onClose} type="text">
                         Cancel
                     </Button>
-                    <Button onClick={moveGlossaryEntity} data-testid="glossary-entity-modal-move-button">
-                        Move
-                    </Button>
+                    <Button onClick={moveGlossaryEntity}>Move</Button>
                 </>
             }
         >

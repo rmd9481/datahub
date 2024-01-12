@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
+
 @EqualsAndHashCode(callSuper = true)
 @Value
 @NonFinal
@@ -27,15 +28,19 @@ public class TagChangeEvent extends ChangeEvent {
       AuditStamp auditStamp,
       SemanticChangeType semVerChange,
       String description,
-      Urn tagUrn) {
+      Urn tagUrn
+  ) {
     super(
         entityUrn,
         category,
         operation,
         modifier,
-        ImmutableMap.of("tagUrn", tagUrn.toString()),
+        ImmutableMap.of(
+            "tagUrn", tagUrn.toString()
+        ),
         auditStamp,
         semVerChange,
-        description);
+        description
+    );
   }
 }

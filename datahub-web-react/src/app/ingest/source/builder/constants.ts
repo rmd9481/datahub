@@ -27,10 +27,6 @@ import powerbiLogo from '../../../../images/powerbilogo.png';
 import modeLogo from '../../../../images/modelogo.png';
 import databricksLogo from '../../../../images/databrickslogo.png';
 import verticaLogo from '../../../../images/verticalogo.png';
-import mlflowLogo from '../../../../images/mlflowlogo.png';
-import dynamodbLogo from '../../../../images/dynamodblogo.png';
-import fivetranLogo from '../../../../images/fivetranlogo.png';
-import csvLogo from '../../../../images/csv-logo.png';
 
 export const ATHENA = 'athena';
 export const ATHENA_URN = `urn:li:dataPlatform:${ATHENA}`;
@@ -47,8 +43,6 @@ export const DBT = 'dbt';
 export const DBT_URN = `urn:li:dataPlatform:${DBT}`;
 export const DRUID = 'druid';
 export const DRUID_URN = `urn:li:dataPlatform:${DRUID}`;
-export const DYNAMODB = 'dynamodb';
-export const DYNAMODB_URN = `urn:li:dataPlatform:${DYNAMODB}`;
 export const ELASTICSEARCH = 'elasticsearch';
 export const ELASTICSEARCH_URN = `urn:li:dataPlatform:${ELASTICSEARCH}`;
 export const FEAST = 'feast';
@@ -67,8 +61,6 @@ export const MARIA_DB = 'mariadb';
 export const MARIA_DB_URN = `urn:li:dataPlatform:${MARIA_DB}`;
 export const METABASE = 'metabase';
 export const METABASE_URN = `urn:li:dataPlatform:${METABASE}`;
-export const MLFLOW = 'mlflow';
-export const MLFLOW_URN = `urn:li:dataPlatform:${MLFLOW}`;
 export const MODE = 'mode';
 export const MODE_URN = `urn:li:dataPlatform:${MODE}`;
 export const MONGO_DB = 'mongodb';
@@ -103,16 +95,10 @@ export const CUSTOM = 'custom';
 export const CUSTOM_URN = `urn:li:dataPlatform:${CUSTOM}`;
 export const UNITY_CATALOG = 'unity-catalog';
 export const UNITY_CATALOG_URN = `urn:li:dataPlatform:${UNITY_CATALOG}`;
-export const DATABRICKS = 'databricks';
-export const DATABRICKS_URN = `urn:li:dataPlatform:${DATABRICKS}`;
 export const DBT_CLOUD = 'dbt-cloud';
 export const DBT_CLOUD_URN = `urn:li:dataPlatform:dbt`;
 export const VERTICA = 'vertica';
 export const VERTICA_URN = `urn:li:dataPlatform:${VERTICA}`;
-export const FIVETRAN = 'fivetran';
-export const FIVETRAN_URN = `urn:li:dataPlatform:${FIVETRAN}`;
-export const CSV = 'csv-enricher';
-export const CSV_URN = `urn:li:dataPlatform:${CSV}`;
 
 export const PLATFORM_URN_TO_LOGO = {
     [ATHENA_URN]: athenaLogo,
@@ -121,7 +107,6 @@ export const PLATFORM_URN_TO_LOGO = {
     [CLICKHOUSE_URN]: clickhouseLogo,
     [DBT_URN]: dbtLogo,
     [DRUID_URN]: druidLogo,
-    [DYNAMODB_URN]: dynamodbLogo,
     [ELASTICSEARCH_URN]: elasticsearchLogo,
     [FEAST_URN]: feastLogo,
     [GLUE_URN]: glueLogo,
@@ -130,7 +115,6 @@ export const PLATFORM_URN_TO_LOGO = {
     [LOOKER_URN]: lookerLogo,
     [MARIA_DB_URN]: mariadbLogo,
     [METABASE_URN]: metabaseLogo,
-    [MLFLOW_URN]: mlflowLogo,
     [MODE_URN]: modeLogo,
     [MONGO_DB_URN]: mongodbLogo,
     [MSSQL_URN]: mssqlLogo,
@@ -145,10 +129,7 @@ export const PLATFORM_URN_TO_LOGO = {
     [TRINO_URN]: trinoLogo,
     [SUPERSET_URN]: supersetLogo,
     [UNITY_CATALOG_URN]: databricksLogo,
-    [DATABRICKS_URN]: databricksLogo,
     [VERTICA_URN]: verticaLogo,
-    [FIVETRAN_URN]: fivetranLogo,
-    [CSV_URN]: csvLogo,
 };
 
 export const SOURCE_TO_PLATFORM_URN = {

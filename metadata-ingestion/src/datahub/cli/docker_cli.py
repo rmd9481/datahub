@@ -5,7 +5,6 @@ import logging
 import os
 import pathlib
 import platform
-import signal
 import subprocess
 import sys
 import tempfile
@@ -158,7 +157,6 @@ def should_use_neo4j_for_graph_service(graph_service_override: Optional[str]) ->
 
 def _set_environment_variables(
     version: Optional[str],
-    mysql_version: Optional[str],
     mysql_port: Optional[pydantic.PositiveInt],
     zk_port: Optional[pydantic.PositiveInt],
     kafka_broker_port: Optional[pydantic.PositiveInt],
@@ -173,8 +171,6 @@ def _set_environment_variables(
             )
             version = f"v{version}"
         os.environ["DATAHUB_VERSION"] = version
-    if mysql_version is not None:
-        os.environ["DATAHUB_MYSQL_VERSION"] = mysql_version
     if mysql_port is not None:
         os.environ["DATAHUB_MAPPED_MYSQL_PORT"] = str(mysql_port)
 
@@ -430,7 +426,7 @@ def detect_quickstart_arch(arch: Optional[str]) -> Architectures:
     return quickstart_arch
 
 
-@docker.command()  # noqa: C901
+@docker.command()
 @click.option(
     "--version",
     type=str,
@@ -592,7 +588,7 @@ def detect_quickstart_arch(arch: Optional[str]) -> Architectures:
         "arch",
     ]
 )
-def quickstart(  # noqa: C901
+def quickstart(
     version: Optional[str],
     build_locally: bool,
     pull_images: bool,
@@ -678,7 +674,6 @@ def quickstart(  # noqa: C901
     # set version
     _set_environment_variables(
         version=quickstart_execution_plan.docker_tag,
-        mysql_version=quickstart_execution_plan.mysql_tag,
         mysql_port=mysql_port,
         zk_port=zk_port,
         kafka_broker_port=kafka_broker_port,
@@ -760,25 +755,14 @@ def quickstart(  # noqa: C901
             up_attempts += 1
 
             logger.debug(f"Executing docker compose up command, attempt #{up_attempts}")
-            up_process = subprocess.Popen(
-                base_command + ["up", "-d", "--remove-orphans"],
-                env=_docker_subprocess_env(),
-            )
             try:
-                up_process.wait(timeout=_QUICKSTART_UP_TIMEOUT.total_seconds())
+                subprocess.run(
+                    base_command + ["up", "-d", "--remove-orphans"],
+                    env=_docker_subprocess_env(),
+                    timeout=_QUICKSTART_UP_TIMEOUT.total_seconds(),
+                )
             except subprocess.TimeoutExpired:
-                logger.debug("docker compose up timed out, sending SIGTERM")
-                up_process.terminate()
-                try:
-                    up_process.wait(timeout=8)
-                except subprocess.TimeoutExpired:
-                    logger.debug("docker compose up still running, sending SIGKILL")
-                    up_process.kill()
-                    up_process.wait()
-            else:
-                # If the docker process got a keyboard interrupt, raise one here.
-                if up_process.returncode in {128 + signal.SIGINT, -signal.SIGINT}:
-                    raise KeyboardInterrupt
+                logger.debug("docker compose up timed out, will retry")
 
         # Check docker health every few seconds.
         status = check_docker_quickstart()

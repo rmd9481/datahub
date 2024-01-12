@@ -32,21 +32,6 @@ function getParentRelationship(direction: Direction, parent: VizNode | null, nod
     return directionRelationships?.find((r) => r?.entity?.urn === node?.urn);
 }
 
-// this utility function is to help make sure layouts that contain many references to the same URN don't struggle laying out that URN.
-function firstAppearanceIndices(arr) {
-    const seen = new Set(); // To track which strings have been seen
-    const result = [] as number[];
-
-    for (let i = 0; i < arr.length; i++) {
-        if (!seen.has(arr[i])) {
-            seen.add(arr[i]); // Add the string to the set
-            result.push(i); // Save the index
-        }
-    }
-
-    return result;
-}
-
 function layoutNodesForOneDirection(
     data: NodeData,
     direction: Direction,
@@ -69,10 +54,12 @@ function layoutNodesForOneDirection(
     while (nodesInCurrentLayer.length > 0) {
         // if we've already added a node to the viz higher up dont add it again
         const urnsToAddInCurrentLayer = Array.from(new Set(nodesInCurrentLayer.map(({ node }) => node.urn || '')));
-        const positionsToAddInCurrentLayer = firstAppearanceIndices(urnsToAddInCurrentLayer);
+        const nodesToAddInCurrentLayer = urnsToAddInCurrentLayer
+            .filter((urn, pos) => urnsToAddInCurrentLayer.indexOf(urn) === pos)
+            .filter((urn) => !nodesByUrn[urn || '']);
 
         const filteredNodesInCurrentLayer = nodesInCurrentLayer
-            .filter((_, idx) => positionsToAddInCurrentLayer.indexOf(idx) > -1)
+            .filter(({ node }) => nodesToAddInCurrentLayer.indexOf(node.urn || '') > -1)
             .filter(({ node }) => node.status?.removed !== true);
 
         const layerSize = filteredNodesInCurrentLayer.length;

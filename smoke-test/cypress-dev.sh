@@ -17,5 +17,4 @@ npm install
 
 source ../../set-cypress-creds.sh
 
-npx cypress open \
-   --env "ADMIN_DISPLAYNAME=$CYPRESS_ADMIN_DISPLAYNAME,ADMIN_USERNAME=$CYPRESS_ADMIN_USERNAME,ADMIN_PASSWORD=$CYPRESS_ADMIN_PASSWORD"
+npx cypress open

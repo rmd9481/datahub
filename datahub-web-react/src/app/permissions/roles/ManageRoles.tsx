@@ -21,11 +21,7 @@ import { OnboardingTour } from '../../onboarding/OnboardingTour';
 import { ROLES_INTRO_ID } from '../../onboarding/config/RolesOnboardingConfig';
 import { clearUserListCache } from '../../identity/user/cacheUtils';
 
-const SourceContainer = styled.div`
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-`;
+const SourceContainer = styled.div``;
 
 const PaginationContainer = styled.div`
     display: flex;
@@ -39,9 +35,6 @@ const RoleName = styled.span`
 
 const PageContainer = styled.span`
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
 `;
 
 const ActionsContainer = styled.div`
@@ -79,6 +72,7 @@ export const ManageRoles = () => {
         data: rolesData,
         refetch: rolesRefetch,
     } = useListRolesQuery({
+        fetchPolicy: 'cache-first',
         variables: {
             input: {
                 start,
@@ -86,7 +80,6 @@ export const ManageRoles = () => {
                 query,
             },
         },
-        fetchPolicy: (query?.length || 0) > 0 ? 'no-cache' : 'cache-first',
     });
 
     const totalRoles = rolesData?.listRoles?.total || 0;
@@ -245,10 +238,7 @@ export const ManageRoles = () => {
                             fontSize: 12,
                         }}
                         onSearch={() => null}
-                        onQueryChange={(q) => {
-                            setPage(1);
-                            setQuery(q);
-                        }}
+                        onQueryChange={(q) => setQuery(q)}
                         entityRegistry={entityRegistry}
                     />
                     {isBatchAddRolesModalVisible && (

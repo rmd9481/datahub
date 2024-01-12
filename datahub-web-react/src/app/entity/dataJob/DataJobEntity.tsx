@@ -15,6 +15,7 @@ import { GenericEntityProperties } from '../shared/types';
 import { DataJobFlowTab } from '../shared/tabs/Entity/DataJobFlowTab';
 import { getDataForEntityType } from '../shared/containers/profile/utils';
 import { SidebarDomainSection } from '../shared/containers/profile/sidebar/Domain/SidebarDomainSection';
+import { SidebarAccessRequestSection } from '../shared/containers/profile/sidebar/AccessRequest/SidebarAccessRequestSection';
 import { RunsTab } from './tabs/RunsTab';
 import { EntityMenuItems } from '../shared/EntityDropdown/EntityDropdown';
 import { DataFlowEntity } from '../dataFlow/DataFlowEntity';
@@ -124,6 +125,9 @@ export class DataJobEntity implements Entity<DataJob> {
                     component: SidebarDomainSection,
                 },
                 {
+                    component: SidebarAccessRequestSection,
+                },
+                {
                     component: DataProductSection,
                 },
             ]}
@@ -147,7 +151,6 @@ export class DataJobEntity implements Entity<DataJob> {
             <Preview
                 urn={data.urn}
                 name={data.properties?.name || ''}
-                subType={data.subTypes?.typeNames?.[0]}
                 description={data.editableProperties?.description || data.properties?.description}
                 platformName={getDataJobPlatformName(data)}
                 platformLogo={data?.dataFlow?.platform?.properties?.logoUrl || ''}
@@ -167,7 +170,6 @@ export class DataJobEntity implements Entity<DataJob> {
             <Preview
                 urn={data.urn}
                 name={data.properties?.name || ''}
-                subType={data.subTypes?.typeNames?.[0]}
                 description={data.editableProperties?.description || data.properties?.description}
                 platformName={getDataJobPlatformName(data)}
                 platformLogo={data?.dataFlow?.platform?.properties?.logoUrl || ''}

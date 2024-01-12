@@ -1,10 +1,9 @@
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, Dict, Iterable, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Callable, Dict, Iterable, List, Optional, Union, cast
 
 from datahub.api.entities.datajob import DataFlow, DataJob
-from datahub.emitter.generic_emitter import Emitter
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
 from datahub.emitter.mcp_builder import DatahubKey
 from datahub.metadata.com.linkedin.pegasus2avro.dataprocess import (
@@ -26,6 +25,10 @@ from datahub.utilities.urns.data_flow_urn import DataFlowUrn
 from datahub.utilities.urns.data_job_urn import DataJobUrn
 from datahub.utilities.urns.data_process_instance_urn import DataProcessInstanceUrn
 from datahub.utilities.urns.dataset_urn import DatasetUrn
+
+if TYPE_CHECKING:
+    from datahub.emitter.kafka_emitter import DatahubKafkaEmitter
+    from datahub.emitter.rest_emitter import DatahubRestEmitter
 
 
 class DataProcessInstanceKey(DatahubKey):
@@ -75,7 +78,7 @@ class DataProcessInstance:
 
     def __post_init__(self):
         self.urn = DataProcessInstanceUrn.create_from_id(
-            id=DataProcessInstanceKey(
+            dataprocessinstance_id=DataProcessInstanceKey(
                 cluster=self.cluster,
                 orchestrator=self.orchestrator,
                 id=self.id,
@@ -103,7 +106,7 @@ class DataProcessInstance:
 
     def emit_process_start(
         self,
-        emitter: Emitter,
+        emitter: Union["DatahubRestEmitter", "DatahubKafkaEmitter"],
         start_timestamp_millis: int,
         attempt: Optional[int] = None,
         emit_template: bool = True,
@@ -194,7 +197,7 @@ class DataProcessInstance:
 
     def emit_process_end(
         self,
-        emitter: Emitter,
+        emitter: Union["DatahubRestEmitter", "DatahubKafkaEmitter"],
         end_timestamp_millis: int,
         result: InstanceRunResult,
         result_type: Optional[str] = None,
@@ -204,7 +207,7 @@ class DataProcessInstance:
         """
         Generate an DataProcessInstance finish event and emits is
 
-        :param emitter: (Emitter) the datahub emitter to emit generated mcps
+        :param emitter: (Union[DatahubRestEmitter, DatahubKafkaEmitter]) the datahub emitter to emit generated mcps
         :param end_timestamp_millis: (int) the end time of the execution in milliseconds
         :param result: (InstanceRunResult) The result of the run
         :param result_type: (string) It identifies the system where the native result comes from like Airflow, Azkaban
@@ -220,10 +223,12 @@ class DataProcessInstance:
             self._emit_mcp(mcp, emitter, callback)
 
     def generate_mcp(
-        self, created_ts_millis: Optional[int] = None, materialize_iolets: bool = True
+        self, created_ts_millis: Optional[int] = None
     ) -> Iterable[MetadataChangeProposalWrapper]:
-        """Generates mcps from the object"""
-
+        """
+        Generates mcps from the object
+        :rtype: Iterable[MetadataChangeProposalWrapper]
+        """
         mcp = MetadataChangeProposalWrapper(
             entityUrn=str(self.urn),
             aspect=DataProcessInstanceProperties(
@@ -251,29 +256,29 @@ class DataProcessInstance:
         )
         yield mcp
 
-        yield from self.generate_inlet_outlet_mcp(materialize_iolets=materialize_iolets)
+        yield from self.generate_inlet_outlet_mcp()
 
     @staticmethod
     def _emit_mcp(
         mcp: MetadataChangeProposalWrapper,
-        emitter: Emitter,
+        emitter: Union["DatahubRestEmitter", "DatahubKafkaEmitter"],
         callback: Optional[Callable[[Exception, str], None]] = None,
     ) -> None:
         """
 
-        :param emitter: (Emitter) the datahub emitter to emit generated mcps
+        :param emitter: (Union[DatahubRestEmitter, DatahubKafkaEmitter]) the datahub emitter to emit generated mcps
         :param callback: (Optional[Callable[[Exception, str], None]]) the callback method for KafkaEmitter if it is used
         """
         emitter.emit(mcp, callback)
 
     def emit(
         self,
-        emitter: Emitter,
+        emitter: Union["DatahubRestEmitter", "DatahubKafkaEmitter"],
         callback: Optional[Callable[[Exception, str], None]] = None,
     ) -> None:
         """
 
-        :param emitter: (Emitter) the datahub emitter to emit generated mcps
+        :param emitter: (Union[DatahubRestEmitter, DatahubKafkaEmitter]) the datahub emitter to emit generated mcps
         :param callback: (Optional[Callable[[Exception, str], None]]) the callback method for KafkaEmitter if it is used
         """
         for mcp in self.generate_mcp():
@@ -327,9 +332,7 @@ class DataProcessInstance:
         dpi._template_object = dataflow
         return dpi
 
-    def generate_inlet_outlet_mcp(
-        self, materialize_iolets: bool
-    ) -> Iterable[MetadataChangeProposalWrapper]:
+    def generate_inlet_outlet_mcp(self) -> Iterable[MetadataChangeProposalWrapper]:
         if self.inlets:
             mcp = MetadataChangeProposalWrapper(
                 entityUrn=str(self.urn),
@@ -349,9 +352,10 @@ class DataProcessInstance:
             yield mcp
 
         # Force entity materialization
-        if materialize_iolets:
-            for iolet in self.inlets + self.outlets:
-                yield MetadataChangeProposalWrapper(
-                    entityUrn=str(iolet),
-                    aspect=StatusClass(removed=False),
-                )
+        for iolet in self.inlets + self.outlets:
+            mcp = MetadataChangeProposalWrapper(
+                entityUrn=str(iolet),
+                aspect=StatusClass(removed=False),
+            )
+
+            yield mcp

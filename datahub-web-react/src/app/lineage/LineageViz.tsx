@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWindowSize } from '@react-hook/window-size';
-import { Zoom } from '@visx/zoom';
+import { Zoom } from '@vx/zoom';
 
 import { TreeProps } from './types';
 import LineageVizInsideZoom from './LineageVizInsideZoom';
@@ -42,7 +42,7 @@ export default function LineageViz({
             scaleXMax={2}
             scaleYMin={1 / 8}
             scaleYMax={2}
-            initialTransformMatrix={initialTransform}
+            transformMatrix={initialTransform}
         >
             {(zoom) => (
                 <LineageVizInsideZoom

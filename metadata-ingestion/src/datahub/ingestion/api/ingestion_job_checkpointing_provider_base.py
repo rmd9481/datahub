@@ -35,7 +35,7 @@ class IngestionCheckpointingProviderBase(StatefulCommittable[CheckpointJobStates
     @classmethod
     @abstractmethod
     def create(
-        cls: Type[_Self], config_dict: Dict[str, Any], ctx: PipelineContext
+        cls: Type[_Self], config_dict: Dict[str, Any], ctx: PipelineContext, name: str
     ) -> "_Self":
         pass
 

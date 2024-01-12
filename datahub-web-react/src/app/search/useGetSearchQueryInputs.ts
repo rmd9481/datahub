@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router';
 import { useMemo } from 'react';
 import { FacetFilterInput, EntityType } from '../../types.generated';
 import { useEntityRegistry } from '../useEntityRegistry';
-import { ENTITY_FILTER_NAME, UnionType } from './utils/constants';
+import { ENTITY_FILTER_NAME, FILTER_DELIMITER, UnionType } from './utils/constants';
 import { useUserContext } from '../context/useUserContext';
 import useFilters from './utils/useFilters';
 import { generateOrFilters } from './utils/generateOrFilters';
@@ -27,6 +27,12 @@ export default function useGetSearchQueryInputs(excludedFilterFields?: Array<str
     const sortInput = useSortInput();
 
     const filters: Array<FacetFilterInput> = useFilters(params);
+    const nonNestedFilters = filters.filter(
+        (f) => !f.field.includes(FILTER_DELIMITER) && !excludedFilterFields?.includes(f.field),
+    );
+    const nestedFilters = filters.filter(
+        (f) => f.field.includes(FILTER_DELIMITER) && !excludedFilterFields?.includes(f.field),
+    );
     const entityFilters: Array<EntityType> = useMemo(
         () =>
             filters
@@ -37,8 +43,8 @@ export default function useGetSearchQueryInputs(excludedFilterFields?: Array<str
     );
 
     const orFilters = useMemo(
-        () => generateOrFilters(unionType, filters, excludedFilterFields),
-        [filters, excludedFilterFields, unionType],
+        () => generateOrFilters(unionType, nonNestedFilters, nestedFilters),
+        [nonNestedFilters, nestedFilters, unionType],
     );
 
     return { entityFilters, query, unionType, filters, orFilters, viewUrn, page, activeType, sortInput };

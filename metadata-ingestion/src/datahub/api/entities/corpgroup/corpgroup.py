@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Callable, Iterable, List, Optional, Union
+from typing import TYPE_CHECKING, Callable, Iterable, List, Optional, Union
 
 import pydantic
 from pydantic import BaseModel
@@ -11,10 +11,9 @@ import datahub.emitter.mce_builder as builder
 from datahub.api.entities.corpuser.corpuser import CorpUser, CorpUserGenerationConfig
 from datahub.configuration.common import ConfigurationError
 from datahub.configuration.validate_field_rename import pydantic_renamed_field
-from datahub.emitter.generic_emitter import Emitter
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
 from datahub.emitter.rest_emitter import DatahubRestEmitter
-from datahub.ingestion.graph.client import DataHubGraph
+from datahub.ingestion.graph.client import DatahubClientConfig, DataHubGraph
 from datahub.metadata.schema_classes import (
     CorpGroupEditableInfoClass,
     CorpGroupInfoClass,
@@ -25,6 +24,9 @@ from datahub.metadata.schema_classes import (
     StatusClass,
     _Aspect,
 )
+
+if TYPE_CHECKING:
+    from datahub.emitter.kafka_emitter import DatahubKafkaEmitter
 
 logger = logging.getLogger(__name__)
 
@@ -192,9 +194,30 @@ class CorpGroup(BaseModel):
                 entityUrn=urn, aspect=StatusClass(removed=False)
             )
 
+    @staticmethod
+    def _datahub_graph_from_datahub_rest_emitter(
+        rest_emitter: DatahubRestEmitter,
+    ) -> DataHubGraph:
+        """
+        Create a datahub graph instance from a REST Emitter.
+        A stop-gap implementation which is expected to be removed after PATCH support is implemented
+        for membership updates for users <-> groups
+        """
+        graph = DataHubGraph(
+            config=DatahubClientConfig(
+                server=rest_emitter._gms_server,
+                token=rest_emitter._token,
+                timeout_sec=rest_emitter._connect_timeout_sec,
+                retry_status_codes=rest_emitter._retry_status_codes,
+                extra_headers=rest_emitter._session.headers,
+                disable_ssl_verification=rest_emitter._session.verify is False,
+            )
+        )
+        return graph
+
     def emit(
         self,
-        emitter: Emitter,
+        emitter: Union[DatahubRestEmitter, "DatahubKafkaEmitter"],
         callback: Optional[Callable[[Exception, str], None]] = None,
     ) -> None:
         """
@@ -212,7 +235,7 @@ class CorpGroup(BaseModel):
                 # who are passing in a DataHubRestEmitter today
                 # we won't need this in the future once PATCH support is implemented as all emitters
                 # will work
-                datahub_graph = emitter.to_graph()
+                datahub_graph = self._datahub_graph_from_datahub_rest_emitter(emitter)
         for mcp in self.generate_mcp(
             generation_config=CorpGroupGenerationConfig(
                 override_editable=self.overrideEditable, datahub_graph=datahub_graph

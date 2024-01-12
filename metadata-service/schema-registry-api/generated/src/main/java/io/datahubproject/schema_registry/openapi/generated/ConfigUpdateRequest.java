@@ -1,36 +1,40 @@
 package io.datahubproject.schema_registry.openapi.generated;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Objects;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.constraints.*;
 
-/** Config update request */
+/**
+ * Config update request
+ */
 @io.swagger.v3.oas.annotations.media.Schema(description = "Config update request")
 @Validated
-@javax.annotation.Generated(
-    value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
-    date = "2022-12-20T16:52:36.517693Z[Europe/Lisbon]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-12-20T16:52:36.517693Z[Europe/Lisbon]")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ConfigUpdateRequest {
+public class ConfigUpdateRequest   {
 
-  /** Compatibility Level */
+  /**
+   * Compatibility Level
+   */
   public enum CompatibilityEnum {
     BACKWARD("BACKWARD"),
-
+    
     BACKWARD_TRANSITIVE("BACKWARD_TRANSITIVE"),
-
+    
     FORWARD("FORWARD"),
-
+    
     FORWARD_TRANSITIVE("FORWARD_TRANSITIVE"),
-
+    
     FULL("FULL"),
-
+    
     FULL_TRANSITIVE("FULL_TRANSITIVE"),
-
+    
     NONE("NONE");
 
     private String value;
@@ -55,7 +59,6 @@ public class ConfigUpdateRequest {
       return null;
     }
   }
-
   @JsonProperty("compatibility")
   private CompatibilityEnum compatibility = null;
 
@@ -66,19 +69,18 @@ public class ConfigUpdateRequest {
 
   /**
    * Compatibility Level
-   *
    * @return compatibility
-   */
-  @io.swagger.v3.oas.annotations.media.Schema(
-      example = "FULL_TRANSITIVE",
-      description = "Compatibility Level")
-  public CompatibilityEnum getCompatibility() {
+   **/
+  @io.swagger.v3.oas.annotations.media.Schema(example = "FULL_TRANSITIVE", description = "Compatibility Level")
+  
+    public CompatibilityEnum getCompatibility() {
     return compatibility;
   }
 
   public void setCompatibility(CompatibilityEnum compatibility) {
     this.compatibility = compatibility;
   }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -101,14 +103,15 @@ public class ConfigUpdateRequest {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ConfigUpdateRequest {\n");
-
+    
     sb.append("    compatibility: ").append(toIndentedString(compatibility)).append("\n");
     sb.append("}");
     return sb.toString();
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

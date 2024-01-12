@@ -1,6 +1,4 @@
-import logging
 import os
-import subprocess
 import tempfile
 import time
 from random import randint
@@ -19,6 +17,8 @@ from datahub.metadata.schema_classes import (DataProductPropertiesClass,
                                              DomainPropertiesClass,
                                              DomainsClass)
 from datahub.utilities.urns.urn import Urn
+import subprocess
+import logging
 
 logger = logging.getLogger(__name__)
 

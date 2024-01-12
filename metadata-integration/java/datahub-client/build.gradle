@@ -14,13 +14,23 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 jar.enabled = false // Since we only want to build shadow jars, disabling the regular jar creation
 
+tasks.withType(JavaCompile).configureEach {
+  javaCompiler = javaToolchains.compilerFor {
+    languageVersion = JavaLanguageVersion.of(8)
+  }
+}
+tasks.withType(Test).configureEach {
+  javaLauncher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(8)
+  }
+}
+
 dependencies {
   implementation project(':metadata-models')
-  implementation project(path: ':metadata-models', configuration: "dataTemplate")
   implementation(externalDependency.kafkaAvroSerializer) {
     exclude group: "org.apache.avro"
   }
-  implementation externalDependency.avro
+  implementation externalDependency.avro_1_7
   constraints {
     implementation('commons-collections:commons-collections:3.2.2') {
       because 'Vulnerability Issue'
@@ -39,7 +49,6 @@ dependencies {
   annotationProcessor externalDependency.lombok
   // VisibleForTesting
   compileOnly externalDependency.guava
-  testImplementation externalDependency.testng
   testImplementation externalDependency.mockito
   testImplementation externalDependency.mockServer
   testImplementation externalDependency.mockServerClient
@@ -47,7 +56,7 @@ dependencies {
   testImplementation externalDependency.httpAsyncClient
   testRuntimeOnly externalDependency.logbackClassic
 
-  swaggerCodegen externalDependency.swaggerCli
+  swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.33'
 }
 
 task copyAvroSchemas {
@@ -87,7 +96,6 @@ shadowJar {
   // we can move to automatic relocation using ConfigureShadowRelocation after we get to a good place on these first
   relocate 'org.springframework', 'datahub.shaded.org.springframework'
   relocate 'com.fasterxml.jackson', 'datahub.shaded.jackson'
-  relocate 'org.yaml', 'io.acryl.shaded.org.yaml' // Required for shading snakeyaml
   relocate 'net.jcip.annotations', 'datahub.shaded.annotations'
   relocate 'javassist', 'datahub.shaded.javassist'
   relocate 'edu.umd.cs.findbugs', 'datahub.shaded.findbugs'
@@ -228,6 +236,8 @@ compileJava.dependsOn generateOpenApiPojos
 processResources.dependsOn generateOpenApiPojos
 sourceSets.main.java.srcDir "${generateOpenApiPojos.outputDir}/src/main/java"
 sourceSets.main.resources.srcDir "${generateOpenApiPojos.outputDir}/src/main/resources"
+
+checkstyleMain.exclude '**/generated/**'
 
 clean {
   project.delete("$projectDir/generated")

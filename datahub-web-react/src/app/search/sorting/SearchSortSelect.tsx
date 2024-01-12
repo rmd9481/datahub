@@ -1,9 +1,8 @@
 import Icon, { CaretDownFilled } from '@ant-design/icons';
-import { Select, Tooltip } from 'antd';
+import { Select } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as SortIcon } from '../../../images/sort.svg';
-import { ANTD_GRAY } from '../../entity/shared/constants';
 import { DEFAULT_SORT_OPTION, SORT_OPTIONS } from '../context/constants';
 import { useSearchContext } from '../context/SearchContext';
 
@@ -14,20 +13,19 @@ const SelectWrapper = styled.span`
 
     .ant-select-selection-item {
         // !important is necessary because updating Select styles for antd is impossible
-        color: ${ANTD_GRAY[8]} !important;
+        color: ${(props) => props.theme.styles['primary-color']} !important;
         font-weight: 700;
     }
 
-    .ant-select-selection-placeholder {
-        color: ${ANTD_GRAY[8]};
-        font-weight: 700;
+    svg {
+        color: ${(props) => props.theme.styles['primary-color']};
     }
 `;
 
 const StyledIcon = styled(Icon)`
-    color: ${ANTD_GRAY[8]};
+    color: ${(props) => props.theme.styles['primary-color']};
     font-size: 16px;
-    margin-right: -8px;
+    margin-right: -6px;
 `;
 
 export default function SearchSortSelect() {
@@ -36,20 +34,18 @@ export default function SearchSortSelect() {
     const options = Object.entries(SORT_OPTIONS).map(([value, option]) => ({ value, label: option.label }));
 
     return (
-        <Tooltip title="Sort search results" showArrow={false} placement="left">
-            <SelectWrapper>
-                <StyledIcon component={SortIcon} />
-                <Select
-                    placeholder="Sort"
-                    value={selectedSortOption === DEFAULT_SORT_OPTION ? null : selectedSortOption}
-                    options={options}
-                    bordered={false}
-                    onChange={(sortOption) => setSelectedSortOption(sortOption)}
-                    dropdownStyle={{ minWidth: 'max-content' }}
-                    placement="bottomRight"
-                    suffixIcon={<CaretDownFilled />}
-                />
-            </SelectWrapper>
-        </Tooltip>
+        <SelectWrapper>
+            <StyledIcon component={SortIcon} />
+            <Select
+                value={selectedSortOption}
+                defaultValue={DEFAULT_SORT_OPTION}
+                options={options}
+                bordered={false}
+                onChange={(sortOption) => setSelectedSortOption(sortOption)}
+                dropdownStyle={{ minWidth: 'max-content' }}
+                placement="bottomRight"
+                suffixIcon={<CaretDownFilled />}
+            />
+        </SelectWrapper>
     );
 }

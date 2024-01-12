@@ -1,7 +1,5 @@
 package com.linkedin.datahub.graphql.resolvers.assertion;
 
-import static com.linkedin.datahub.graphql.resolvers.ResolverUtils.*;
-
 import com.google.common.collect.ImmutableList;
 import com.linkedin.datahub.graphql.QueryContext;
 import com.linkedin.datahub.graphql.generated.Assertion;
@@ -28,9 +26,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-/** GraphQL Resolver used for fetching AssertionRunEvents. */
-public class AssertionRunEventResolver
-    implements DataFetcher<CompletableFuture<AssertionRunEventsResult>> {
+import static com.linkedin.datahub.graphql.resolvers.ResolverUtils.*;
+
+
+/**
+ * GraphQL Resolver used for fetching AssertionRunEvents.
+ */
+public class AssertionRunEventResolver implements DataFetcher<CompletableFuture<AssertionRunEventsResult>> {
 
   private final EntityClient _client;
 
@@ -40,72 +42,58 @@ public class AssertionRunEventResolver
 
   @Override
   public CompletableFuture<AssertionRunEventsResult> get(DataFetchingEnvironment environment) {
-    return CompletableFuture.supplyAsync(
-        () -> {
-          final QueryContext context = environment.getContext();
+    return CompletableFuture.supplyAsync(() -> {
 
-          final String urn = ((Assertion) environment.getSource()).getUrn();
-          final String maybeStatus = environment.getArgumentOrDefault("status", null);
-          final Long maybeStartTimeMillis =
-              environment.getArgumentOrDefault("startTimeMillis", null);
-          final Long maybeEndTimeMillis = environment.getArgumentOrDefault("endTimeMillis", null);
-          final Integer maybeLimit = environment.getArgumentOrDefault("limit", null);
-          final FilterInput maybeFilters =
-              environment.getArgument("filter") != null
-                  ? bindArgument(environment.getArgument("filter"), FilterInput.class)
-                  : null;
+      final QueryContext context = environment.getContext();
 
-          try {
-            // Step 1: Fetch aspects from GMS
-            List<EnvelopedAspect> aspects =
-                _client.getTimeseriesAspectValues(
-                    urn,
-                    Constants.ASSERTION_ENTITY_NAME,
-                    Constants.ASSERTION_RUN_EVENT_ASPECT_NAME,
-                    maybeStartTimeMillis,
-                    maybeEndTimeMillis,
-                    maybeLimit,
-                    buildFilter(maybeFilters, maybeStatus),
-                    context.getAuthentication());
+      final String urn = ((Assertion) environment.getSource()).getUrn();
+      final String maybeStatus = environment.getArgumentOrDefault("status", null);
+      final Long maybeStartTimeMillis = environment.getArgumentOrDefault("startTimeMillis", null);
+      final Long maybeEndTimeMillis = environment.getArgumentOrDefault("endTimeMillis", null);
+      final Integer maybeLimit = environment.getArgumentOrDefault("limit", null);
+      final FilterInput maybeFilters = environment.getArgument("filter") != null
+          ? bindArgument(environment.getArgument("filter"), FilterInput.class)
+          : null;
 
-            // Step 2: Bind profiles into GraphQL strong types.
-            List<AssertionRunEvent> runEvents =
-                aspects.stream().map(AssertionRunEventMapper::map).collect(Collectors.toList());
+      try {
+        // Step 1: Fetch aspects from GMS
+        List<EnvelopedAspect> aspects = _client.getTimeseriesAspectValues(
+            urn,
+            Constants.ASSERTION_ENTITY_NAME,
+            Constants.ASSERTION_RUN_EVENT_ASPECT_NAME,
+            maybeStartTimeMillis,
+            maybeEndTimeMillis,
+            maybeLimit,
+            buildFilter(maybeFilters, maybeStatus),
+            context.getAuthentication());
 
-            // Step 3: Package and return response.
-            final AssertionRunEventsResult result = new AssertionRunEventsResult();
-            result.setTotal(runEvents.size());
-            result.setFailed(
-                Math.toIntExact(
-                    runEvents.stream()
-                        .filter(
-                            runEvent ->
-                                AssertionRunStatus.COMPLETE.equals(runEvent.getStatus())
-                                    && runEvent.getResult() != null
-                                    && AssertionResultType.FAILURE.equals(
-                                        runEvent.getResult().getType()))
-                        .count()));
-            result.setSucceeded(
-                Math.toIntExact(
-                    runEvents.stream()
-                        .filter(
-                            runEvent ->
-                                AssertionRunStatus.COMPLETE.equals(runEvent.getStatus())
-                                    && runEvent.getResult() != null
-                                    && AssertionResultType.SUCCESS.equals(
-                                        runEvent.getResult().getType()))
-                        .count()));
-            result.setRunEvents(runEvents);
-            return result;
-          } catch (RemoteInvocationException e) {
-            throw new RuntimeException("Failed to retrieve Assertion Run Events from GMS", e);
-          }
-        });
+        // Step 2: Bind profiles into GraphQL strong types.
+        List<AssertionRunEvent> runEvents = aspects.stream().map(AssertionRunEventMapper::map).collect(Collectors.toList());
+
+        // Step 3: Package and return response.
+        final AssertionRunEventsResult result = new AssertionRunEventsResult();
+        result.setTotal(runEvents.size());
+        result.setFailed(Math.toIntExact(runEvents.stream().filter(runEvent ->
+          AssertionRunStatus.COMPLETE.equals(runEvent.getStatus())
+              && runEvent.getResult() != null
+              && AssertionResultType.FAILURE.equals(
+              runEvent.getResult().getType()
+        )).count()));
+        result.setSucceeded(Math.toIntExact(runEvents.stream().filter(runEvent ->
+            AssertionRunStatus.COMPLETE.equals(runEvent.getStatus())
+                && runEvent.getResult() != null
+                && AssertionResultType.SUCCESS.equals(runEvent.getResult().getType()
+            )).count()));
+        result.setRunEvents(runEvents);
+        return result;
+      } catch (RemoteInvocationException e) {
+        throw new RuntimeException("Failed to retrieve Assertion Run Events from GMS", e);
+      }
+    });
   }
 
   @Nullable
-  public static Filter buildFilter(
-      @Nullable FilterInput filtersInput, @Nullable final String status) {
+  public static Filter buildFilter(@Nullable FilterInput filtersInput, @Nullable final String status) {
     if (filtersInput == null && status == null) {
       return null;
     }
@@ -119,14 +107,8 @@ public class AssertionRunEventResolver
     if (filtersInput != null) {
       facetFilters.addAll(filtersInput.getAnd());
     }
-    return new Filter()
-        .setOr(
-            new ConjunctiveCriterionArray(
-                new ConjunctiveCriterion()
-                    .setAnd(
-                        new CriterionArray(
-                            facetFilters.stream()
-                                .map(filter -> criterionFromFilter(filter, true))
-                                .collect(Collectors.toList())))));
+    return new Filter().setOr(new ConjunctiveCriterionArray(new ConjunctiveCriterion().setAnd(new CriterionArray(facetFilters.stream()
+        .map(filter -> criterionFromFilter(filter, true))
+        .collect(Collectors.toList())))));
   }
 }

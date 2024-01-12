@@ -31,7 +31,7 @@ const ThinDivider = styled(Divider)`
     margin-bottom: 16px;
 `;
 
-export const ResultWrapper = styled.div<{ showUpdatedStyles: boolean }>`
+const ResultWrapper = styled.div<{ showUpdatedStyles: boolean }>`
     ${(props) =>
         props.showUpdatedStyles &&
         `    
@@ -39,6 +39,7 @@ export const ResultWrapper = styled.div<{ showUpdatedStyles: boolean }>`
         border-radius: 5px;
         margin: 0 auto 8px auto;
         padding: 8px 16px;
+        max-width: 1200px;
         border-bottom: 1px solid ${ANTD_GRAY[5]};
     `}
 `;
@@ -54,7 +55,6 @@ const ListItem = styled.div<{ isSelectMode: boolean }>`
 `;
 
 type Props = {
-    loading: boolean;
     query: string;
     searchResults: CombinedSearchResult[];
     totalResultCount: number;
@@ -65,7 +65,6 @@ type Props = {
 };
 
 export const SearchResultList = ({
-    loading,
     query,
     searchResults,
     totalResultCount,
@@ -106,7 +105,7 @@ export const SearchResultList = ({
                 id="search-result-list"
                 dataSource={searchResults}
                 split={false}
-                locale={{ emptyText: (!loading && <EmptySearchResults suggestions={suggestions} />) || <></> }}
+                locale={{ emptyText: <EmptySearchResults suggestions={suggestions} /> }}
                 renderItem={(item, index) => (
                     <ResultWrapper showUpdatedStyles={showSearchFiltersV2} className={`entityUrn-${item.entity.urn}`}>
                         <ListItem

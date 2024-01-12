@@ -8,13 +8,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "post_id",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.NumberType": {}
-                    }
-                },
-                "native_column_type": "NUMERIC"
+                "column": "post_id"
             },
             "upstreams": [
                 {
@@ -26,9 +20,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "id",
-                "column_type": null,
-                "native_column_type": null
+                "column": "id"
             },
             "upstreams": [
                 {
@@ -40,9 +32,7 @@
         {
             "downstream": {
                 "table": null,
-                "column": "min_metric",
-                "column_type": null,
-                "native_column_type": null
+                "column": "min_metric"
             },
             "upstreams": [
                 {

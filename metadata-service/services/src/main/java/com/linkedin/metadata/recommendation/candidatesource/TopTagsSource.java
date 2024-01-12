@@ -8,6 +8,7 @@ import com.linkedin.metadata.search.EntitySearchService;
 import javax.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 public class TopTagsSource extends EntitySearchAggregationSource {
 
@@ -33,8 +34,7 @@ public class TopTagsSource extends EntitySearchAggregationSource {
   }
 
   @Override
-  public boolean isEligible(
-      @Nonnull Urn userUrn, @Nonnull RecommendationRequestContext requestContext) {
+  public boolean isEligible(@Nonnull Urn userUrn, @Nonnull RecommendationRequestContext requestContext) {
     return requestContext.getScenario() == ScenarioType.HOME
         || requestContext.getScenario() == ScenarioType.SEARCH_RESULTS;
   }

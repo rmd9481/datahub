@@ -82,20 +82,6 @@ fragment parentNodesFields on ParentNodesResult {
     }
 }
 
-fragment parentDomainsFields on ParentDomainsResult {
-    count
-    domains {
-        urn
-        type
-        ... on Domain {
-            properties {
-                name
-                description
-            }
-        }
-    }
-}
-
 fragment ownershipFields on Ownership {
     owners {
         owner {
@@ -240,10 +226,6 @@ fragment nonRecursiveDatasetFields on Dataset {
             value
         }
         externalUrl
-        lastModified {
-            time
-            actor
-        }
     }
     editableProperties {
         description
@@ -336,9 +318,6 @@ fragment nonRecursiveDataJobFields on DataJob {
     deprecation {
         ...deprecationFields
     }
-    subTypes {
-        typeNames
-    }
 }
 
 fragment dataJobFields on DataJob {
@@ -392,9 +371,6 @@ fragment dataJobFields on DataJob {
     }
     browsePathV2 {
         ...browsePathV2Fields
-    }
-    subTypes {
-        typeNames
     }
 }
 
@@ -953,23 +929,6 @@ fragment parentContainerFields on Container {
     properties {
         name
     }
-    subTypes {
-        typeNames
-    }
-}
-
-fragment domainEntitiesFields on Domain {
-    entities(input: { start: 0, count: 0 }) {
-        total
-    }
-    dataProducts: entities(
-        input: { start: 0, count: 0, filters: [{ field: "_entityType", value: "DATA_PRODUCT" }] }
-    ) {
-        total
-    }
-    children: relationships(input: { types: ["IsPartOf"], direction: INCOMING, start: 0, count: 0 }) {
-        total
-    }
 }
 
 fragment entityDomain on DomainAssociation {
@@ -980,10 +939,6 @@ fragment entityDomain on DomainAssociation {
             name
             description
         }
-        parentDomains {
-            ...parentDomainsFields
-        }
-        ...domainEntitiesFields
     }
     associatedUrn
 }

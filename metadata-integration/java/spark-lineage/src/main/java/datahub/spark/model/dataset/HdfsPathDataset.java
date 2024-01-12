@@ -1,9 +1,12 @@
 package datahub.spark.model.dataset;
 
-import com.linkedin.common.FabricType;
-import java.net.URI;
-import lombok.ToString;
 import org.apache.hadoop.fs.Path;
+
+import com.linkedin.common.FabricType;
+
+import lombok.ToString;
+
+import java.net.URI;
 
 @ToString
 public class HdfsPathDataset extends SparkDataset {
@@ -27,22 +30,18 @@ public class HdfsPathDataset extends SparkDataset {
   }
 
   public HdfsPathDataset(
-      Path path,
-      String platformInstance,
-      boolean includeScheme,
-      FabricType fabricType,
-      String removePartitionPattern) {
+          Path path,
+          String platformInstance,
+          boolean includeScheme,
+          FabricType fabricType,
+          String removePartitionPattern) {
     // TODO check static partitions?
-    this(
-        getPath(path, includeScheme, removePartitionPattern),
-        platformInstance,
-        getPlatform(path),
-        fabricType);
+    this(getPath(path, includeScheme, removePartitionPattern), platformInstance, getPlatform(path), fabricType);
   }
 
-  public HdfsPathDataset(
-      String pathUri, String platformInstance, String platform, FabricType fabricType) {
+  public HdfsPathDataset(String pathUri, String platformInstance, String platform, FabricType fabricType) {
     // TODO check static partitions?
     super(platform, platformInstance, pathUri, fabricType);
   }
+
 }

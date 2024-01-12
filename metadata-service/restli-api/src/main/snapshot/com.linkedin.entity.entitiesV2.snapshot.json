@@ -114,13 +114,7 @@
               }, {
                 "name" : "runId",
                 "type" : "string",
-                "doc" : "The original run id that produced the metadata. Populated in case of batch-ingestion.",
-                "default" : "no-run-id-provided",
-                "optional" : true
-              }, {
-                "name" : "lastRunId",
-                "type" : "string",
-                "doc" : "The last run id that produced the metadata. Populated in case of batch-ingestion.",
+                "doc" : "The run id that produced the metadata. Populated in case of batch-ingestion.",
                 "default" : "no-run-id-provided",
                 "optional" : true
               }, {
@@ -162,7 +156,6 @@
     "path" : "/entitiesV2",
     "schema" : "com.linkedin.entity.EntityResponse",
     "doc" : "Single unified resource for fetching, updating, searching, & browsing DataHub entities\n\ngenerated from: com.linkedin.metadata.resources.entity.EntityV2Resource",
-    "resourceClass" : "com.linkedin.metadata.resources.entity.EntityV2Resource",
     "collection" : {
       "identifier" : {
         "name" : "entitiesV2Id",
@@ -171,7 +164,6 @@
       "supports" : [ "batch_get", "get" ],
       "methods" : [ {
         "method" : "get",
-        "javaMethodName" : "get",
         "doc" : "Retrieves the value for an entity that is made up of latest versions of specified aspects.",
         "parameters" : [ {
           "name" : "aspects",
@@ -180,7 +172,6 @@
         } ]
       }, {
         "method" : "batch_get",
-        "javaMethodName" : "batchGet",
         "parameters" : [ {
           "name" : "aspects",
           "type" : "{ \"type\" : \"array\", \"items\" : \"string\" }",

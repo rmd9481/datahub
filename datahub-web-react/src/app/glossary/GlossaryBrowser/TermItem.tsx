@@ -5,7 +5,6 @@ import { useEntityRegistry } from '../../useEntityRegistry';
 import { ANTD_GRAY } from '../../entity/shared/constants';
 import { ChildGlossaryTermFragment } from '../../../graphql/glossaryNode.generated';
 import { useGlossaryEntityData } from '../../entity/shared/GlossaryEntityContext';
-import { useGlossaryActiveTabPath } from '../../entity/shared/containers/profile/utils';
 
 const TermWrapper = styled.div`
     font-weight: normal;
@@ -48,15 +47,13 @@ interface Props {
     term: ChildGlossaryTermFragment;
     isSelecting?: boolean;
     selectTerm?: (urn: string, displayName: string) => void;
-    includeActiveTabPath?: boolean;
 }
 
 function TermItem(props: Props) {
-    const { term, isSelecting, selectTerm, includeActiveTabPath } = props;
+    const { term, isSelecting, selectTerm } = props;
 
     const { entityData } = useGlossaryEntityData();
     const entityRegistry = useEntityRegistry();
-    const activeTabPath = useGlossaryActiveTabPath();
 
     function handleSelectTerm() {
         if (selectTerm) {
@@ -71,9 +68,7 @@ function TermItem(props: Props) {
         <TermWrapper>
             {!isSelecting && (
                 <TermLink
-                    to={`${entityRegistry.getEntityUrl(term.type, term.urn)}${
-                        includeActiveTabPath ? `/${activeTabPath}` : ''
-                    }`}
+                    to={`${entityRegistry.getEntityUrl(term.type, term.urn)}`}
                     isSelected={entityData?.urn === term.urn}
                 >
                     {entityRegistry.getDisplayName(term.type, isOnEntityPage ? entityData : term)}

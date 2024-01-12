@@ -8,15 +8,15 @@ import com.linkedin.datahub.graphql.generated.EntityType;
 import com.linkedin.datahub.graphql.generated.SchemaFieldEntity;
 import com.linkedin.datahub.graphql.types.common.mappers.UrnToEntityMapper;
 import graphql.execution.DataFetcherResult;
+
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 
-public class SchemaFieldType
-    implements com.linkedin.datahub.graphql.types.EntityType<SchemaFieldEntity, String> {
+public class SchemaFieldType implements com.linkedin.datahub.graphql.types.EntityType<SchemaFieldEntity, String> {
 
-  public SchemaFieldType() {}
+  public SchemaFieldType() { }
 
   @Override
   public EntityType type() {
@@ -34,17 +34,18 @@ public class SchemaFieldType
   }
 
   @Override
-  public List<DataFetcherResult<SchemaFieldEntity>> batchLoad(
-      @Nonnull List<String> urns, @Nonnull QueryContext context) throws Exception {
-    final List<Urn> schemaFieldUrns =
-        urns.stream().map(UrnUtils::getUrn).collect(Collectors.toList());
+  public List<DataFetcherResult<SchemaFieldEntity>> batchLoad(@Nonnull List<String> urns, @Nonnull QueryContext context) throws Exception {
+    final List<Urn> schemaFieldUrns = urns.stream()
+        .map(UrnUtils::getUrn)
+        .collect(Collectors.toList());
 
     try {
       return schemaFieldUrns.stream()
           .map(this::mapSchemaFieldUrn)
-          .map(
-              schemaFieldEntity ->
-                  DataFetcherResult.<SchemaFieldEntity>newResult().data(schemaFieldEntity).build())
+          .map(schemaFieldEntity -> DataFetcherResult.<SchemaFieldEntity>newResult()
+              .data(schemaFieldEntity)
+              .build()
+          )
           .collect(Collectors.toList());
 
     } catch (Exception e) {
@@ -65,4 +66,6 @@ public class SchemaFieldType
       throw new RuntimeException("Failed to load schemaField entity", e);
     }
   }
+
 }
+

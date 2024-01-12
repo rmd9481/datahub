@@ -12,6 +12,4 @@ public class KafkaConfiguration {
   private SchemaRegistryConfiguration schemaRegistry;
 
   private ProducerConfiguration producer;
-
-  private ConsumerConfiguration consumer;
 }

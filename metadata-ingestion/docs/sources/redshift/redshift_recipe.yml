@@ -40,8 +40,8 @@ source:
 
     options:
       connect_args:
-        # check all available options here: https://pypi.org/project/redshift-connector/
-        ssl_insecure: "false" # Specifies if IDP hosts server certificate will be verified
+        sslmode: "prefer" # or "require" or "verify-ca"
+        sslrootcert: ~ # needed to unpin the AWS Redshift certificate
 
 sink:
   # sink configs

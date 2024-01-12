@@ -23,7 +23,6 @@ from datahub.ingestion.source_config.sql.snowflake import (
     SnowflakeConfig,
 )
 from datahub.ingestion.source_config.usage.snowflake_usage import SnowflakeUsageConfig
-from datahub.utilities.global_warning_util import add_global_warning
 
 logger = logging.Logger(__name__)
 
@@ -51,17 +50,15 @@ class DatabaseId:
     database: str = Field(
         description="Database created from share in consumer account."
     )
-    platform_instance: Optional[str] = Field(
-        default=None,
-        description="Platform instance of consumer snowflake account.",
+    platform_instance: str = Field(
+        description="Platform instance of consumer snowflake account."
     )
 
 
 class SnowflakeShareConfig(ConfigModel):
     database: str = Field(description="Database from which share is created.")
-    platform_instance: Optional[str] = Field(
-        default=None,
-        description="Platform instance for snowflake account in which share is created.",
+    platform_instance: str = Field(
+        description="Platform instance for snowflake account in which share is created."
     )
 
     consumers: Set[DatabaseId] = Field(
@@ -101,8 +98,8 @@ class SnowflakeV2Config(
     )
 
     include_view_column_lineage: bool = Field(
-        default=True,
-        description="Populates view->view and table->view column lineage using DataHub's sql parser.",
+        default=False,
+        description="Populates view->view and table->view column lineage.",
     )
 
     _check_role_grants_removed = pydantic_removed_field("check_role_grants")
@@ -159,15 +156,6 @@ class SnowflakeV2Config(
         description="Format user urns as an email, if the snowflake user's email is set. If `email_domain` is provided, generates email addresses for snowflake users with unset emails, based on their username.",
     )
 
-    @validator("convert_urns_to_lowercase")
-    def validate_convert_urns_to_lowercase(cls, v):
-        if not v:
-            add_global_warning(
-                "Please use `convert_urns_to_lowercase: True`, otherwise lineage to other sources may not work correctly."
-            )
-
-        return v
-
     @validator("include_column_lineage")
     def validate_include_column_lineage(cls, v, values):
         if not values.get("include_table_lineage") and v:
@@ -176,7 +164,7 @@ class SnowflakeV2Config(
             )
         return v
 
-    @root_validator(pre=False, skip_on_failure=True)
+    @root_validator(pre=False)
     def validate_unsupported_configs(cls, values: Dict) -> Dict:
         value = values.get("include_read_operational_stats")
         if value is not None and value:
@@ -249,11 +237,10 @@ class SnowflakeV2Config(
 
         if shares:
             # Check: platform_instance should be present
-            if current_platform_instance is None:
-                logger.info(
-                    "It is advisable to use `platform_instance` when ingesting from multiple snowflake accounts, if they contain databases with same name. "
-                    "Setting `platform_instance` allows distinguishing such databases without conflict and correctly ingest their metadata."
-                )
+            assert current_platform_instance is not None, (
+                "Did you forget to set `platform_instance` for current ingestion ? "
+                "It is required to use `platform_instance` when ingesting from multiple snowflake accounts."
+            )
 
             databases_included_in_share: List[DatabaseId] = []
             databases_created_from_share: List[DatabaseId] = []
@@ -262,11 +249,10 @@ class SnowflakeV2Config(
                 shared_db = DatabaseId(
                     share_details.database, share_details.platform_instance
                 )
-                if current_platform_instance:
-                    assert all(
-                        consumer.platform_instance != share_details.platform_instance
-                        for consumer in share_details.consumers
-                    ), "Share's platform_instance can not be same as consumer's platform instance. Self-sharing not supported in Snowflake."
+                assert all(
+                    consumer.platform_instance != share_details.platform_instance
+                    for consumer in share_details.consumers
+                ), "Share's platform_instance can not be same as consumer's platform instance. Self-sharing not supported in Snowflake."
 
                 databases_included_in_share.append(shared_db)
                 databases_created_from_share.extend(share_details.consumers)
@@ -310,11 +296,7 @@ class SnowflakeV2Config(
                             f"database {consumer.database} is created from inbound share {share_name}."
                         )
                         inbounds[consumer.database] = share_details.source_database
-                        if self.platform_instance:
-                            break
-                        # If not using platform_instance, any one of consumer databases
-                        # can be the database from this instance. so we include all relevant
-                        # databases in inbounds.
+                        break
                 else:
                     logger.info(
                         f"Skipping Share {share_name}, as it does not include current platform instance {self.platform_instance}",

@@ -1,7 +1,7 @@
 [
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
+    "entityUrn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
     "changeType": "UPSERT",
     "aspectName": "containerProperties",
     "aspect": {
@@ -9,20 +9,19 @@
             "customProperties": {
                 "platform": "presto-on-hive",
                 "env": "PROD",
-                "database": "metastore"
+                "database": "hive"
             },
-            "name": "metastore"
+            "name": "hive"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
+    "entityUrn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
     "changeType": "UPSERT",
     "aspectName": "status",
     "aspect": {
@@ -32,13 +31,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
+    "entityUrn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
     "changeType": "UPSERT",
     "aspectName": "dataPlatformInstance",
     "aspect": {
@@ -48,13 +46,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
+    "entityUrn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -66,13 +63,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
+    "entityUrn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
@@ -82,13 +78,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
+    "entityUrn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
     "changeType": "UPSERT",
     "aspectName": "containerProperties",
     "aspect": {
@@ -96,7 +91,7 @@
             "customProperties": {
                 "platform": "presto-on-hive",
                 "env": "PROD",
-                "database": "metastore",
+                "database": "hive",
                 "schema": "db1"
             },
             "name": "db1"
@@ -104,13 +99,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
+    "entityUrn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
     "changeType": "UPSERT",
     "aspectName": "status",
     "aspect": {
@@ -120,13 +114,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
+    "entityUrn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
     "changeType": "UPSERT",
     "aspectName": "dataPlatformInstance",
     "aspect": {
@@ -136,13 +129,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
+    "entityUrn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -154,67 +146,63 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
+    "entityUrn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+            "container": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "container",
-    "entityUrn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
+    "entityUrn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.map_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.map_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.map_test,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.map_test,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -223,7 +211,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1.map_test",
+                        "schemaName": "hive.db1.map_test",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -276,15 +264,15 @@
                 {
                     "com.linkedin.pegasus2avro.dataset.DatasetProperties": {
                         "customProperties": {
-                            "totalSize": "0",
-                            "numRows": "0",
                             "numFiles": "0",
                             "COLUMN_STATS_ACCURATE": "{\"BASIC_STATS\":\"true\"}",
-                            "transient_lastDdlTime": "1700805676",
                             "rawDataSize": "0",
+                            "numRows": "0",
+                            "totalSize": "0",
+                            "transient_lastDdlTime": "1688395014",
                             "table_type": "MANAGED_TABLE",
                             "table_location": "hdfs://namenode:8020/user/hive/warehouse/db1.db/map_test",
-                            "create_date": "2023-11-24"
+                            "create_date": "2023-07-03"
                         },
                         "name": "map_test",
                         "tags": []
@@ -295,13 +283,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.map_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.map_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -313,55 +300,52 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.map_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.map_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.union_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.union_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.union_test,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.union_test,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -370,7 +354,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1.union_test",
+                        "schemaName": "hive.db1.union_test",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -480,15 +464,15 @@
                 {
                     "com.linkedin.pegasus2avro.dataset.DatasetProperties": {
                         "customProperties": {
-                            "numRows": "0",
                             "numFiles": "0",
                             "COLUMN_STATS_ACCURATE": "{\"BASIC_STATS\":\"true\"}",
-                            "transient_lastDdlTime": "1700805676",
                             "rawDataSize": "0",
+                            "numRows": "0",
                             "totalSize": "0",
+                            "transient_lastDdlTime": "1688395014",
                             "table_type": "MANAGED_TABLE",
                             "table_location": "hdfs://namenode:8020/user/hive/warehouse/db1.db/union_test",
-                            "create_date": "2023-11-24"
+                            "create_date": "2023-07-03"
                         },
                         "name": "union_test",
                         "tags": []
@@ -499,13 +483,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.union_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.union_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -517,55 +500,52 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.union_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.union_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.nested_struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.nested_struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.nested_struct_test,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.nested_struct_test,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -574,7 +554,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1.nested_struct_test",
+                        "schemaName": "hive.db1.nested_struct_test",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -676,15 +656,15 @@
                 {
                     "com.linkedin.pegasus2avro.dataset.DatasetProperties": {
                         "customProperties": {
-                            "totalSize": "0",
                             "numFiles": "0",
                             "COLUMN_STATS_ACCURATE": "{\"BASIC_STATS\":\"true\"}",
-                            "transient_lastDdlTime": "1700805676",
                             "rawDataSize": "0",
                             "numRows": "0",
+                            "totalSize": "0",
+                            "transient_lastDdlTime": "1688395014",
                             "table_type": "MANAGED_TABLE",
                             "table_location": "hdfs://namenode:8020/user/hive/warehouse/db1.db/nested_struct_test",
-                            "create_date": "2023-11-24"
+                            "create_date": "2023-07-03"
                         },
                         "name": "nested_struct_test",
                         "tags": []
@@ -695,13 +675,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.nested_struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.nested_struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -713,55 +692,52 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.nested_struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.nested_struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -770,7 +746,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1.array_struct_test",
+                        "schemaName": "hive.db1.array_struct_test",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -856,17 +832,17 @@
                 {
                     "com.linkedin.pegasus2avro.dataset.DatasetProperties": {
                         "customProperties": {
-                            "another.comment": "This table has no partitions",
-                            "numRows": "1",
-                            "rawDataSize": "32",
-                            "totalSize": "33",
-                            "numFiles": "1",
-                            "transient_lastDdlTime": "1700805674",
                             "comment": "This table has array of structs",
+                            "numFiles": "1",
                             "COLUMN_STATS_ACCURATE": "{\"BASIC_STATS\":\"true\"}",
+                            "transient_lastDdlTime": "1688395011",
+                            "rawDataSize": "32",
+                            "numRows": "1",
+                            "totalSize": "33",
+                            "another.comment": "This table has no partitions",
                             "table_type": "MANAGED_TABLE",
                             "table_location": "hdfs://namenode:8020/user/hive/warehouse/db1.db/array_struct_test",
-                            "create_date": "2023-11-24"
+                            "create_date": "2023-07-03"
                         },
                         "name": "array_struct_test",
                         "description": "This table has array of structs",
@@ -878,13 +854,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -896,55 +871,52 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.struct_test,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.struct_test,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -953,7 +925,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1.struct_test",
+                        "schemaName": "hive.db1.struct_test",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -1033,15 +1005,15 @@
                 {
                     "com.linkedin.pegasus2avro.dataset.DatasetProperties": {
                         "customProperties": {
-                            "transient_lastDdlTime": "1700805671",
                             "numFiles": "0",
                             "COLUMN_STATS_ACCURATE": "{\"BASIC_STATS\":\"true\"}",
+                            "transient_lastDdlTime": "1688395008",
                             "rawDataSize": "0",
                             "numRows": "0",
                             "totalSize": "0",
                             "table_type": "MANAGED_TABLE",
                             "table_location": "hdfs://namenode:8020/user/hive/warehouse/db1.db/struct_test",
-                            "create_date": "2023-11-24"
+                            "create_date": "2023-07-03"
                         },
                         "name": "struct_test",
                         "tags": []
@@ -1052,13 +1024,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -1070,55 +1041,52 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.struct_test,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.struct_test,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1._test_table_underscore,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1._test_table_underscore,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1._test_table_underscore,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1._test_table_underscore,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -1127,7 +1095,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1._test_table_underscore",
+                        "schemaName": "hive.db1._test_table_underscore",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -1177,15 +1145,15 @@
                 {
                     "com.linkedin.pegasus2avro.dataset.DatasetProperties": {
                         "customProperties": {
-                            "transient_lastDdlTime": "1700805671",
                             "numFiles": "0",
                             "COLUMN_STATS_ACCURATE": "{\"BASIC_STATS\":\"true\"}",
+                            "transient_lastDdlTime": "1688395008",
                             "rawDataSize": "0",
                             "numRows": "0",
                             "totalSize": "0",
                             "table_type": "MANAGED_TABLE",
                             "table_location": "hdfs://namenode:8020/user/hive/warehouse/db1.db/_test_table_underscore",
-                            "create_date": "2023-11-24"
+                            "create_date": "2023-07-03"
                         },
                         "name": "_test_table_underscore",
                         "tags": []
@@ -1196,13 +1164,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1._test_table_underscore,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1._test_table_underscore,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -1214,55 +1181,52 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1._test_table_underscore,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1._test_table_underscore,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.pokes,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.pokes,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.pokes,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.pokes,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -1271,7 +1235,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1.pokes",
+                        "schemaName": "hive.db1.pokes",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -1335,10 +1299,10 @@
                 {
                     "com.linkedin.pegasus2avro.dataset.DatasetProperties": {
                         "customProperties": {
-                            "transient_lastDdlTime": "1700805669",
+                            "transient_lastDdlTime": "1688395005",
                             "table_type": "MANAGED_TABLE",
                             "table_location": "hdfs://namenode:8020/user/hive/warehouse/db1.db/pokes",
-                            "create_date": "2023-11-24",
+                            "create_date": "2023-07-03",
                             "partitioned_columns": "baz"
                         },
                         "name": "pokes",
@@ -1350,13 +1314,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.pokes,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.pokes,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -1368,55 +1331,52 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.pokes,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.pokes,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test_presto_view,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test_presto_view,PROD)",
     "changeType": "UPSERT",
     "aspectName": "container",
     "aspect": {
         "json": {
-            "container": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+            "container": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "proposedSnapshot": {
         "com.linkedin.pegasus2avro.metadata.snapshot.DatasetSnapshot": {
-            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test_presto_view,PROD)",
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test_presto_view,PROD)",
             "aspects": [
                 {
                     "com.linkedin.pegasus2avro.common.Status": {
@@ -1425,7 +1385,7 @@
                 },
                 {
                     "com.linkedin.pegasus2avro.schema.SchemaMetadata": {
-                        "schemaName": "metastore.db1.array_struct_test_presto_view",
+                        "schemaName": "hive.db1.array_struct_test_presto_view",
                         "platform": "urn:li:dataPlatform:presto-on-hive",
                         "version": 0,
                         "created": {
@@ -1493,13 +1453,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test_presto_view,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test_presto_view,PROD)",
     "changeType": "UPSERT",
     "aspectName": "subTypes",
     "aspect": {
@@ -1511,13 +1470,12 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test_presto_view,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test_presto_view,PROD)",
     "changeType": "UPSERT",
     "aspectName": "viewProperties",
     "aspect": {
@@ -1529,33 +1487,31 @@
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 },
 {
     "entityType": "dataset",
-    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,metastore.db1.array_struct_test_presto_view,PROD)",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:presto-on-hive,hive.db1.array_struct_test_presto_view,PROD)",
     "changeType": "UPSERT",
     "aspectName": "browsePathsV2",
     "aspect": {
         "json": {
             "path": [
                 {
-                    "id": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d",
-                    "urn": "urn:li:container:f4ec3d97ca6750de28020a0d393c289d"
+                    "id": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab",
+                    "urn": "urn:li:container:e998a77f6edaa92d1326dec9d37c96ab"
                 },
                 {
-                    "id": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f",
-                    "urn": "urn:li:container:5bd3e4d159b00200dfe53d79a486ce7f"
+                    "id": "urn:li:container:bb66ab4651750f727700446f9b3aa2df",
+                    "urn": "urn:li:container:bb66ab4651750f727700446f9b3aa2df"
                 }
             ]
         }
     },
     "systemMetadata": {
         "lastObserved": 1632398400000,
-        "runId": "presto-on-hive-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "presto-on-hive-test"
     }
 }
 ]

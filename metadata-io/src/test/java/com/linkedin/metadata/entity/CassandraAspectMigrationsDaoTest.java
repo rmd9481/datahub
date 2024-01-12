@@ -1,10 +1,8 @@
 package com.linkedin.metadata.entity;
 
-import static org.mockito.Mockito.*;
-
+import com.linkedin.metadata.config.PreProcessHooks;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.linkedin.metadata.CassandraTestUtils;
-import com.linkedin.metadata.config.PreProcessHooks;
 import com.linkedin.metadata.entity.cassandra.CassandraAspectDao;
 import com.linkedin.metadata.entity.cassandra.CassandraRetentionService;
 import com.linkedin.metadata.event.EventProducer;
@@ -17,11 +15,15 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.mockito.Mockito.*;
+
+
 public class CassandraAspectMigrationsDaoTest extends AspectMigrationsDaoTest<CassandraAspectDao> {
 
   private CassandraContainer _cassandraContainer;
 
-  public CassandraAspectMigrationsDaoTest() throws EntityRegistryException {}
+  public CassandraAspectMigrationsDaoTest() throws EntityRegistryException {
+  }
 
   @BeforeClass
   public void setupContainer() {
@@ -47,14 +49,8 @@ public class CassandraAspectMigrationsDaoTest extends AspectMigrationsDaoTest<Ca
     _mockUpdateIndicesService = mock(UpdateIndicesService.class);
     PreProcessHooks preProcessHooks = new PreProcessHooks();
     preProcessHooks.setUiEnabled(true);
-    _entityServiceImpl =
-        new EntityServiceImpl(
-            dao,
-            _mockProducer,
-            _testEntityRegistry,
-            true,
-            _mockUpdateIndicesService,
-            preProcessHooks);
+    _entityServiceImpl = new EntityServiceImpl(dao, _mockProducer, _testEntityRegistry, true, _mockUpdateIndicesService,
+        preProcessHooks);
     _retentionService = new CassandraRetentionService(_entityServiceImpl, session, 1000);
     _entityServiceImpl.setRetentionService(_retentionService);
 
@@ -63,8 +59,8 @@ public class CassandraAspectMigrationsDaoTest extends AspectMigrationsDaoTest<Ca
 
   /**
    * Ideally, all tests would be in the base class, so they're reused between all implementations.
-   * When that's the case - test runner will ignore this class (and its base!) so we keep this dummy
-   * test to make sure this class will always be discovered.
+   * When that's the case - test runner will ignore this class (and its base!) so we keep this dummy test
+   * to make sure this class will always be discovered.
    */
   @Test
   public void obligatoryTest() throws AssertionError {

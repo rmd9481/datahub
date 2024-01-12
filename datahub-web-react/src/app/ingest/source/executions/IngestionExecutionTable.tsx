@@ -4,7 +4,6 @@ import { StyledTable } from '../../../entity/shared/components/styled/StyledTabl
 import { ExecutionRequest } from '../../../../types.generated';
 import { ButtonsColumn, SourceColumn, StatusColumn, TimeColumn } from './IngestionExecutionTableColumns';
 import { SUCCESS } from '../utils';
-import { formatDuration } from '../../../shared/formatDuration';
 
 interface Props {
     executionRequests: ExecutionRequest[];
@@ -35,10 +34,13 @@ export default function IngestionExecutionTable({
             render: TimeColumn,
         },
         {
-            title: 'Duration',
+            title: 'Duration (s)',
             dataIndex: 'duration',
             key: 'duration',
-            render: (durationMs: number) => formatDuration(durationMs),
+            render: (durationMs: number) => {
+                const seconds = (durationMs && `${durationMs / 1000}s`) || 'None';
+                return seconds;
+            },
         },
         {
             title: 'Status',

@@ -1,9 +1,5 @@
 package com.linkedin.datahub.graphql.resolvers.search;
 
-import static com.linkedin.datahub.graphql.resolvers.ResolverUtils.bindArgument;
-import static com.linkedin.datahub.graphql.resolvers.search.SearchUtils.*;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import com.linkedin.common.urn.UrnUtils;
 import com.linkedin.datahub.graphql.QueryContext;
 import com.linkedin.datahub.graphql.exception.ValidationException;
@@ -17,90 +13,87 @@ import com.linkedin.metadata.service.ViewService;
 import com.linkedin.view.DataHubViewInfo;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Resolver responsible for resolving the 'autocomplete' field of the Query type */
-public class AutoCompleteForMultipleResolver
-    implements DataFetcher<CompletableFuture<AutoCompleteMultipleResults>> {
+import static com.linkedin.datahub.graphql.resolvers.ResolverUtils.bindArgument;
+import static com.linkedin.datahub.graphql.resolvers.search.SearchUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
-  private static final Logger _logger =
-      LoggerFactory.getLogger(AutoCompleteForMultipleResolver.class.getName());
+/**
+ * Resolver responsible for resolving the 'autocomplete' field of the Query type
+ */
+public class AutoCompleteForMultipleResolver implements DataFetcher<CompletableFuture<AutoCompleteMultipleResults>> {
 
-  private final Map<EntityType, SearchableEntityType<?, ?>> _typeToEntity;
-  private final ViewService _viewService;
+    private static final Logger _logger = LoggerFactory.getLogger(AutoCompleteForMultipleResolver.class.getName());
 
-  public AutoCompleteForMultipleResolver(
-      @Nonnull final List<SearchableEntityType<?, ?>> searchableEntities,
-      @Nonnull final ViewService viewService) {
-    _typeToEntity =
-        searchableEntities.stream()
-            .collect(Collectors.toMap(SearchableEntityType::type, entity -> entity));
-    _viewService = viewService;
-  }
+    private final Map<EntityType, SearchableEntityType<?, ?>> _typeToEntity;
+    private final ViewService _viewService;
 
-  @Override
-  public CompletableFuture<AutoCompleteMultipleResults> get(DataFetchingEnvironment environment) {
-    final QueryContext context = environment.getContext();
-    final AutoCompleteMultipleInput input =
-        bindArgument(environment.getArgument("input"), AutoCompleteMultipleInput.class);
-
-    if (isBlank(input.getQuery())) {
-      _logger.error("'query' parameter was null or empty");
-      throw new ValidationException("'query' parameter can not be null or empty");
+    public AutoCompleteForMultipleResolver(@Nonnull final List<SearchableEntityType<?, ?>> searchableEntities, @Nonnull final ViewService viewService) {
+        _typeToEntity = searchableEntities.stream().collect(Collectors.toMap(
+            SearchableEntityType::type,
+            entity -> entity
+        ));
+        _viewService = viewService;
     }
-    // escape forward slash since it is a reserved character in Elasticsearch
-    final String sanitizedQuery = ResolverUtils.escapeForwardSlash(input.getQuery());
-    final DataHubViewInfo maybeResolvedView =
-        (input.getViewUrn() != null)
-            ? resolveView(
-                _viewService, UrnUtils.getUrn(input.getViewUrn()), context.getAuthentication())
+
+    @Override
+    public CompletableFuture<AutoCompleteMultipleResults> get(DataFetchingEnvironment environment) {
+        final QueryContext context = environment.getContext();
+        final AutoCompleteMultipleInput input = bindArgument(environment.getArgument("input"), AutoCompleteMultipleInput.class);
+
+        if (isBlank(input.getQuery())) {
+            _logger.error("'query' parameter was null or empty");
+            throw new ValidationException("'query' parameter can not be null or empty");
+        }
+        // escape forward slash since it is a reserved character in Elasticsearch
+        final String sanitizedQuery = ResolverUtils.escapeForwardSlash(input.getQuery());
+        final DataHubViewInfo maybeResolvedView = (input.getViewUrn() != null)
+            ? resolveView(_viewService, UrnUtils.getUrn(input.getViewUrn()), context.getAuthentication())
             : null;
 
-    List<EntityType> types = getEntityTypes(input.getTypes(), maybeResolvedView);
-    if (types != null && types.size() > 0) {
-      return AutocompleteUtils.batchGetAutocompleteResults(
-          types.stream().map(_typeToEntity::get).collect(Collectors.toList()),
-          sanitizedQuery,
-          input,
-          environment,
-          maybeResolvedView);
+        List<EntityType> types = getEntityTypes(input.getTypes(), maybeResolvedView);
+        if (types != null && types.size() > 0) {
+            return AutocompleteUtils.batchGetAutocompleteResults(
+                types.stream().map(_typeToEntity::get).collect(Collectors.toList()),
+                sanitizedQuery,
+                input,
+                environment,
+                maybeResolvedView);
+        }
+
+        // By default, autocomplete only against the Default Set of Autocomplete entities
+        return AutocompleteUtils.batchGetAutocompleteResults(
+            AUTO_COMPLETE_ENTITY_TYPES.stream().map(_typeToEntity::get).collect(Collectors.toList()),
+            sanitizedQuery,
+            input,
+            environment,
+            maybeResolvedView);
     }
 
-    // By default, autocomplete only against the Default Set of Autocomplete entities
-    return AutocompleteUtils.batchGetAutocompleteResults(
-        AUTO_COMPLETE_ENTITY_TYPES.stream().map(_typeToEntity::get).collect(Collectors.toList()),
-        sanitizedQuery,
-        input,
-        environment,
-        maybeResolvedView);
-  }
+    /**
+     * Gets the intersection of provided input types and types on the view applied (if any)
+     */
+    @Nullable
+    List<EntityType> getEntityTypes(final @Nullable List<EntityType> inputTypes, final @Nullable DataHubViewInfo maybeResolvedView) {
+        List<EntityType> types = inputTypes;
+        if (maybeResolvedView != null) {
+            List<EntityType> inputEntityTypes = types != null ? types : new ArrayList<>();
+            final List<String> inputEntityNames = inputEntityTypes.stream().map(EntityTypeMapper::getName).collect(Collectors.toList());
+            List<String> stringEntityTypes = SearchUtils.intersectEntityTypes(inputEntityNames, maybeResolvedView.getDefinition().getEntityTypes());
 
-  /** Gets the intersection of provided input types and types on the view applied (if any) */
-  @Nullable
-  List<EntityType> getEntityTypes(
-      final @Nullable List<EntityType> inputTypes,
-      final @Nullable DataHubViewInfo maybeResolvedView) {
-    List<EntityType> types = inputTypes;
-    if (maybeResolvedView != null) {
-      List<EntityType> inputEntityTypes = types != null ? types : new ArrayList<>();
-      final List<String> inputEntityNames =
-          inputEntityTypes.stream().map(EntityTypeMapper::getName).collect(Collectors.toList());
-      List<String> stringEntityTypes =
-          SearchUtils.intersectEntityTypes(
-              inputEntityNames, maybeResolvedView.getDefinition().getEntityTypes());
+            types = stringEntityTypes.stream().map(EntityTypeMapper::getType).collect(Collectors.toList());
+        }
 
-      types =
-          stringEntityTypes.stream().map(EntityTypeMapper::getType).collect(Collectors.toList());
+        return types;
     }
-
-    return types;
-  }
 }

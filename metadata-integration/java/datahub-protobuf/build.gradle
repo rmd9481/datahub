@@ -12,6 +12,12 @@ apply from: '../versioning.gradle'
 
 jar.enabled = false // Since we only want to build shadow jars, disabling the regular jar creation
 
+afterEvaluate {
+    if (project.plugins.hasPlugin('java')) {
+        sourceCompatibility = 11
+        targetCompatibility = 11
+    }
+}
 ext {
    javaMainClass = "datahub.protobuf.Proto2DataHub"
 }
@@ -31,10 +37,10 @@ dependencies {
     implementation externalDependency.commonsCli
     implementation externalDependency.httpAsyncClient
     implementation externalDependency.slf4jApi
-    implementation externalDependency.jacksonCore
     compileOnly externalDependency.lombok
     annotationProcessor externalDependency.lombok
-    testImplementation externalDependency.testng
+    testImplementation externalDependency.junitJupiterApi
+    testRuntimeOnly externalDependency.junitJupiterEngine
 }
 
 import java.nio.file.Paths
@@ -61,7 +67,10 @@ jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
 }
 
-test.finalizedBy jacocoTestReport
+test {
+    useJUnit()
+    finalizedBy jacocoTestReport
+}
 
 
 task checkShadowJar(type: Exec) {
@@ -202,4 +211,4 @@ nexusStaging {
     password = System.getenv("NEXUS_PASSWORD")
 }
 
-startScripts.dependsOn shadowJar
+

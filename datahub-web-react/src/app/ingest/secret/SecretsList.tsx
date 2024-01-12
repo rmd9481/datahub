@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Empty, message, Modal, Pagination, Typography } from 'antd';
-import { debounce } from 'lodash';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import * as QueryString from 'query-string';
 import { useLocation } from 'react-router';
@@ -19,7 +18,6 @@ import { SearchBar } from '../../search/SearchBar';
 import { useEntityRegistry } from '../../useEntityRegistry';
 import { scrollToTop } from '../../shared/searchUtils';
 import { addSecretToListSecretsCache, removeSecretFromListSecretsCache } from './cacheUtils';
-import { ONE_SECOND_IN_MS } from '../../entity/shared/tabs/Dataset/Queries/utils/constants';
 
 const DeleteButtonContainer = styled.div`
     display: flex;
@@ -56,10 +54,10 @@ export const SecretsList = () => {
             input: {
                 start,
                 count: pageSize,
-                query: (query?.length && query) || undefined,
+                query: query && query.length > 0 ? query : undefined,
             },
         },
-        fetchPolicy: (query?.length || 0) > 0 ? 'no-cache' : 'cache-first',
+        fetchPolicy: query && query.length > 0 ? 'no-cache' : 'cache-first',
     });
 
     const totalSecrets = data?.listSecrets?.total || 0;
@@ -85,10 +83,6 @@ export const SecretsList = () => {
         scrollToTop();
         setPage(newPage);
     };
-
-    const debouncedSetQuery = debounce((newQuery: string | undefined) => {
-        setQuery(newQuery);
-    }, ONE_SECOND_IN_MS);
 
     const onSubmit = (state: SecretBuilderState, resetBuilderState: () => void) => {
         createSecretMutation({
@@ -182,11 +176,7 @@ export const SecretsList = () => {
             <div>
                 <TabToolbar>
                     <div>
-                        <Button
-                            data-testid="create-secret-button"
-                            type="text"
-                            onClick={() => setIsCreatingSecret(true)}
-                        >
+                        <Button type="text" onClick={() => setIsCreatingSecret(true)}>
                             <PlusOutlined /> Create new secret
                         </Button>
                     </div>
@@ -203,10 +193,7 @@ export const SecretsList = () => {
                             fontSize: 12,
                         }}
                         onSearch={() => null}
-                        onQueryChange={(q) => {
-                            setPage(1);
-                            debouncedSetQuery(q);
-                        }}
+                        onQueryChange={(q) => setQuery(q)}
                         entityRegistry={entityRegistry}
                         hideRecommendations
                     />

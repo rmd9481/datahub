@@ -1,20 +1,13 @@
 import React from 'react';
-import { Button, DatePicker, Form, message, Modal } from 'antd';
-import styled from 'styled-components';
+import { Button, DatePicker, Form, Input, message, Modal } from 'antd';
 import { useBatchUpdateDeprecationMutation } from '../../../../graphql/mutations.generated';
 import { handleBatchError } from '../utils';
-import { Editor } from '../tabs/Documentation/components/editor/Editor';
-import { ANTD_GRAY } from '../constants';
 
 type Props = {
     urns: string[];
     onClose: () => void;
     refetch?: () => void;
 };
-
-const StyledEditor = styled(Editor)`
-    border: 1px solid ${ANTD_GRAY[4.5]};
-`;
 
 export const UpdateDeprecationModal = ({ urns, onClose, refetch }: Props) => {
     const [batchUpdateDeprecation] = useBatchUpdateDeprecationMutation();
@@ -34,7 +27,7 @@ export const UpdateDeprecationModal = ({ urns, onClose, refetch }: Props) => {
                         resources: [...urns.map((urn) => ({ resourceUrn: urn }))],
                         deprecated: true,
                         note: formData.note,
-                        decommissionTime: formData.decommissionTime && formData.decommissionTime.unix() * 1000,
+                        decommissionTime: formData.decommissionTime && formData.decommissionTime.unix(),
                     },
                 },
             });
@@ -71,11 +64,10 @@ export const UpdateDeprecationModal = ({ urns, onClose, refetch }: Props) => {
                     </Button>
                 </>
             }
-            width='40%'
         >
             <Form form={form} name="addDeprecationForm" onFinish={handleOk} layout="vertical">
-                <Form.Item name="note" label="Note" rules={[{ whitespace: true }]}>
-                    <StyledEditor/>
+                <Form.Item name="note" label="Note" rules={[{ whitespace: true }, { min: 0, max: 100 }]}>
+                    <Input placeholder="Add Note" autoFocus />
                 </Form.Item>
                 <Form.Item name="decommissionTime" label="Decommission Date">
                     <DatePicker style={{ width: '100%' }} />

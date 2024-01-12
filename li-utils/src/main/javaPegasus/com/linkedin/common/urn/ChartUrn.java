@@ -5,6 +5,7 @@ import com.linkedin.data.template.DirectCoercer;
 import com.linkedin.data.template.TemplateOutputCastException;
 import java.net.URISyntaxException;
 
+
 public final class ChartUrn extends Urn {
 
   public static final String ENTITY_TYPE = "chart";
@@ -41,8 +42,7 @@ public final class ChartUrn extends Urn {
         throw new URISyntaxException(urn.toString(), "Invalid number of keys.");
       } else {
         try {
-          return new ChartUrn(
-              (String) key.getAs(0, String.class), (String) key.getAs(1, String.class));
+          return new ChartUrn((String)key.getAs(0, String.class), (String)key.getAs(1, String.class));
         } catch (Exception e) {
           throw new URISyntaxException(urn.toString(), "Invalid URN Parameter: '" + e.getMessage());
         }
@@ -55,20 +55,18 @@ public final class ChartUrn extends Urn {
   }
 
   static {
-    Custom.registerCoercer(
-        new DirectCoercer<ChartUrn>() {
-          public Object coerceInput(ChartUrn object) throws ClassCastException {
-            return object.toString();
-          }
+    Custom.registerCoercer(new DirectCoercer<ChartUrn>() {
+      public Object coerceInput(ChartUrn object) throws ClassCastException {
+        return object.toString();
+      }
 
-          public ChartUrn coerceOutput(Object object) throws TemplateOutputCastException {
-            try {
-              return ChartUrn.createFromString((String) object);
-            } catch (URISyntaxException e) {
-              throw new TemplateOutputCastException("Invalid URN syntax: " + e.getMessage(), e);
-            }
-          }
-        },
-        ChartUrn.class);
+      public ChartUrn coerceOutput(Object object) throws TemplateOutputCastException {
+        try {
+          return ChartUrn.createFromString((String) object);
+        } catch (URISyntaxException e) {
+          throw new TemplateOutputCastException("Invalid URN syntax: " + e.getMessage(), e);
+        }
+      }
+    }, ChartUrn.class);
   }
 }

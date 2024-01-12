@@ -151,6 +151,9 @@ export const SchemaTab = ({ properties }: { properties?: any }) => {
         return groupByFieldPath(filteredRows, { showKeySchema });
     }, [showKeySchema, filteredRows]);
 
+    const lastUpdated = getSchemaBlameData?.getSchemaBlame?.version?.semanticVersionTimestamp;
+    const lastObserved = versionedDatasetData.data?.versionedDataset?.schema?.lastObserved;
+
     const schemaFieldBlameList: Array<SchemaFieldBlame> =
         (getSchemaBlameData?.getSchemaBlame?.schemaFieldBlameList as Array<SchemaFieldBlame>) || [];
 
@@ -164,6 +167,8 @@ export const SchemaTab = ({ properties }: { properties?: any }) => {
                 hasKeySchema={hasKeySchema}
                 showKeySchema={showKeySchema}
                 setShowKeySchema={setShowKeySchema}
+                lastObserved={lastObserved}
+                lastUpdated={lastUpdated}
                 selectedVersion={selectedVersion}
                 versionList={versionList}
                 showSchemaAuditView={showSchemaAuditView}

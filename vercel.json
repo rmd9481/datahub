@@ -1,5 +1,5 @@
 {
-  "buildCommand": "./gradlew -PuseSystemNode=true :docs-website:build",
+  "buildCommand": "./gradlew :docs-website:build",
   "github": {
     "silent": true,
     "autoJobCancelation": true

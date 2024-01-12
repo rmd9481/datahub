@@ -95,7 +95,6 @@ const simpleViewEntityTypes = [
     EntityType.Dashboard,
     EntityType.GlossaryNode,
     EntityType.GlossaryTerm,
-    EntityType.DataProduct,
 ];
 
 export const HomePageRecommendations = ({ user }: Props) => {

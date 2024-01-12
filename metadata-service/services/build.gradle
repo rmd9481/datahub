@@ -1,7 +1,5 @@
-plugins {
-    id 'org.hidetake.swagger.generator'
-    id 'java'
-}
+apply plugin: 'java'
+apply plugin: 'org.hidetake.swagger.generator'
 
 configurations {
     enhance
@@ -11,9 +9,9 @@ dependencies {
     implementation externalDependency.jsonPatch
     implementation project(':entity-registry')
     implementation project(':metadata-utils')
-    implementation project(':metadata-events:mxe-avro')
+    implementation project(':metadata-events:mxe-avro-1.7')
     implementation project(':metadata-events:mxe-registration')
-    implementation project(':metadata-events:mxe-utils-avro')
+    implementation project(':metadata-events:mxe-utils-avro-1.7')
     implementation project(':metadata-models')
     implementation project(':metadata-service:restli-client')
     implementation project(':metadata-service:configuration')
@@ -65,6 +63,8 @@ dependencies {
 }
 
 test {
+    // https://docs.gradle.org/current/userguide/performance.html
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
     testLogging.showStandardStreams = true
     testLogging.exceptionFormat = 'full'
 }

@@ -3,7 +3,6 @@ query getGroup($urn: String!, $membersCount: Int!) {
         urn
         type
         name
-        exists
         origin {
             type
             externalType

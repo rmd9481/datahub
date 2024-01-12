@@ -1,4 +1,4 @@
-# Reporting Security Issues
+# Reporting security issues
 
 If you think you have found a security vulnerability, please send a report to security@datahubproject.io. This address can be used for all of Acryl Data’s open source and commercial products (including but not limited to DataHub and Acryl Data). We can accept only vulnerability reports at this address.
 

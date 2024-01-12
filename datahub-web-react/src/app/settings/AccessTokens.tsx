@@ -21,9 +21,6 @@ const SourceContainer = styled.div`
     padding-top: 20px;
     padding-right: 40px;
     padding-left: 40px;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
 `;
 
 const TokensContainer = styled.div`
@@ -202,12 +199,7 @@ export const AccessTokens = () => {
             key: 'x',
             render: (_, record: any) => (
                 <ActionButtonContainer>
-                    <Button
-                        onClick={() => onRemoveToken(record)}
-                        icon={<DeleteOutlined />}
-                        danger
-                        data-testid="revoke-token-button"
-                    >
+                    <Button onClick={() => onRemoveToken(record)} icon={<DeleteOutlined />} danger>
                         Revoke
                     </Button>
                 </ActionButtonContainer>

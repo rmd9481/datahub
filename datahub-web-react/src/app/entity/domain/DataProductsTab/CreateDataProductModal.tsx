@@ -32,7 +32,6 @@ export default function CreateDataProductModal({ domain, onCreateDataProduct, on
             variables: {
                 input: {
                     domainUrn: domain.urn,
-                    id: builderState.id,
                     properties: {
                         name: builderState.name,
                         description: builderState.description || undefined,
@@ -50,10 +49,10 @@ export default function CreateDataProductModal({ domain, onCreateDataProduct, on
                     onClose();
                 }
             })
-            .catch(( error ) => {
+            .catch(() => {
                 onClose();
                 message.destroy();
-                message.error({ content: `Failed to create Data Product: ${error.message}.` });
+                message.error({ content: 'Failed to create Data Product. An unexpected error occurred' });
             });
     }
 

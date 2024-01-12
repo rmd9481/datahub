@@ -1,8 +1,16 @@
 {
     "query_type": "SELECT",
     "in_tables": [
-        "urn:li:dataset:(urn:li:dataPlatform:bigquery,bq-proj.dataset.table1,PROD)",
-        "urn:li:dataset:(urn:li:dataPlatform:bigquery,bq-proj.dataset.table2,PROD)"
+        {
+            "database": "bq-proj",
+            "db_schema": "dataset",
+            "table": "table1"
+        },
+        {
+            "database": "bq-proj",
+            "db_schema": "dataset",
+            "table": "table2"
+        }
     ],
     "out_tables": [],
     "column_lineage": [
@@ -13,7 +21,11 @@
             },
             "upstreams": [
                 {
-                    "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,bq-proj.dataset.table1,PROD)",
+                    "table": {
+                        "database": "bq-proj",
+                        "db_schema": "dataset",
+                        "table": "table1"
+                    },
                     "column": "reporting_day"
                 }
             ]
@@ -25,11 +37,19 @@
             },
             "upstreams": [
                 {
-                    "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,bq-proj.dataset.table1,PROD)",
+                    "table": {
+                        "database": "bq-proj",
+                        "db_schema": "dataset",
+                        "table": "table1"
+                    },
                     "column": "by_product.product_code"
                 },
                 {
-                    "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,bq-proj.dataset.table2,PROD)",
+                    "table": {
+                        "database": "bq-proj",
+                        "db_schema": "dataset",
+                        "table": "table2"
+                    },
                     "column": "other_field"
                 }
             ]
@@ -41,7 +61,11 @@
             },
             "upstreams": [
                 {
-                    "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,bq-proj.dataset.table2,PROD)",
+                    "table": {
+                        "database": "bq-proj",
+                        "db_schema": "dataset",
+                        "table": "table2"
+                    },
                     "column": "other_field"
                 }
             ]
@@ -53,7 +77,11 @@
             },
             "upstreams": [
                 {
-                    "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,bq-proj.dataset.table1,PROD)",
+                    "table": {
+                        "database": "bq-proj",
+                        "db_schema": "dataset",
+                        "table": "table1"
+                    },
                     "column": "by_product.product_code_dau"
                 }
             ]

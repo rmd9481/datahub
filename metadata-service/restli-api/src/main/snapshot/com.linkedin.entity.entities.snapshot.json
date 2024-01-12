@@ -6249,13 +6249,7 @@
     }, {
       "name" : "runId",
       "type" : "string",
-      "doc" : "The original run id that produced the metadata. Populated in case of batch-ingestion.",
-      "default" : "no-run-id-provided",
-      "optional" : true
-    }, {
-      "name" : "lastRunId",
-      "type" : "string",
-      "doc" : "The last run id that produced the metadata. Populated in case of batch-ingestion.",
+      "doc" : "The run id that produced the metadata. Populated in case of batch-ingestion.",
       "default" : "no-run-id-provided",
       "optional" : true
     }, {
@@ -6289,7 +6283,6 @@
     "path" : "/entities",
     "schema" : "com.linkedin.entity.Entity",
     "doc" : "Single unified resource for fetching, updating, searching, & browsing DataHub entities\n\ngenerated from: com.linkedin.metadata.resources.entity.EntityResource",
-    "resourceClass" : "com.linkedin.metadata.resources.entity.EntityResource",
     "collection" : {
       "identifier" : {
         "name" : "entitiesId",
@@ -6298,7 +6291,6 @@
       "supports" : [ "batch_get", "get" ],
       "methods" : [ {
         "method" : "get",
-        "javaMethodName" : "get",
         "doc" : "Retrieves the value for an entity that is made up of latest versions of specified aspects.",
         "parameters" : [ {
           "name" : "aspects",
@@ -6307,7 +6299,6 @@
         } ]
       }, {
         "method" : "batch_get",
-        "javaMethodName" : "batchGet",
         "parameters" : [ {
           "name" : "aspects",
           "type" : "{ \"type\" : \"array\", \"items\" : \"string\" }",
@@ -6316,7 +6307,6 @@
       } ],
       "actions" : [ {
         "name" : "applyRetention",
-        "javaMethodName" : "applyRetention",
         "parameters" : [ {
           "name" : "start",
           "type" : "int",
@@ -6341,7 +6331,6 @@
         "returns" : "string"
       }, {
         "name" : "autocomplete",
-        "javaMethodName" : "autocomplete",
         "parameters" : [ {
           "name" : "entity",
           "type" : "string"
@@ -6363,7 +6352,6 @@
         "returns" : "com.linkedin.metadata.query.AutoCompleteResult"
       }, {
         "name" : "batchGetTotalEntityCount",
-        "javaMethodName" : "batchGetTotalEntityCount",
         "parameters" : [ {
           "name" : "entities",
           "type" : "{ \"type\" : \"array\", \"items\" : \"string\" }"
@@ -6371,7 +6359,6 @@
         "returns" : "{ \"type\" : \"map\", \"values\" : \"long\" }"
       }, {
         "name" : "batchIngest",
-        "javaMethodName" : "batchIngest",
         "parameters" : [ {
           "name" : "entities",
           "type" : "{ \"type\" : \"array\", \"items\" : \"com.linkedin.entity.Entity\" }"
@@ -6382,7 +6369,6 @@
         } ]
       }, {
         "name" : "browse",
-        "javaMethodName" : "browse",
         "parameters" : [ {
           "name" : "entity",
           "type" : "string"
@@ -6403,7 +6389,6 @@
         "returns" : "com.linkedin.metadata.browse.BrowseResult"
       }, {
         "name" : "delete",
-        "javaMethodName" : "deleteEntity",
         "doc" : "Deletes all data related to an individual urn(entity).\nService Returns: - a DeleteEntityResponse object.",
         "parameters" : [ {
           "name" : "urn",
@@ -6413,7 +6398,7 @@
           "name" : "aspectName",
           "type" : "string",
           "optional" : true,
-          "doc" : "- the optional aspect name if only want to delete the aspect (applicable only\n     for timeseries aspects)."
+          "doc" : "- the optional aspect name if only want to delete the aspect (applicable only for timeseries aspects)."
         }, {
           "name" : "startTimeMillis",
           "type" : "long",
@@ -6428,7 +6413,6 @@
         "returns" : "com.linkedin.metadata.run.DeleteEntityResponse"
       }, {
         "name" : "deleteAll",
-        "javaMethodName" : "deleteEntities",
         "parameters" : [ {
           "name" : "registryId",
           "type" : "string",
@@ -6441,7 +6425,6 @@
         "returns" : "com.linkedin.metadata.run.RollbackResponse"
       }, {
         "name" : "deleteReferences",
-        "javaMethodName" : "deleteReferencesTo",
         "parameters" : [ {
           "name" : "urn",
           "type" : "string"
@@ -6453,7 +6436,6 @@
         "returns" : "com.linkedin.metadata.run.DeleteReferencesResponse"
       }, {
         "name" : "exists",
-        "javaMethodName" : "exists",
         "parameters" : [ {
           "name" : "urn",
           "type" : "string"
@@ -6461,7 +6443,6 @@
         "returns" : "boolean"
       }, {
         "name" : "filter",
-        "javaMethodName" : "filter",
         "parameters" : [ {
           "name" : "entity",
           "type" : "string"
@@ -6482,7 +6463,6 @@
         "returns" : "com.linkedin.metadata.search.SearchResult"
       }, {
         "name" : "getBrowsePaths",
-        "javaMethodName" : "getBrowsePaths",
         "parameters" : [ {
           "name" : "urn",
           "type" : "com.linkedin.common.Urn"
@@ -6490,7 +6470,6 @@
         "returns" : "{ \"type\" : \"array\", \"items\" : \"string\" }"
       }, {
         "name" : "getTotalEntityCount",
-        "javaMethodName" : "getTotalEntityCount",
         "parameters" : [ {
           "name" : "entity",
           "type" : "string"
@@ -6498,7 +6477,6 @@
         "returns" : "long"
       }, {
         "name" : "ingest",
-        "javaMethodName" : "ingest",
         "parameters" : [ {
           "name" : "entity",
           "type" : "com.linkedin.entity.Entity"
@@ -6509,7 +6487,6 @@
         } ]
       }, {
         "name" : "list",
-        "javaMethodName" : "list",
         "parameters" : [ {
           "name" : "entity",
           "type" : "string"
@@ -6531,7 +6508,6 @@
         "returns" : "com.linkedin.metadata.query.ListResult"
       }, {
         "name" : "listUrns",
-        "javaMethodName" : "listUrns",
         "parameters" : [ {
           "name" : "entity",
           "type" : "string"
@@ -6545,7 +6521,6 @@
         "returns" : "com.linkedin.metadata.query.ListUrnsResult"
       }, {
         "name" : "scrollAcrossEntities",
-        "javaMethodName" : "scrollAcrossEntities",
         "parameters" : [ {
           "name" : "entities",
           "type" : "{ \"type\" : \"array\", \"items\" : \"string\" }",
@@ -6578,7 +6553,6 @@
         "returns" : "com.linkedin.metadata.search.ScrollResult"
       }, {
         "name" : "scrollAcrossLineage",
-        "javaMethodName" : "scrollAcrossLineage",
         "parameters" : [ {
           "name" : "urn",
           "type" : "string"
@@ -6630,7 +6604,6 @@
         "returns" : "com.linkedin.metadata.search.LineageScrollResult"
       }, {
         "name" : "search",
-        "javaMethodName" : "search",
         "parameters" : [ {
           "name" : "entity",
           "type" : "string"
@@ -6666,7 +6639,6 @@
         "returns" : "com.linkedin.metadata.search.SearchResult"
       }, {
         "name" : "searchAcrossEntities",
-        "javaMethodName" : "searchAcrossEntities",
         "parameters" : [ {
           "name" : "entities",
           "type" : "{ \"type\" : \"array\", \"items\" : \"string\" }",
@@ -6696,7 +6668,6 @@
         "returns" : "com.linkedin.metadata.search.SearchResult"
       }, {
         "name" : "searchAcrossLineage",
-        "javaMethodName" : "searchAcrossLineage",
         "parameters" : [ {
           "name" : "urn",
           "type" : "string"
@@ -6745,7 +6716,6 @@
         "returns" : "com.linkedin.metadata.search.LineageSearchResult"
       }, {
         "name" : "setWritable",
-        "javaMethodName" : "setWriteable",
         "parameters" : [ {
           "name" : "value",
           "type" : "boolean",

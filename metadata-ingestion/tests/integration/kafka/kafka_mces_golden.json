@@ -86,8 +86,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -104,8 +103,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -120,8 +118,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -147,10 +144,10 @@
                             "time": 0,
                             "actor": "urn:li:corpuser:unknown"
                         },
-                        "hash": "a79a2fe3adab60b21d272a9cc3e93595",
+                        "hash": "cc452cf58242cdb9d09cf33d657497d8",
                         "platformSchema": {
                             "com.linkedin.pegasus2avro.schema.KafkaSchema": {
-                                "documentSchema": "{\"type\":\"record\",\"name\":\"CreateUserRequest\",\"namespace\":\"io.codebrews.createuserrequest\",\"doc\":\"Value schema for kafka topic\",\"fields\":[{\"name\":\"email\",\"type\":\"string\",\"tags\":[\"Email\"]},{\"name\":\"firstName\",\"type\":\"string\",\"tags\":[\"Name\"]},{\"name\":\"lastName\",\"type\":\"string\",\"tags\":[\"Name\"]}],\"tags\":[\"PII\"]}",
+                                "documentSchema": "{\"type\":\"record\",\"name\":\"CreateUserRequest\",\"namespace\":\"io.codebrews.createuserrequest\",\"doc\":\"Value schema for kafka topic\",\"fields\":[{\"name\":\"email\",\"type\":\"string\"},{\"name\":\"firstName\",\"type\":\"string\"},{\"name\":\"lastName\",\"type\":\"string\"}]}",
                                 "documentSchemaType": "AVRO",
                                 "keySchema": "{\"type\":\"record\",\"name\":\"UserKey\",\"namespace\":\"io.codebrews.createuserrequest\",\"doc\":\"Key schema for kafka topic\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"namespace\",\"type\":\"string\"}]}",
                                 "keySchemaType": "AVRO"
@@ -191,15 +188,7 @@
                                 },
                                 "nativeDataType": "email",
                                 "recursive": false,
-                                "globalTags": {
-                                    "tags": [
-                                        {
-                                            "tag": "urn:li:tag:Email"
-                                        }
-                                    ]
-                                },
-                                "isPartOfKey": false,
-                                "jsonProps": "{\"tags\": [\"Email\"]}"
+                                "isPartOfKey": false
                             },
                             {
                                 "fieldPath": "[version=2.0].[type=CreateUserRequest].[type=string].firstName",
@@ -211,15 +200,7 @@
                                 },
                                 "nativeDataType": "firstName",
                                 "recursive": false,
-                                "globalTags": {
-                                    "tags": [
-                                        {
-                                            "tag": "urn:li:tag:Name"
-                                        }
-                                    ]
-                                },
-                                "isPartOfKey": false,
-                                "jsonProps": "{\"tags\": [\"Name\"]}"
+                                "isPartOfKey": false
                             },
                             {
                                 "fieldPath": "[version=2.0].[type=CreateUserRequest].[type=string].lastName",
@@ -231,15 +212,7 @@
                                 },
                                 "nativeDataType": "lastName",
                                 "recursive": false,
-                                "globalTags": {
-                                    "tags": [
-                                        {
-                                            "tag": "urn:li:tag:Name"
-                                        }
-                                    ]
-                                },
-                                "isPartOfKey": false,
-                                "jsonProps": "{\"tags\": [\"Name\"]}"
+                                "isPartOfKey": false
                             }
                         ]
                     }
@@ -248,15 +221,6 @@
                     "com.linkedin.pegasus2avro.common.BrowsePaths": {
                         "paths": [
                             "/prod/kafka"
-                        ]
-                    }
-                },
-                {
-                    "com.linkedin.pegasus2avro.common.GlobalTags": {
-                        "tags": [
-                            {
-                                "tag": "urn:li:tag:PII"
-                            }
                         ]
                     }
                 },
@@ -282,8 +246,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -300,8 +263,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -318,8 +280,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -334,8 +295,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -361,10 +321,10 @@
                             "time": 0,
                             "actor": "urn:li:corpuser:unknown"
                         },
-                        "hash": "62c7c400ec5760797a59c45e59c2f2dc",
+                        "hash": "dc1cf32c2688cc3d2d27fe6e856f06d2",
                         "platformSchema": {
                             "com.linkedin.pegasus2avro.schema.KafkaSchema": {
-                                "documentSchema": "{\"type\":\"record\",\"name\":\"CreateUserRequest\",\"namespace\":\"io.codebrews.createuserrequest\",\"doc\":\"Value schema for kafka topic\",\"fields\":[{\"name\":\"email\",\"type\":\"string\",\"tags\":[\"Email\"]},{\"name\":\"firstName\",\"type\":\"string\",\"tags\":[\"Name\"]},{\"name\":\"lastName\",\"type\":\"string\",\"tags\":[\"Name\"]}],\"tags\":[\"PII\"]}",
+                                "documentSchema": "{\"type\":\"record\",\"name\":\"CreateUserRequest\",\"namespace\":\"io.codebrews.createuserrequest\",\"doc\":\"Value schema for kafka topic\",\"fields\":[{\"name\":\"email\",\"type\":\"string\"},{\"name\":\"firstName\",\"type\":\"string\"},{\"name\":\"lastName\",\"type\":\"string\"}]}",
                                 "documentSchemaType": "AVRO",
                                 "keySchema": "\"string\"",
                                 "keySchemaType": "AVRO"
@@ -393,15 +353,7 @@
                                 },
                                 "nativeDataType": "email",
                                 "recursive": false,
-                                "globalTags": {
-                                    "tags": [
-                                        {
-                                            "tag": "urn:li:tag:Email"
-                                        }
-                                    ]
-                                },
-                                "isPartOfKey": false,
-                                "jsonProps": "{\"tags\": [\"Email\"]}"
+                                "isPartOfKey": false
                             },
                             {
                                 "fieldPath": "[version=2.0].[type=CreateUserRequest].[type=string].firstName",
@@ -413,15 +365,7 @@
                                 },
                                 "nativeDataType": "firstName",
                                 "recursive": false,
-                                "globalTags": {
-                                    "tags": [
-                                        {
-                                            "tag": "urn:li:tag:Name"
-                                        }
-                                    ]
-                                },
-                                "isPartOfKey": false,
-                                "jsonProps": "{\"tags\": [\"Name\"]}"
+                                "isPartOfKey": false
                             },
                             {
                                 "fieldPath": "[version=2.0].[type=CreateUserRequest].[type=string].lastName",
@@ -433,15 +377,7 @@
                                 },
                                 "nativeDataType": "lastName",
                                 "recursive": false,
-                                "globalTags": {
-                                    "tags": [
-                                        {
-                                            "tag": "urn:li:tag:Name"
-                                        }
-                                    ]
-                                },
-                                "isPartOfKey": false,
-                                "jsonProps": "{\"tags\": [\"Name\"]}"
+                                "isPartOfKey": false
                             }
                         ]
                     }
@@ -450,15 +386,6 @@
                     "com.linkedin.pegasus2avro.common.BrowsePaths": {
                         "paths": [
                             "/prod/kafka"
-                        ]
-                    }
-                },
-                {
-                    "com.linkedin.pegasus2avro.common.GlobalTags": {
-                        "tags": [
-                            {
-                                "tag": "urn:li:tag:PII"
-                            }
                         ]
                     }
                 },
@@ -484,8 +411,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -502,8 +428,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 },
 {
@@ -518,56 +443,7 @@
     },
     "systemMetadata": {
         "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
-    }
-},
-{
-    "entityType": "tag",
-    "entityUrn": "urn:li:tag:Email",
-    "changeType": "UPSERT",
-    "aspectName": "tagKey",
-    "aspect": {
-        "json": {
-            "name": "Email"
-        }
-    },
-    "systemMetadata": {
-        "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
-    }
-},
-{
-    "entityType": "tag",
-    "entityUrn": "urn:li:tag:Name",
-    "changeType": "UPSERT",
-    "aspectName": "tagKey",
-    "aspect": {
-        "json": {
-            "name": "Name"
-        }
-    },
-    "systemMetadata": {
-        "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
-    }
-},
-{
-    "entityType": "tag",
-    "entityUrn": "urn:li:tag:PII",
-    "changeType": "UPSERT",
-    "aspectName": "tagKey",
-    "aspect": {
-        "json": {
-            "name": "PII"
-        }
-    },
-    "systemMetadata": {
-        "lastObserved": 1586847600000,
-        "runId": "kafka-test",
-        "lastRunId": "no-run-id-provided"
+        "runId": "kafka-test"
     }
 }
 ]

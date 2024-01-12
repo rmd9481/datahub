@@ -1,6 +1,5 @@
 package com.linkedin.metadata.graph.neo4j;
 
-import apoc.path.PathExplorer;
 import java.io.File;
 import java.net.URI;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -18,7 +17,7 @@ public class Neo4jTestServerBuilder {
   }
 
   public Neo4jTestServerBuilder() {
-    this(new InProcessNeo4jBuilder().withProcedure(PathExplorer.class));
+    this(new InProcessNeo4jBuilder());
   }
 
   public Neo4jTestServerBuilder(File workingDirectory) {

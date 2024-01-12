@@ -1,19 +1,17 @@
+import YAML from 'yamljs';
 import {
     CheckCircleOutlined,
     ClockCircleOutlined,
     CloseCircleOutlined,
-    ExclamationCircleOutlined,
     LoadingOutlined,
-    StopOutlined,
     WarningOutlined,
 } from '@ant-design/icons';
-import YAML from 'yamljs';
-import { ListIngestionSourcesDocument, ListIngestionSourcesQuery } from '../../../graphql/ingestion.generated';
-import { EntityType, FacetMetadata } from '../../../types.generated';
-import EntityRegistry from '../../entity/EntityRegistry';
 import { ANTD_GRAY, REDESIGN_COLORS } from '../../entity/shared/constants';
+import { EntityType, FacetMetadata } from '../../../types.generated';
 import { capitalizeFirstLetterOnly, pluralize } from '../../shared/textUtil';
+import EntityRegistry from '../../entity/EntityRegistry';
 import { SourceConfig } from './builder/types';
+import { ListIngestionSourcesDocument, ListIngestionSourcesQuery } from '../../../graphql/ingestion.generated';
 
 export const getSourceConfigs = (ingestionSources: SourceConfig[], sourceType: string) => {
     const sourceConfigs = ingestionSources.find((source) => source.name === sourceType);
@@ -42,9 +40,7 @@ export function getPlaceholderRecipe(ingestionSources: SourceConfig[], type?: st
 
 export const RUNNING = 'RUNNING';
 export const SUCCESS = 'SUCCESS';
-export const WARNING = 'WARNING';
 export const FAILURE = 'FAILURE';
-export const CONNECTION_FAILURE = 'CONNECTION_FAILURE';
 export const CANCELLED = 'CANCELLED';
 export const UP_FOR_RETRY = 'UP_FOR_RETRY';
 export const ROLLING_BACK = 'ROLLING_BACK';
@@ -60,10 +56,8 @@ export const getExecutionRequestStatusIcon = (status: string) => {
     return (
         (status === RUNNING && LoadingOutlined) ||
         (status === SUCCESS && CheckCircleOutlined) ||
-        (status === WARNING && ExclamationCircleOutlined) ||
         (status === FAILURE && CloseCircleOutlined) ||
-        (status === CONNECTION_FAILURE && CloseCircleOutlined) ||
-        (status === CANCELLED && StopOutlined) ||
+        (status === CANCELLED && CloseCircleOutlined) ||
         (status === UP_FOR_RETRY && ClockCircleOutlined) ||
         (status === ROLLED_BACK && WarningOutlined) ||
         (status === ROLLING_BACK && LoadingOutlined) ||
@@ -76,9 +70,7 @@ export const getExecutionRequestStatusDisplayText = (status: string) => {
     return (
         (status === RUNNING && 'Running') ||
         (status === SUCCESS && 'Succeeded') ||
-        (status === WARNING && 'Completed') ||
         (status === FAILURE && 'Failed') ||
-        (status === CONNECTION_FAILURE && 'Connection Failed') ||
         (status === CANCELLED && 'Cancelled') ||
         (status === UP_FOR_RETRY && 'Up for Retry') ||
         (status === ROLLED_BACK && 'Rolled Back') ||
@@ -91,25 +83,21 @@ export const getExecutionRequestStatusDisplayText = (status: string) => {
 export const getExecutionRequestSummaryText = (status: string) => {
     switch (status) {
         case RUNNING:
-            return 'Ingestion is running...';
+            return 'Ingestion is running';
         case SUCCESS:
-            return 'Ingestion succeeded with no errors or suspected missing data.';
-        case WARNING:
-            return 'Ingestion completed with minor or intermittent errors.';
+            return 'Ingestion successfully completed';
         case FAILURE:
-            return 'Ingestion failed to complete, or completed with serious errors.';
-        case CONNECTION_FAILURE:
-            return 'Ingestion failed due to network, authentication, or permission issues.';
+            return 'Ingestion completed with errors';
         case CANCELLED:
-            return 'Ingestion was cancelled.';
+            return 'Ingestion was cancelled';
         case ROLLED_BACK:
-            return 'Ingestion was rolled back.';
+            return 'Ingestion was rolled back';
         case ROLLING_BACK:
-            return 'Ingestion is in the process of rolling back.';
+            return 'Ingestion is in the process of rolling back';
         case ROLLBACK_FAILED:
-            return 'Ingestion rollback failed.';
+            return 'Ingestion rollback failed';
         default:
-            return 'Ingestion status not recognized.';
+            return 'Ingestion status not recognized';
     }
 };
 
@@ -117,9 +105,7 @@ export const getExecutionRequestStatusDisplayColor = (status: string) => {
     return (
         (status === RUNNING && REDESIGN_COLORS.BLUE) ||
         (status === SUCCESS && 'green') ||
-        (status === WARNING && 'orangered') ||
         (status === FAILURE && 'red') ||
-        (status === CONNECTION_FAILURE && 'crimson') ||
         (status === UP_FOR_RETRY && 'orange') ||
         (status === CANCELLED && ANTD_GRAY[9]) ||
         (status === ROLLED_BACK && 'orange') ||

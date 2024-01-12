@@ -1,5 +1,4 @@
 """LDAP Source"""
-import contextlib
 import dataclasses
 from typing import Any, Dict, Iterable, List, Optional
 
@@ -391,10 +390,10 @@ class LDAPSource(StatefulIngestionSourceBase):
         country_code = get_attr_or_none(
             attrs, self.config.user_attrs_map["countryCode"]
         )
-        department_id = None
-        with contextlib.suppress(ValueError):
-            if department_id_str:
-                department_id = int(department_id_str)
+        if department_id_str:
+            department_id = int(department_id_str)
+        else:
+            department_id = None
 
         custom_props_map = {}
         if self.config.custom_props_list:

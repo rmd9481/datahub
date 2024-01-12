@@ -11,6 +11,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
+
 @Configuration
 @Import({ElasticSearchSystemMetadataServiceFactory.class})
 public class SystemMetadataServiceFactory {
@@ -23,6 +24,6 @@ public class SystemMetadataServiceFactory {
   @Bean(name = "systemMetadataService")
   @Primary
   protected SystemMetadataService createInstance() {
-    return _elasticSearchSystemMetadataService;
+      return _elasticSearchSystemMetadataService;
   }
 }

@@ -1,7 +1,8 @@
 package com.linkedin.metadata.datahubusage;
 
 public class DataHubUsageEventConstants {
-  private DataHubUsageEventConstants() {}
+  private DataHubUsageEventConstants() {
+  }
 
   // Common fields
   public static final String TYPE = "type";

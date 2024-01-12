@@ -6,8 +6,7 @@ import graphql.schema.TypeResolver;
 
 public class TimeSeriesAspectInterfaceTypeResolver implements TypeResolver {
 
-  public TimeSeriesAspectInterfaceTypeResolver() {}
-
+  public TimeSeriesAspectInterfaceTypeResolver() { }
   @Override
   public GraphQLObjectType getType(TypeResolutionEnvironment env) {
     // TODO(John): Fill this out.

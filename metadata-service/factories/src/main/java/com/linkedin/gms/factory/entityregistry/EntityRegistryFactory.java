@@ -32,8 +32,7 @@ public class EntityRegistryFactory {
   @Primary
   @Nonnull
   protected EntityRegistry getInstance() throws EntityRegistryException {
-    MergedEntityRegistry baseEntityRegistry =
-        new MergedEntityRegistry(SnapshotEntityRegistry.getInstance()).apply(configEntityRegistry);
+    MergedEntityRegistry baseEntityRegistry = new MergedEntityRegistry(SnapshotEntityRegistry.getInstance()).apply(configEntityRegistry);
     pluginEntityRegistryLoader.withBaseRegistry(baseEntityRegistry).start(true);
     return baseEntityRegistry;
   }

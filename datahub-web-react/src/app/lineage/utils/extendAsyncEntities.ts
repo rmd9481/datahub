@@ -130,18 +130,6 @@ export function extendColumnLineage(
                     });
                 });
             });
-            if (lineageVizConfig.type === EntityType.DataJob && !fineGrainedLineage.upstreams?.length) {
-                fineGrainedLineage.downstreams?.forEach((downstream) => {
-                    const [downstreamEntityUrn, downstreamField] = breakFieldUrn(downstream);
-                    updateFineGrainedMap(
-                        fineGrainedMap,
-                        lineageVizConfig.urn,
-                        downstreamField,
-                        downstreamEntityUrn,
-                        downstreamField,
-                    );
-                });
-            }
         });
     }
 

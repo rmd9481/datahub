@@ -1,9 +1,5 @@
 package com.linkedin.datahub.graphql.resolvers.role;
 
-import static com.linkedin.datahub.graphql.TestUtils.*;
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
-
 import com.datahub.authentication.Authentication;
 import com.datahub.authorization.role.RoleService;
 import com.google.common.collect.ImmutableList;
@@ -14,6 +10,11 @@ import graphql.schema.DataFetchingEnvironment;
 import java.util.List;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static com.linkedin.datahub.graphql.TestUtils.*;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
+
 
 public class BatchAssignRoleResolverTest {
   private static final String ROLE_URN_STRING = "urn:li:dataHubRole:Admin";

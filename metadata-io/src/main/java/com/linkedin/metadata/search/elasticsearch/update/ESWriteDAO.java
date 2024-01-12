@@ -6,15 +6,16 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opensearch.action.delete.DeleteRequest;
-import org.opensearch.action.update.UpdateRequest;
-import org.opensearch.client.RequestOptions;
-import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.client.indices.GetIndexRequest;
-import org.opensearch.client.indices.GetIndexResponse;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.script.Script;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexResponse;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.script.Script;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,11 +34,10 @@ public class ESWriteDAO {
    * @param document the document to update / insert
    * @param docId the ID of the document
    */
-  public void upsertDocument(
-      @Nonnull String entityName, @Nonnull String document, @Nonnull String docId) {
+  public void upsertDocument(@Nonnull String entityName, @Nonnull String document, @Nonnull String docId) {
     final String indexName = indexConvention.getIndexName(entityRegistry.getEntitySpec(entityName));
-    final UpdateRequest updateRequest =
-        new UpdateRequest(indexName, docId)
+    final UpdateRequest updateRequest = new UpdateRequest(
+            indexName, docId)
             .detectNoop(false)
             .docAsUpsert(true)
             .doc(document, XContentType.JSON)
@@ -57,12 +57,12 @@ public class ESWriteDAO {
     bulkProcessor.add(new DeleteRequest(indexName).id(docId));
   }
 
-  /** Applies a script to a particular document */
-  public void applyScriptUpdate(
-      @Nonnull String entityName, @Nonnull String docId, @Nonnull String script) {
+  /**
+   * Applies a script to a particular document
+   */
+  public void applyScriptUpdate(@Nonnull String entityName, @Nonnull String docId, @Nonnull String script) {
     final String indexName = indexConvention.getIndexName(entityRegistry.getEntitySpec(entityName));
-    UpdateRequest updateRequest =
-        new UpdateRequest(indexName, docId)
+    UpdateRequest updateRequest = new UpdateRequest(indexName, docId)
             .detectNoop(false)
             .scriptedUpsert(true)
             .retryOnConflict(numRetries)
@@ -70,7 +70,9 @@ public class ESWriteDAO {
     bulkProcessor.add(updateRequest);
   }
 
-  /** Clear all documents in all the indices */
+  /**
+   * Clear all documents in all the indices
+   */
   public void clear() {
     String[] indices = getIndices(indexConvention.getAllEntityIndicesPattern());
     bulkProcessor.deleteByQuery(QueryBuilders.matchAllQuery(), indices);
@@ -78,12 +80,11 @@ public class ESWriteDAO {
 
   private String[] getIndices(String pattern) {
     try {
-      GetIndexResponse response =
-          searchClient.indices().get(new GetIndexRequest(pattern), RequestOptions.DEFAULT);
+      GetIndexResponse response = searchClient.indices().get(new GetIndexRequest(pattern), RequestOptions.DEFAULT);
       return response.getIndices();
     } catch (IOException e) {
       log.error("Failed to get indices using pattern {}", pattern);
-      return new String[] {};
+      return new String[]{};
     }
   }
 }

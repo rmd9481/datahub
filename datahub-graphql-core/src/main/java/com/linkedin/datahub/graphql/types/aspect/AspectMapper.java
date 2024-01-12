@@ -7,6 +7,7 @@ import com.linkedin.entity.EnvelopedAspect;
 import com.linkedin.metadata.Constants;
 import javax.annotation.Nonnull;
 
+
 public class AspectMapper {
 
   public static final AspectMapper INSTANCE = new AspectMapper();

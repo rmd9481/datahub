@@ -1,5 +1,6 @@
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Type, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
 
 from datahub.emitter.mce_builder import Aspect
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
@@ -21,9 +22,7 @@ from datahub.metadata.schema_classes import (
 
 
 class MockDataHubGraph(DataHubGraph):
-    def __init__(
-        self, entity_graph: Optional[Dict[str, Dict[str, Any]]] = None
-    ) -> None:
+    def __init__(self, entity_graph: Dict[str, Dict[str, Any]] = {}) -> None:
         self.emitted: List[
             Union[
                 MetadataChangeEvent,
@@ -31,7 +30,7 @@ class MockDataHubGraph(DataHubGraph):
                 MetadataChangeProposalWrapper,
             ]
         ] = []
-        self.entity_graph = entity_graph or {}
+        self.entity_graph = entity_graph
 
     def import_file(self, file: Path) -> None:
         """Imports metadata from any MCE/MCP file. Does not clear prior loaded data.
@@ -111,8 +110,9 @@ class MockDataHubGraph(DataHubGraph):
             UsageAggregationClass,
         ],
         callback: Union[Callable[[Exception, str], None], None] = None,
-    ) -> None:
+    ) -> Tuple[datetime, datetime]:
         self.emitted.append(item)  # type: ignore
+        return (datetime.now(), datetime.now())
 
     def emit_mce(self, mce: MetadataChangeEvent) -> None:
         self.emitted.append(mce)

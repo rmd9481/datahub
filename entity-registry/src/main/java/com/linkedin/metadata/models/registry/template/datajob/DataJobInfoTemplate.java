@@ -7,6 +7,7 @@ import com.linkedin.datajob.DataJobInfo;
 import com.linkedin.metadata.models.registry.template.Template;
 import javax.annotation.Nonnull;
 
+
 public class DataJobInfoTemplate implements Template<DataJobInfo> {
 
   @Override

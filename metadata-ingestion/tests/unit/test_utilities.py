@@ -1,5 +1,5 @@
 from datahub.utilities.delayed_iter import delayed_iter
-from datahub.utilities.sql_parser import SqlLineageSQLParser
+from datahub.utilities.sql_parser import MetadataSQLSQLParser, SqlLineageSQLParser
 
 
 def test_delayed_iter():
@@ -36,10 +36,18 @@ def test_delayed_iter():
     ]
 
 
+def test_metadatasql_sql_parser_get_tables_from_simple_query():
+    sql_query = "SELECT foo.a, foo.b, bar.c FROM foo JOIN bar ON (foo.a == bar.b);"
+
+    tables_list = MetadataSQLSQLParser(sql_query).get_tables()
+    tables_list.sort()
+    assert tables_list == ["bar", "foo"]
+
+
 def test_sqllineage_sql_parser_get_tables_from_simple_query():
     sql_query = "SELECT foo.a, foo.b, bar.c FROM foo JOIN bar ON (foo.a == bar.b);"
 
-    tables_list = SqlLineageSQLParser(sql_query).get_tables()
+    tables_list = MetadataSQLSQLParser(sql_query).get_tables()
     tables_list.sort()
     assert tables_list == ["bar", "foo"]
 
@@ -113,7 +121,7 @@ def test_sqllineage_sql_parser_get_columns_from_simple_query():
     assert columns_list == ["a", "b"]
 
 
-def test_sqllineage_sql_parser_get_columns_with_alias_and_count_star():
+def test_metadatasql_sql_parser_get_columns_with_alias_and_count_star():
     sql_query = "SELECT foo.a, foo.b, bar.c as test, count(*) as count FROM foo JOIN bar ON (foo.a == bar.b);"
 
     columns_list = SqlLineageSQLParser(sql_query).get_columns()
@@ -121,7 +129,7 @@ def test_sqllineage_sql_parser_get_columns_with_alias_and_count_star():
     assert columns_list == ["a", "b", "count", "test"]
 
 
-def test_sqllineage_sql_parser_get_columns_with_more_complex_join():
+def test_metadatasql_sql_parser_get_columns_with_more_complex_join():
     sql_query = """
     INSERT
     INTO
@@ -198,6 +206,21 @@ date :: date) <= 7
     assert columns_list == ["c", "date", "e", "u", "x"]
 
 
+def test_metadatasql_sql_parser_get_tables_from_templated_query():
+    sql_query = """
+        SELECT
+          country,
+          city,
+          timestamp,
+          measurement
+        FROM
+          ${my_view.SQL_TABLE_NAME} AS my_view
+"""
+    tables_list = MetadataSQLSQLParser(sql_query).get_tables()
+    tables_list.sort()
+    assert tables_list == ["my_view.SQL_TABLE_NAME"]
+
+
 def test_sqllineage_sql_parser_get_tables_from_templated_query():
     sql_query = """
         SELECT
@@ -211,6 +234,21 @@ def test_sqllineage_sql_parser_get_tables_from_templated_query():
     tables_list = SqlLineageSQLParser(sql_query).get_tables()
     tables_list.sort()
     assert tables_list == ["my_view.SQL_TABLE_NAME"]
+
+
+def test_metadatasql_sql_parser_get_columns_from_templated_query():
+    sql_query = """
+        SELECT
+          country,
+          city,
+          timestamp,
+          measurement
+        FROM
+          ${my_view.SQL_TABLE_NAME} AS my_view
+"""
+    columns_list = MetadataSQLSQLParser(sql_query).get_columns()
+    columns_list.sort()
+    assert columns_list == ["city", "country", "measurement", "timestamp"]
 
 
 def test_sqllineage_sql_parser_get_columns_from_templated_query():
@@ -237,6 +275,34 @@ def test_sqllineage_sql_parser_with_weird_lookml_query():
     columns_list = SqlLineageSQLParser(sql_query).get_columns()
     columns_list.sort()
     assert columns_list == ["aliased_platform", "country", "date"]
+
+
+def test_metadatasql_sql_parser_with_weird_lookml_query():
+    sql_query = """
+    SELECT date DATE,
+             platform VARCHAR(20) AS aliased_platform,
+             country VARCHAR(20) FROM fragment_derived_view'
+    """
+    columns_list = MetadataSQLSQLParser(sql_query).get_columns()
+    columns_list.sort()
+    assert columns_list == ["aliased_platform", "country", "date"]
+
+
+def test_metadatasql_sql_parser_tables_from_redash_query():
+    sql_query = """SELECT
+name,
+SUM(quantity * list_price * (1 - discount)) AS total,
+YEAR(order_date) as order_year
+FROM
+`orders` o
+INNER JOIN `order_items` i ON i.order_id = o.order_id
+INNER JOIN `staffs` s ON s.staff_id = o.staff_id
+GROUP BY
+name,
+year(order_date)"""
+    table_list = MetadataSQLSQLParser(sql_query).get_tables()
+    table_list.sort()
+    assert table_list == ["order_items", "orders", "staffs"]
 
 
 def test_sqllineage_sql_parser_tables_from_redash_query():

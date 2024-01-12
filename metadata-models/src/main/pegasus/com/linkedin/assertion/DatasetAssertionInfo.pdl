@@ -18,10 +18,9 @@ record DatasetAssertionInfo {
     /**
     * Scope of the Assertion. What part of the dataset does this assertion apply to?
     **/
-    @Searchable = {}
     scope: enum DatasetAssertionScope {
       /**
-      * This assertion applies to dataset column(s)
+      * This assertion applies to dataset columns
       */
       DATASET_COLUMN
 
@@ -29,11 +28,6 @@ record DatasetAssertionInfo {
       * This assertion applies to entire rows of the dataset
       */
       DATASET_ROWS
-
-      /**
-      * This assertion applies to the storage size of the dataset
-      */
-      DATASET_STORAGE_SIZE
 
       /**
       * This assertion applies to the schema of the dataset
@@ -47,9 +41,7 @@ record DatasetAssertionInfo {
     }
 
     /**
-    * One or more dataset schema fields that are targeted by this assertion.
-    *
-    * This field is expected to be provided if the assertion scope is DATASET_COLUMN.
+    * One or more dataset schema fields that are targeted by this assertion
     */
     @Relationship = {
       "/*": {
@@ -57,18 +49,11 @@ record DatasetAssertionInfo {
         "entityTypes": [ "schemaField" ]
       }
     }
-    @Searchable = {
-      "/*": {
-        "fieldType": "URN"
-      }
-    }
     fields: optional array[Urn]
 
     /**
     * Standardized assertion operator
-    * This field is left blank if there is no selected aggregation or metric for a particular column.
     */
-    @Searchable = {}
     aggregation: optional AssertionStdAggregation
 
     /**

@@ -40,7 +40,6 @@ export const SecretBuilderModal = ({ initialState, visible, onSubmit, onCancel }
                         Cancel
                     </Button>
                     <Button
-                        data-testid="secret-modal-create-button"
                         id="createSecretButton"
                         onClick={() =>
                             onSubmit?.(
@@ -72,7 +71,6 @@ export const SecretBuilderModal = ({ initialState, visible, onSubmit, onCancel }
                         Give your secret a name. This is what you&apos;ll use to reference the secret from your recipes.
                     </Typography.Paragraph>
                     <Form.Item
-                        data-testid="secret-modal-name-input"
                         name={NAME_FIELD_NAME}
                         rules={[
                             {
@@ -81,7 +79,7 @@ export const SecretBuilderModal = ({ initialState, visible, onSubmit, onCancel }
                             },
                             { whitespace: false },
                             { min: 1, max: 50 },
-                            { pattern: /^[a-zA-Z_]+[a-zA-Z0-9_]*$/, message: 'Please start the secret name with a letter, followed by letters, digits, or underscores only.' },
+                            { pattern: /^[^\s\t${}\\,'"]+$/, message: 'This secret name is not allowed.' },
                         ]}
                         hasFeedback
                     >
@@ -93,7 +91,6 @@ export const SecretBuilderModal = ({ initialState, visible, onSubmit, onCancel }
                         The value of your secret, which will be encrypted and stored securely within DataHub.
                     </Typography.Paragraph>
                     <Form.Item
-                        data-testid="secret-modal-value-input"
                         name={VALUE_FIELD_NAME}
                         rules={[
                             {
@@ -113,7 +110,6 @@ export const SecretBuilderModal = ({ initialState, visible, onSubmit, onCancel }
                         An optional description to help keep track of your secret.
                     </Typography.Paragraph>
                     <Form.Item
-                        data-testid="secret-modal-description-input"
                         name={DESCRIPTION_FIELD_NAME}
                         rules={[{ whitespace: true }, { min: 1, max: 500 }]}
                         hasFeedback

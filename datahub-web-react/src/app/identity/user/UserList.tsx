@@ -25,16 +25,9 @@ import { useUpdateEducationStepIdsAllowlist } from '../../onboarding/useUpdateEd
 import { DEFAULT_USER_LIST_PAGE_SIZE, removeUserFromListUsersCache } from './cacheUtils';
 import { useUserContext } from '../../context/useUserContext';
 
-const UserContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-`;
+const UserContainer = styled.div``;
 
 const UserStyledList = styled(List)`
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
     &&& {
         width: 100%;
         border-color: ${(props) => props.theme.styles['border-color-base']};
@@ -52,7 +45,6 @@ export const UserList = () => {
     const params = QueryString.parse(location.search, { arrayFormat: 'comma' });
     const paramsQuery = (params?.query as string) || undefined;
     const [query, setQuery] = useState<undefined | string>(undefined);
-    const [usersList, setUsersList] = useState<Array<any>>([]);
     useEffect(() => setQuery(paramsQuery), [paramsQuery]);
 
     const [page, setPage] = useState(1);
@@ -78,13 +70,12 @@ export const UserList = () => {
                 query: (query?.length && query) || undefined,
             },
         },
-        fetchPolicy: 'no-cache',
+        fetchPolicy: (query?.length || 0) > 0 ? 'no-cache' : 'cache-first',
     });
 
     const totalUsers = usersData?.listUsers?.total || 0;
-    useEffect(()=> {
-        setUsersList(usersData?.listUsers?.users || []);
-    }, [usersData]);
+    const users = usersData?.listUsers?.users || [];
+
     const onChangePage = (newPage: number) => {
         scrollToTop();
         setPage(newPage);
@@ -144,11 +135,7 @@ export const UserList = () => {
                             fontSize: 12,
                         }}
                         onSearch={() => null}
-                        onQueryChange={(q) => {
-                            setPage(1);
-                            setQuery(q);
-                            setUsersList([]);
-                        }}
+                        onQueryChange={(q) => setQuery(q)}
                         entityRegistry={entityRegistry}
                         hideRecommendations
                     />
@@ -158,7 +145,7 @@ export const UserList = () => {
                     locale={{
                         emptyText: <Empty description="No Users!" image={Empty.PRESENTED_IMAGE_SIMPLE} />,
                     }}
-                    dataSource={usersList}
+                    dataSource={users}
                     renderItem={(item: any) => (
                         <UserListItem
                             onDelete={() => handleDelete(item.urn as string)}

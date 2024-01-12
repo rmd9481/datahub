@@ -76,7 +76,6 @@ export const MarkdownView = styled(MDEditor.Markdown)`
 export type Props = {
     source: string;
     limit?: number;
-    // eslint-disable-next-line react/no-unused-prop-types
     isCompact?: boolean;
     editable?: boolean;
     onEditClicked?: () => void;

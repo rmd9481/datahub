@@ -17,17 +17,14 @@ logger = logging.getLogger(__name__)
 
 
 class DatahubIngestionStateProviderConfig(IngestionCheckpointingProviderConfig):
-    datahub_api: DatahubClientConfig = DatahubClientConfig()
+    datahub_api: Optional[DatahubClientConfig] = DatahubClientConfig()
 
 
 class DatahubIngestionCheckpointingProvider(IngestionCheckpointingProviderBase):
     orchestrator_name: str = "datahub"
 
-    def __init__(
-        self,
-        graph: DataHubGraph,
-    ):
-        super().__init__(self.__class__.__name__)
+    def __init__(self, graph: DataHubGraph, name: str):
+        super().__init__(name)
         self.graph = graph
         if not self._is_server_stateful_ingestion_capable():
             raise ConfigurationError(
@@ -37,14 +34,24 @@ class DatahubIngestionCheckpointingProvider(IngestionCheckpointingProviderBase):
 
     @classmethod
     def create(
-        cls, config_dict: Dict[str, Any], ctx: PipelineContext
+        cls, config_dict: Dict[str, Any], ctx: PipelineContext, name: str
     ) -> "DatahubIngestionCheckpointingProvider":
-        config = DatahubIngestionStateProviderConfig.parse_obj(config_dict)
         if ctx.graph:
             # Use the pipeline-level graph if set
-            return cls(ctx.graph)
+            return cls(ctx.graph, name)
+        elif config_dict is None:
+            raise ConfigurationError("Missing provider configuration.")
         else:
-            return cls(DataHubGraph(config.datahub_api))
+            provider_config = (
+                DatahubIngestionStateProviderConfig.parse_obj_allow_extras(config_dict)
+            )
+            if provider_config.datahub_api:
+                graph = DataHubGraph(provider_config.datahub_api)
+                return cls(graph, name)
+            else:
+                raise ConfigurationError(
+                    "Missing datahub_api. Provide either a global one or under the state_provider."
+                )
 
     def _is_server_stateful_ingestion_capable(self) -> bool:
         server_config = self.graph.get_config() if self.graph else None

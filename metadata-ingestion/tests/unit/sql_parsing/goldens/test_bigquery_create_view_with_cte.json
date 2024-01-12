@@ -12,13 +12,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,my-proj-2.dataset.my_view,PROD)",
-                "column": "col5",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "STRING"
+                "column": "col5"
             },
             "upstreams": [
                 {
@@ -30,13 +24,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,my-proj-2.dataset.my_view,PROD)",
-                "column": "col1",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "STRING"
+                "column": "col1"
             },
             "upstreams": [
                 {
@@ -48,13 +36,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,my-proj-2.dataset.my_view,PROD)",
-                "column": "col2",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "STRING"
+                "column": "col2"
             },
             "upstreams": [
                 {
@@ -66,13 +48,7 @@
         {
             "downstream": {
                 "table": "urn:li:dataset:(urn:li:dataPlatform:bigquery,my-proj-2.dataset.my_view,PROD)",
-                "column": "col3",
-                "column_type": {
-                    "type": {
-                        "com.linkedin.pegasus2avro.schema.StringType": {}
-                    }
-                },
-                "native_column_type": "STRING"
+                "column": "col3"
             },
             "upstreams": [
                 {

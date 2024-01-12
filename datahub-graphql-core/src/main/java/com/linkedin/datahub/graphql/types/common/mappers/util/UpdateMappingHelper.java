@@ -6,6 +6,7 @@ import com.linkedin.metadata.utils.GenericRecordUtils;
 import com.linkedin.mxe.MetadataChangeProposal;
 import lombok.AllArgsConstructor;
 
+
 @AllArgsConstructor
 public class UpdateMappingHelper {
   private final String entityName;

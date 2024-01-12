@@ -3,7 +3,6 @@ from typing import Dict, List, Set
 
 import pytest
 
-import datahub.emitter.mce_builder as builder
 from datahub.ingestion.source.bigquery_v2.bigquery_audit import (
     BigQueryTableRef,
     QueryEvent,
@@ -82,9 +81,7 @@ def lineage_entries() -> List[QueryEvent]:
 def test_lineage_with_timestamps(lineage_entries: List[QueryEvent]) -> None:
     config = BigQueryV2Config()
     report = BigQueryV2Report()
-    extractor: BigqueryLineageExtractor = BigqueryLineageExtractor(
-        config, report, lambda x: builder.make_dataset_urn("bigquery", str(x))
-    )
+    extractor: BigqueryLineageExtractor = BigqueryLineageExtractor(config, report)
 
     bq_table = BigQueryTableRef.from_string_name(
         "projects/my_project/datasets/my_dataset/tables/my_table"
@@ -99,6 +96,7 @@ def test_lineage_with_timestamps(lineage_entries: List[QueryEvent]) -> None:
         bq_table=bq_table,
         bq_table_urn="urn:li:dataset:(urn:li:dataPlatform:bigquery,my_project.my_dataset.my_table,PROD)",
         lineage_metadata=lineage_map,
+        platform="bigquery",
     )
     assert upstream_lineage
     assert len(upstream_lineage.upstreams) == 4
@@ -107,9 +105,7 @@ def test_lineage_with_timestamps(lineage_entries: List[QueryEvent]) -> None:
 def test_column_level_lineage(lineage_entries: List[QueryEvent]) -> None:
     config = BigQueryV2Config(extract_column_lineage=True, incremental_lineage=False)
     report = BigQueryV2Report()
-    extractor: BigqueryLineageExtractor = BigqueryLineageExtractor(
-        config, report, lambda x: builder.make_dataset_urn("bigquery", str(x))
-    )
+    extractor: BigqueryLineageExtractor = BigqueryLineageExtractor(config, report)
 
     bq_table = BigQueryTableRef.from_string_name(
         "projects/my_project/datasets/my_dataset/tables/my_table"
@@ -124,6 +120,7 @@ def test_column_level_lineage(lineage_entries: List[QueryEvent]) -> None:
         bq_table=bq_table,
         bq_table_urn="urn:li:dataset:(urn:li:dataPlatform:bigquery,my_project.my_dataset.my_table,PROD)",
         lineage_metadata=lineage_map,
+        platform="bigquery",
     )
     assert upstream_lineage
     assert len(upstream_lineage.upstreams) == 2

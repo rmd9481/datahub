@@ -77,7 +77,6 @@ class SnowflakeColumn(BaseColumn):
 
 @dataclass
 class SnowflakeTable(BaseTable):
-    type: Optional[str] = None
     clustering_key: Optional[str] = None
     pk: Optional[SnowflakePK] = None
     columns: List[SnowflakeColumn] = field(default_factory=list)
@@ -266,7 +265,6 @@ class SnowflakeDataDictionary(SnowflakeQueryMixin):
             tables[table["TABLE_SCHEMA"]].append(
                 SnowflakeTable(
                     name=table["TABLE_NAME"],
-                    type=table["TABLE_TYPE"],
                     created=table["CREATED"],
                     last_altered=table["LAST_ALTERED"],
                     size_in_bytes=table["BYTES"],
@@ -290,7 +288,6 @@ class SnowflakeDataDictionary(SnowflakeQueryMixin):
             tables.append(
                 SnowflakeTable(
                     name=table["TABLE_NAME"],
-                    type=table["TABLE_TYPE"],
                     created=table["CREATED"],
                     last_altered=table["LAST_ALTERED"],
                     size_in_bytes=table["BYTES"],

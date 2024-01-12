@@ -1,8 +1,12 @@
 import pytest
 import tenacity
-
-from tests.utils import (get_frontend_session, get_frontend_url, get_root_urn,
-                         get_sleep_info, wait_for_healthcheck_util)
+from tests.utils import (
+    get_frontend_url,
+    wait_for_healthcheck_util,
+    get_frontend_session,
+    get_sleep_info,
+    get_root_urn,
+)
 
 TEST_POLICY_NAME = "Updated Platform Policy"
 

@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.linkedin.common.AuditStamp;
 import com.linkedin.common.urn.Urn;
 import com.linkedin.metadata.timeline.data.ChangeCategory;
-import com.linkedin.metadata.timeline.data.ChangeEvent;
 import com.linkedin.metadata.timeline.data.ChangeOperation;
+import com.linkedin.metadata.timeline.data.ChangeEvent;
 import com.linkedin.metadata.timeline.data.SemanticChangeType;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -27,7 +27,8 @@ public class SchemaFieldGlossaryTermChangeEvent extends ChangeEvent {
       String description,
       String fieldPath,
       Urn parentUrn,
-      Urn termUrn) {
+      Urn termUrn
+  ) {
     super(
         entityUrn,
         category,
@@ -36,9 +37,11 @@ public class SchemaFieldGlossaryTermChangeEvent extends ChangeEvent {
         ImmutableMap.of(
             "fieldPath", fieldPath,
             "parentUrn", parentUrn.toString(),
-            "termUrn", termUrn.toString()),
+            "termUrn", termUrn.toString()
+        ),
         auditStamp,
         semVerChange,
-        description);
+        description
+    );
   }
 }

@@ -67,7 +67,6 @@ entities:
       - institutionalMemory
       - dataPlatformInstance
       - browsePathsV2
-      - subTypes
   - name: dataFlow
     category: core
     keyAspect: dataFlowKey
@@ -101,7 +100,6 @@ entities:
       - dataProcessInstanceRelationships
       - dataProcessInstanceRunEvent
   - name: chart
-    category: core
     keyAspect: chartKey
     aspects:
       - chartInfo
@@ -121,7 +119,6 @@ entities:
       - globalTags
       - glossaryTerms
       - browsePathsV2
-      - subTypes
   - name: dashboard
     keyAspect: dashboardKey
     aspects:
@@ -186,7 +183,6 @@ entities:
       - origin
   - name: domain
     doc: A data domain within an organization.
-    category: core
     keyAspect: domainKey
     aspects:
       - domainProperties
@@ -194,7 +190,6 @@ entities:
       - ownership
   - name: container
     doc: A container of related data assets.
-    category: core
     keyAspect: containerKey
     aspects:
       - containerProperties
@@ -211,7 +206,6 @@ entities:
       - domains
       - browsePathsV2
   - name: tag
-    category: core
     keyAspect: tagKey
     aspects:
       - tagProperties
@@ -219,7 +213,6 @@ entities:
       - deprecation
       - status
   - name: glossaryTerm
-    category: core
     keyAspect: glossaryTermKey
     aspects:
       - glossaryTermInfo
@@ -232,7 +225,6 @@ entities:
       - status
       - browsePaths
   - name: glossaryNode
-    category: core
     keyAspect: glossaryNodeKey
     aspects:
       - glossaryNodeInfo
@@ -264,7 +256,6 @@ entities:
       - assertionInfo
       - dataPlatformInstance
       - assertionRunEvent
-      - assertionActions
       - status
   - name: dataHubRetention
     category: internal
@@ -401,7 +392,7 @@ entities:
       - dataHubUpgradeRequest
       - dataHubUpgradeResult
   - name: inviteToken
-    category: internal
+    category: core
     keyAspect: inviteTokenKey
     aspects:
       - inviteToken
@@ -426,7 +417,7 @@ entities:
     aspects:
       - postInfo
   - name: dataHubStepState
-    category: internal
+    category: core
     keyAspect: dataHubStepStateKey
     aspects:
       - dataHubStepStateProperties
@@ -460,12 +451,4 @@ entities:
     aspects:
       - ownershipTypeInfo
       - status
-  - name: dataContract
-    category: core
-    keyAspect: dataContractKey
-    aspects:
-      - dataContractProperties
-      - dataContractStatus
-      - status
-
 events:

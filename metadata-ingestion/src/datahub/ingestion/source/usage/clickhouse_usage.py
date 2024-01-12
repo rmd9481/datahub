@@ -143,7 +143,11 @@ class ClickHouseUsageSource(Source):
         results = engine.execute(query)
         events = []
         for row in results:
-            event_dict = row._asdict()
+            # minor type conversion
+            if hasattr(row, "_asdict"):
+                event_dict = row._asdict()
+            else:
+                event_dict = dict(row)
 
             # stripping extra spaces caused by above _asdict() conversion
             for k, v in event_dict.items():

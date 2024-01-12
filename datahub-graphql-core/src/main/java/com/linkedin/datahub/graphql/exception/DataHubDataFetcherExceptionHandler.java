@@ -12,49 +12,34 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DataHubDataFetcherExceptionHandler implements DataFetcherExceptionHandler {
 
-  private static final String DEFAULT_ERROR_MESSAGE = "An unknown error occurred.";
-
   @Override
-  public DataFetcherExceptionHandlerResult onException(
-      DataFetcherExceptionHandlerParameters handlerParameters) {
+  public DataFetcherExceptionHandlerResult onException(DataFetcherExceptionHandlerParameters handlerParameters) {
     Throwable exception = handlerParameters.getException();
     SourceLocation sourceLocation = handlerParameters.getSourceLocation();
     ResultPath path = handlerParameters.getPath();
 
+    log.error("Failed to execute DataFetcher", exception);
+
     DataHubGraphQLErrorCode errorCode = DataHubGraphQLErrorCode.SERVER_ERROR;
-    String message = DEFAULT_ERROR_MESSAGE;
+    String message = "An unknown error occurred.";
 
-    IllegalArgumentException illException =
-        findFirstThrowableCauseOfClass(exception, IllegalArgumentException.class);
-    if (illException != null) {
-      log.error("Failed to execute", illException);
+    // note: make sure to access the true error message via `getCause()`
+    if (exception.getCause() instanceof IllegalArgumentException) {
       errorCode = DataHubGraphQLErrorCode.BAD_REQUEST;
-      message = illException.getMessage();
+      message = exception.getCause().getMessage();
     }
 
-    DataHubGraphQLException graphQLException =
-        findFirstThrowableCauseOfClass(exception, DataHubGraphQLException.class);
-    if (graphQLException != null) {
-      log.error("Failed to execute", graphQLException);
-      errorCode = graphQLException.errorCode();
-      message = graphQLException.getMessage();
+    if (exception instanceof DataHubGraphQLException) {
+      errorCode = ((DataHubGraphQLException) exception).errorCode();
+      message = exception.getMessage();
     }
 
-    if (illException == null && graphQLException == null) {
-      log.error("Failed to execute", exception);
+    if (exception.getCause() instanceof DataHubGraphQLException) {
+      errorCode = ((DataHubGraphQLException) exception.getCause()).errorCode();
+      message = exception.getCause().getMessage();
     }
+
     DataHubGraphQLError error = new DataHubGraphQLError(message, path, sourceLocation, errorCode);
     return DataFetcherExceptionHandlerResult.newResult().error(error).build();
-  }
-
-  <T extends Throwable> T findFirstThrowableCauseOfClass(Throwable throwable, Class<T> clazz) {
-    while (throwable != null) {
-      if (clazz.isInstance(throwable)) {
-        return (T) throwable;
-      } else {
-        throwable = throwable.getCause();
-      }
-    }
-    return null;
   }
 }

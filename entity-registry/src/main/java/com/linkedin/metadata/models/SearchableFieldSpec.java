@@ -6,6 +6,7 @@ import com.linkedin.metadata.models.annotation.SearchableAnnotation;
 import lombok.NonNull;
 import lombok.Value;
 
+
 @Value
 public class SearchableFieldSpec implements FieldSpec {
 

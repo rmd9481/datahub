@@ -1,20 +1,23 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Iterable, List, Optional
+from typing import TYPE_CHECKING, Callable, Iterable, List, Optional, Union
 
 import pydantic
 
 import datahub.emitter.mce_builder as builder
 from datahub.configuration.common import ConfigModel
-from datahub.emitter.generic_emitter import Emitter
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
+from datahub.emitter.rest_emitter import DatahubRestEmitter
 from datahub.metadata.schema_classes import (
     CorpUserEditableInfoClass,
     CorpUserInfoClass,
     GroupMembershipClass,
     StatusClass,
 )
+
+if TYPE_CHECKING:
+    from datahub.emitter.kafka_emitter import DatahubKafkaEmitter
 
 
 @dataclass
@@ -141,7 +144,7 @@ class CorpUser(ConfigModel):
 
     def emit(
         self,
-        emitter: Emitter,
+        emitter: Union[DatahubRestEmitter, "DatahubKafkaEmitter"],
         callback: Optional[Callable[[Exception, str], None]] = None,
     ) -> None:
         """

@@ -26,9 +26,11 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-/** GraphQL Resolver used for fetching the list of Assertions associated with an Entity. */
-public class EntityAssertionsResolver
-    implements DataFetcher<CompletableFuture<EntityAssertionsResult>> {
+
+/**
+ * GraphQL Resolver used for fetching the list of Assertions associated with an Entity.
+ */
+public class EntityAssertionsResolver implements DataFetcher<CompletableFuture<EntityAssertionsResult>> {
 
   private static final String ASSERTS_RELATIONSHIP_NAME = "Asserts";
 
@@ -42,60 +44,54 @@ public class EntityAssertionsResolver
 
   @Override
   public CompletableFuture<EntityAssertionsResult> get(DataFetchingEnvironment environment) {
-    return CompletableFuture.supplyAsync(
-        () -> {
-          final QueryContext context = environment.getContext();
+    return CompletableFuture.supplyAsync(() -> {
 
-          final String entityUrn = ((Entity) environment.getSource()).getUrn();
-          final Integer start = environment.getArgumentOrDefault("start", 0);
-          final Integer count = environment.getArgumentOrDefault("count", 200);
+      final QueryContext context = environment.getContext();
 
-          try {
-            // Step 1: Fetch set of assertions associated with the target entity from the Graph
-            // Store
-            final EntityRelationships relationships =
-                _graphClient.getRelatedEntities(
-                    entityUrn,
-                    ImmutableList.of(ASSERTS_RELATIONSHIP_NAME),
-                    RelationshipDirection.INCOMING,
-                    start,
-                    count,
-                    context.getActorUrn());
+      final String entityUrn = ((Entity) environment.getSource()).getUrn();
+      final Integer start = environment.getArgumentOrDefault("start", 0);
+      final Integer count = environment.getArgumentOrDefault("count", 200);
 
-            final List<Urn> assertionUrns =
-                relationships.getRelationships().stream()
-                    .map(EntityRelationship::getEntity)
-                    .collect(Collectors.toList());
+      try {
+        // Step 1: Fetch set of assertions associated with the target entity from the Graph Store
+        final EntityRelationships relationships = _graphClient.getRelatedEntities(
+            entityUrn,
+            ImmutableList.of(ASSERTS_RELATIONSHIP_NAME),
+            RelationshipDirection.INCOMING,
+            start,
+            count,
+            context.getActorUrn()
+        );
 
-            // Step 2: Hydrate the assertion entities based on the urns from step 1
-            final Map<Urn, EntityResponse> entities =
-                _entityClient.batchGetV2(
-                    Constants.ASSERTION_ENTITY_NAME,
-                    new HashSet<>(assertionUrns),
-                    null,
-                    context.getAuthentication());
+        final List<Urn> assertionUrns = relationships.getRelationships().stream().map(EntityRelationship::getEntity).collect(Collectors.toList());
 
-            // Step 3: Map GMS assertion model to GraphQL model
-            final List<EntityResponse> gmsResults = new ArrayList<>();
-            for (Urn urn : assertionUrns) {
-              gmsResults.add(entities.getOrDefault(urn, null));
-            }
-            final List<Assertion> assertions =
-                gmsResults.stream()
-                    .filter(Objects::nonNull)
-                    .map(AssertionMapper::map)
-                    .collect(Collectors.toList());
+        // Step 2: Hydrate the assertion entities based on the urns from step 1
+        final Map<Urn, EntityResponse> entities = _entityClient.batchGetV2(
+            Constants.ASSERTION_ENTITY_NAME,
+            new HashSet<>(assertionUrns),
+            null,
+            context.getAuthentication());
 
-            // Step 4: Package and return result
-            final EntityAssertionsResult result = new EntityAssertionsResult();
-            result.setCount(relationships.getCount());
-            result.setStart(relationships.getStart());
-            result.setTotal(relationships.getTotal());
-            result.setAssertions(assertions);
-            return result;
-          } catch (URISyntaxException | RemoteInvocationException e) {
-            throw new RuntimeException("Failed to retrieve Assertion Run Events from GMS", e);
-          }
-        });
+        // Step 3: Map GMS assertion model to GraphQL model
+        final List<EntityResponse> gmsResults = new ArrayList<>();
+        for (Urn urn : assertionUrns) {
+          gmsResults.add(entities.getOrDefault(urn, null));
+        }
+        final List<Assertion> assertions = gmsResults.stream()
+          .filter(Objects::nonNull)
+          .map(AssertionMapper::map)
+          .collect(Collectors.toList());
+
+        // Step 4: Package and return result
+        final EntityAssertionsResult result = new EntityAssertionsResult();
+        result.setCount(relationships.getCount());
+        result.setStart(relationships.getStart());
+        result.setTotal(relationships.getTotal());
+        result.setAssertions(assertions);
+        return result;
+      } catch (URISyntaxException | RemoteInvocationException e) {
+        throw new RuntimeException("Failed to retrieve Assertion Run Events from GMS", e);
+      }
+    });
   }
 }

@@ -14,8 +14,6 @@ type Props = {
 const StatSection = styled.div`
     padding: 20px 20px;
     overflow: auto;
-    display: flex;
-    flex-direction: column;
 `;
 
 const NameText = styled(Typography.Text)`
@@ -164,12 +162,7 @@ export default function ColumnStats({ columnStats }: Props) {
     return (
         <StatSection>
             <Typography.Title level={5}>Column Stats</Typography.Title>
-            <StyledTable
-                pagination={false}
-                columns={columnStatsColumns}
-                dataSource={columnStatsTableData} 
-                sticky
-            />
+            <StyledTable pagination={false} columns={columnStatsColumns} dataSource={columnStatsTableData} />
         </StatSection>
     );
 }

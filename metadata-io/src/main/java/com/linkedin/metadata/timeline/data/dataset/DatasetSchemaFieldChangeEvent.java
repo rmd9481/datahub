@@ -27,7 +27,8 @@ public class DatasetSchemaFieldChangeEvent extends ChangeEvent {
       String description,
       String fieldPath,
       Urn fieldUrn,
-      boolean nullable) {
+      boolean nullable
+  ) {
     super(
         entityUrn,
         category,
@@ -36,9 +37,12 @@ public class DatasetSchemaFieldChangeEvent extends ChangeEvent {
         ImmutableMap.of(
             "fieldPath", fieldPath,
             "fieldUrn", fieldUrn.toString(),
-            "nullable", nullable),
+            "nullable", nullable
+        ),
         auditStamp,
         semVerChange,
-        description);
+        description
+    );
   }
 }
+

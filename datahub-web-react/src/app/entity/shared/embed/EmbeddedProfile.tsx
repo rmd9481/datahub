@@ -9,6 +9,7 @@ import EntityContext from '../EntityContext';
 import { GenericEntityProperties } from '../types';
 import EmbeddedHeader from './EmbeddedHeader';
 import { SidebarAboutSection } from '../containers/profile/sidebar/AboutSection/SidebarAboutSection';
+import { SidebarAccessRequestSection } from '../containers/profile/sidebar/AccessRequest/SidebarAccessRequestSection';
 import { SidebarOwnerSection } from '../containers/profile/sidebar/Ownership/sidebar/SidebarOwnerSection';
 import { SidebarTagsSection } from '../containers/profile/sidebar/SidebarTagsSection';
 import { SidebarDomainSection } from '../containers/profile/sidebar/Domain/SidebarDomainSection';
@@ -55,8 +56,6 @@ export default function EmbeddedProfile<T>({ urn, entityType, getOverridePropert
         return <NonExistentEntityPage />;
     }
 
-    const readOnly = false;
-
     return (
         <EntityContext.Provider
             value={{
@@ -82,15 +81,17 @@ export default function EmbeddedProfile<T>({ urn, entityType, getOverridePropert
                     <StyledDivider />
                     <UpstreamHealth />
                     <StyledDivider />
-                    <SidebarAboutSection readOnly={readOnly} />
+                    <SidebarAboutSection readOnly />
                     <StyledDivider />
-                    <SidebarOwnerSection readOnly={readOnly} />
+                    <SidebarOwnerSection readOnly />
                     <StyledDivider />
-                    <SidebarTagsSection readOnly={readOnly} properties={{ hasTags: true, hasTerms: true }} />
+                    <SidebarTagsSection readOnly properties={{ hasTags: true, hasTerms: true }} />
                     <StyledDivider />
-                    <SidebarDomainSection readOnly={readOnly} />
+                    <SidebarDomainSection readOnly />
                     <StyledDivider />
-                    <DataProductSection readOnly={readOnly} />
+                    <SidebarAccessRequestSection readOnly />
+                    <StyledDivider />
+                    <DataProductSection readOnly />
                 </>
             )}
         </EntityContext.Provider>

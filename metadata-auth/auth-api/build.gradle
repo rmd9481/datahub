@@ -15,12 +15,13 @@ test {
 }
 
 jar {
-  archiveClassifier = "lib"
+  archiveName = "$project.name-lib.jar"
 }
 
 shadowJar {
   zip64 true
-  archiveClassifier = ""
+  classifier = null
+  archiveName = "$project.name-${version}.jar"
   exclude "META-INF/*.RSA", "META-INF/*.SF","META-INF/*.DSA"
 }
 
@@ -30,7 +31,7 @@ dependencies() {
   api project(path: ':metadata-utils')
  
   implementation externalDependency.guava
-  compileOnly externalDependency.lombok
+  implementation externalDependency.lombok
 
   annotationProcessor externalDependency.lombok
 
@@ -38,12 +39,12 @@ dependencies() {
 }
 
 task sourcesJar(type: Jar) {
-  archiveClassifier = 'sources'
+  classifier 'sources'
   from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-  archiveClassifier = 'javadoc'
+  classifier 'javadoc'
   from javadoc.destinationDir
 }
 

@@ -3,22 +3,18 @@
   "type": "record",
   "name": "CreateUserRequest",
   "doc": "Value schema for kafka topic",
-  "tags": ["PII"],
   "fields": [
     {
       "name": "email",
-      "type": "string",
-      "tags": ["Email"]      
+      "type": "string"
     },
     {
       "name": "firstName",
-      "type": "string",
-      "tags": ["Name"]
+      "type": "string"
     },
     {
       "name": "lastName",
-      "type": "string",
-      "tags": ["Name"]
+      "type": "string"
     }
   ]
 }

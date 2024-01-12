@@ -283,13 +283,10 @@ def test_snowflake_unexpected_snowflake_view_lineage_error_causes_pipeline_warni
         )
 
         snowflake_pipeline_config1 = snowflake_pipeline_config.copy()
-        config = cast(
+        cast(
             SnowflakeV2Config,
             cast(PipelineConfig, snowflake_pipeline_config1).source.config,
-        )
-        config.include_table_lineage = True
-        config.include_view_lineage = True
-
+        ).include_view_lineage = True
         pipeline = Pipeline(snowflake_pipeline_config1)
         pipeline.run()
         pipeline.raise_from_status()  # pipeline should not fail
