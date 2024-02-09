@@ -91,9 +91,11 @@ export default function EmbeddedProfile<T>({ urn, entityType, getOverridePropert
                     <StyledDivider />
                     <SidebarDomainSection readOnly={readOnly} />
                     <StyledDivider />
+                    <DataProductSection readOnly={readOnly} />
                     <SidebarAccessRequestSection readOnly={readOnly} />
                     <StyledDivider />
                     <DataProductSection readOnly={readOnly} />
+                </>
             )}
         </EntityContext.Provider>
     );
