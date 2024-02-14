@@ -30,7 +30,7 @@ export const SidebarAccessRequestSection = ({ readOnly }: Props) => {
             script.src = jiraScriptUrl;
             script.async = true;
             script.onload = () => {
-                setupJiraIssueCollector('sidebar-access-request-button', entityUrn);
+                setupJiraIssueCollector('sidebar-access-request-button', entityUrn, entityData);
             };
             document.body.appendChild(script);
             return () => {
@@ -38,7 +38,7 @@ export const SidebarAccessRequestSection = ({ readOnly }: Props) => {
             };
         }
         return () => {};
-    }, [entityUrn, loading]);
+    }, [entityUrn, loading, entityData]);
     return (
         <div>
             <SidebarHeader title="Access Request" />
