@@ -91,9 +91,6 @@ export class MLPrimaryKeyEntity implements Entity<MlPrimaryKey> {
                     name: 'Properties',
                     component: PropertiesTab,
                 },
-                {
-                    component: SidebarAccessRequestSection,
-                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />
@@ -121,6 +118,10 @@ export class MLPrimaryKeyEntity implements Entity<MlPrimaryKey> {
         },
         {
             component: DataProductSection,
+        },
+
+        {
+            component: SidebarAccessRequestSection,
         },
     ];
 

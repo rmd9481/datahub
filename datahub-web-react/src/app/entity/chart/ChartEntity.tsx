@@ -97,6 +97,9 @@ export class ChartEntity implements Entity<Chart> {
         {
             component: DataProductSection,
         },
+        {
+            component: SidebarAccessRequestSection,
+        },
     ];
 
     renderProfile = (urn: string) => (
@@ -160,9 +163,6 @@ export class ChartEntity implements Entity<Chart> {
                         return `Incidents${(activeIncidentCount && ` (${activeIncidentCount})`) || ''}`;
                     },
                 },
-                {
-                    component: SidebarAccessRequestSection,
-                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />

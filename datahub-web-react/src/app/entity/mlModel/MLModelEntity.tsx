@@ -85,8 +85,14 @@ export class MLModelEntity implements Entity<MlModel> {
             },
         },
         {
+            component: SidebarDomainSection,
+        },
+        {
+            component: DataProductSection,
+        },
+        {
             component: SidebarAccessRequestSection,
-        }
+        },
     ];
 
     renderProfile = (urn: string) => (

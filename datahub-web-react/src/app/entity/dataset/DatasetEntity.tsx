@@ -201,16 +201,6 @@ export class DatasetEntity implements Entity<Dataset> {
                         return `Incidents${(activeIncidentCount && ` (${activeIncidentCount})`) || ''}`;
                     },
                 },
-                {
-                    component: SidebarTagsSection,
-                    properties: {
-                        hasTags: true,
-                        hasTerms: true,
-                    },
-                },
-                {
-                    component: SidebarAccessRequestSection,
-                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />
@@ -250,6 +240,9 @@ export class DatasetEntity implements Entity<Dataset> {
         },
         {
             component: DataProductSection,
+        },
+        {
+            component: SidebarAccessRequestSection,
         },
         // TODO: Add back once entity-level recommendations are complete.
         // {

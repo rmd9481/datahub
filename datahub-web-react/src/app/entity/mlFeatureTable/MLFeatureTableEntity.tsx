@@ -87,10 +87,10 @@ export class MLFeatureTableEntity implements Entity<MlFeatureTable> {
             component: SidebarDomainSection,
         },
         {
-                            component: SidebarAccessRequestSection,
+            component: DataProductSection,
         },
         {
-            component: DataProductSection,
+            component: SidebarAccessRequestSection,
         },
     ];
 

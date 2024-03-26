@@ -109,10 +109,10 @@ export class ContainerEntity implements Entity<Container> {
             component: SidebarDomainSection,
         },
         {
-            component: SidebarAccessRequestSection,
+            component: DataProductSection,
         },
         {
-            component: DataProductSection,
+            component: SidebarAccessRequestSection,
         },
         // TODO: Add back once entity-level recommendations are complete.
         // {

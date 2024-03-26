@@ -102,16 +102,6 @@ export class MLFeatureEntity implements Entity<MlFeature> {
                         defaultOwnerType: OwnershipType.TechnicalOwner,
                     },
                 },
-                {
-                    component: SidebarTagsSection,
-                    properties: {
-                        hasTags: true,
-                        hasTerms: true,
-                    },
-                },
-                {
-                    component: SidebarAccessRequestSection,
-                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />
@@ -139,6 +129,9 @@ export class MLFeatureEntity implements Entity<MlFeature> {
         },
         {
             component: DataProductSection,
+        },
+        {
+            component: SidebarAccessRequestSection,
         },
     ];
 

@@ -91,16 +91,6 @@ export class DataFlowEntity implements Entity<DataFlow> {
                         return `Incidents${(activeIncidentCount && ` (${activeIncidentCount})`) || ''}`;
                     },
                 },
-                {
-                    component: SidebarTagsSection,
-                    properties: {
-                        hasTags: true,
-                        hasTerms: true,
-                    },
-                },
-                {
-                    component: SidebarAccessRequestSection,
-                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />
@@ -128,6 +118,9 @@ export class DataFlowEntity implements Entity<DataFlow> {
         },
         {
             component: DataProductSection,
+        },
+        {
+            component: SidebarAccessRequestSection,
         },
     ];
 

@@ -86,6 +86,9 @@ export class MLModelGroupEntity implements Entity<MlModelGroup> {
         {
             component: DataProductSection,
         },
+        {
+            component: SidebarAboutSection,
+        }
     ];
 
     renderProfile = (urn: string) => (
@@ -109,9 +112,6 @@ export class MLModelGroupEntity implements Entity<MlModelGroup> {
                     name: 'Properties',
                     component: PropertiesTab,
                 },
-                {
-                    component: SidebarAboutSection,
-                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />

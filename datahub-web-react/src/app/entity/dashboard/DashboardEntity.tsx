@@ -104,6 +104,9 @@ export class DashboardEntity implements Entity<Dashboard> {
         {
             component: DataProductSection,
         },
+        {
+            component: SidebarAccessRequestSection,
+        },
     ];
 
     renderProfile = (urn: string) => (
@@ -171,16 +174,6 @@ export class DashboardEntity implements Entity<Dashboard> {
                         return `Incidents${(activeIncidentCount && ` (${activeIncidentCount})`) || ''}`;
                     },
                 },
-                {
-                    component: SidebarTagsSection,
-                    properties: {
-                        hasTags: true,
-                        hasTerms: true,
-                    },
-                },
-                {
-                    component: SidebarAccessRequestSection,
-                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />
