@@ -151,8 +151,8 @@ export class DatasetEntity implements Entity<Dataset> {
                     name: 'Queries',
                     component: QueriesTab,
                     display: {
-                        visible: (_, _1) => true,
-                        enabled: (_, _2) => true,
+                        visible: (_, _1) => false,
+                        enabled: (_, _2) => false,
                     },
                 },
                 {

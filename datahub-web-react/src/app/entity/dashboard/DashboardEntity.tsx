@@ -122,6 +122,10 @@ export class DashboardEntity implements Entity<Dashboard> {
             }}
             tabs={[
                 {
+                    name: 'Overview',
+                    component: DocumentationTab,
+                },
+                {
                     name: 'Charts',
                     component: DashboardChartsTab,
                     display: {
@@ -138,10 +142,6 @@ export class DashboardEntity implements Entity<Dashboard> {
                         visible: (_, dashboard: GetDashboardQuery) => (dashboard?.dashboard?.datasets?.total || 0) > 0,
                         enabled: (_, dashboard: GetDashboardQuery) => (dashboard?.dashboard?.datasets?.total || 0) > 0,
                     },
-                },
-                {
-                    name: 'Documentation',
-                    component: DocumentationTab,
                 },
                 {
                     name: 'Preview',

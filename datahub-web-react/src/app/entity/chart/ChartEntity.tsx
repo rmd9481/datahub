@@ -115,10 +115,6 @@ export class ChartEntity implements Entity<Chart> {
             }}
             tabs={[
                 {
-                    name: 'Documentation',
-                    component: DocumentationTab,
-                },
-                {
                     name: 'Fields',
                     component: InputFieldsTab,
                     display: {
