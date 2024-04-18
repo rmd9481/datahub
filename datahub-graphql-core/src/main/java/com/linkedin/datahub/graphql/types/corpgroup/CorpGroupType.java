@@ -7,6 +7,7 @@ import com.datahub.authorization.ConjunctivePrivilegeGroup;
 import com.datahub.authorization.DisjunctivePrivilegeGroup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.linkedin.common.url.Url;
 import com.linkedin.common.urn.Urn;
 import com.linkedin.common.urn.UrnUtils;
 import com.linkedin.data.template.RecordTemplate;
@@ -87,7 +88,7 @@ public class CorpGroupType
               null,
               context.getAuthentication());
 
-      final List<EntityResponse> results = new ArrayList<>();
+      final List<EntityResponse> results = new ArrayList<>(urns.size());
       for (Urn urn : corpGroupUrns) {
         results.add(corpGroupMap.getOrDefault(urn, null));
       }
@@ -97,7 +98,7 @@ public class CorpGroupType
                   gmsCorpGroup == null
                       ? null
                       : DataFetcherResult.<CorpGroup>newResult()
-                          .data(CorpGroupMapper.map(gmsCorpGroup))
+                          .data(CorpGroupMapper.map(context, gmsCorpGroup))
                           .build())
           .collect(Collectors.toList());
     } catch (Exception e) {
@@ -121,7 +122,7 @@ public class CorpGroupType
             Collections.emptyMap(),
             start,
             count);
-    return UrnSearchResultsMapper.map(searchResult);
+    return UrnSearchResultsMapper.map(context, searchResult);
   }
 
   @Override
@@ -135,7 +136,7 @@ public class CorpGroupType
     final AutoCompleteResult result =
         _entityClient.autoComplete(
             context.getOperationContext(), "corpGroup", query, filters, limit);
-    return AutoCompleteResultsMapper.map(result);
+    return AutoCompleteResultsMapper.map(context, result);
   }
 
   @Override
@@ -188,7 +189,7 @@ public class CorpGroupType
     final DisjunctivePrivilegeGroup orPrivilegeGroups = getAuthorizedPrivileges(input);
     return AuthorizationUtils.isAuthorized(
         context.getAuthorizer(),
-        context.getAuthentication().getActor().toUrnStr(),
+        context.getActorUrn(),
         PoliciesConfig.CORP_GROUP_PRIVILEGES.getResourceType(),
         urn,
         orPrivilegeGroups);
@@ -230,6 +231,9 @@ public class CorpGroupType
     }
     if (input.getEmail() != null) {
       result.setEmail(input.getEmail());
+    }
+    if (input.getPictureLink() != null) {
+      result.setPictureLink(new Url(input.getPictureLink()));
     }
     return result;
   }
