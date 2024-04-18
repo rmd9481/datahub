@@ -5,7 +5,7 @@ import { Chart, EntityType, LineageDirection, SearchResult } from '../../../type
 import { Entity, EntityCapabilityType, IconStyleType, PreviewType } from '../Entity';
 import { ChartPreview } from './preview/ChartPreview';
 import { GetChartQuery, useGetChartQuery, useUpdateChartMutation } from '../../../graphql/chart.generated';
-import { DocumentationTab } from '../shared/tabs/Documentation/DocumentationTab';
+// import { DocumentationTab } from '../shared/tabs/Documentation/DocumentationTab';
 import { SidebarAboutSection } from '../shared/containers/profile/sidebar/AboutSection/SidebarAboutSection';
 import { SidebarTagsSection } from '../shared/containers/profile/sidebar/SidebarTagsSection';
 import { SidebarOwnerSection } from '../shared/containers/profile/sidebar/Ownership/sidebar/SidebarOwnerSection';
@@ -86,10 +86,6 @@ export class ChartEntity implements Entity<Chart> {
                 component: ChartStatsSummarySubHeader,
             }}
             tabs={[
-                {
-                    name: 'Documentation',
-                    component: DocumentationTab,
-                },
                 {
                     name: 'Fields',
                     component: InputFieldsTab,

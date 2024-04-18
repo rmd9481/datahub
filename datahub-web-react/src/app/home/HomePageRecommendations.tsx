@@ -14,7 +14,7 @@ import { BrowseEntityCard } from '../search/BrowseEntityCard';
 import { useEntityRegistry } from '../useEntityRegistry';
 import { useGetEntityCountsQuery } from '../../graphql/app.generated';
 import { ANTD_GRAY } from '../entity/shared/constants';
-import { HomePagePosts } from './HomePagePosts';
+// import { HomePagePosts } from './HomePagePosts';
 import {
     HOME_PAGE_DOMAINS_ID,
     HOME_PAGE_MOST_POPULAR_ID,
@@ -159,13 +159,12 @@ export const HomePageRecommendations = ({ user }: Props) => {
 
     return (
         <RecommendationsContainer>
-            <HomePagePosts />
             {orderedEntityCounts && orderedEntityCounts.length > 0 && (
                 <RecommendationContainer>
                     {domainRecommendationModule && (
                         <>
                             <DomainsRecomendationContainer id={HOME_PAGE_DOMAINS_ID}>
-                                <RecommendationTitle level={4}>{domainRecommendationModule.title}</RecommendationTitle>
+                                <RecommendationTitle level={4}>Analytics Groups</RecommendationTitle>
                                 <ThinDivider />
                                 <RecommendationModule
                                     module={domainRecommendationModule as RecommendationModuleType}
