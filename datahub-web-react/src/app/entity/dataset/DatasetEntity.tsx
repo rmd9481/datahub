@@ -128,7 +128,7 @@ export class DatasetEntity implements Entity<Dataset> {
                     },
                 },
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

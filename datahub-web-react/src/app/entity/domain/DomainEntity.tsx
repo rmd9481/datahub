@@ -86,7 +86,7 @@ export class DomainEntity implements Entity<Domain> {
                 },
                 {
                     id: EntityProfileTab.DOCUMENTATION_TAB,
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

@@ -78,7 +78,7 @@ export class GlossaryTermEntity implements Entity<GlossaryTerm> {
                 hideBrowseBar
                 tabs={[
                     {
-                        name: 'Documentation',
+                        name: 'Overview',
                         component: DocumentationTab,
                     },
                     {

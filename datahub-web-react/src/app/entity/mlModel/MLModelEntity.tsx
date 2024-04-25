@@ -109,7 +109,7 @@ export class MLModelEntity implements Entity<MlModel> {
                     component: MLModelSummary,
                 },
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

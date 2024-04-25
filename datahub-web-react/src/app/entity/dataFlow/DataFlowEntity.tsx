@@ -72,7 +72,7 @@ export class DataFlowEntity implements Entity<DataFlow> {
             headerDropdownItems={new Set([EntityMenuItems.UPDATE_DEPRECATION, EntityMenuItems.RAISE_INCIDENT])}
             tabs={[
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

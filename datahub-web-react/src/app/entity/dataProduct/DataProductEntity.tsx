@@ -77,7 +77,7 @@ export class DataProductEntity implements Entity<DataProduct> {
             isNameEditable
             tabs={[
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

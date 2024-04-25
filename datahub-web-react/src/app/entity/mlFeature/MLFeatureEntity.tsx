@@ -82,7 +82,7 @@ export class MLFeatureEntity implements Entity<MlFeature> {
                     component: FeatureTableTab,
                 },
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

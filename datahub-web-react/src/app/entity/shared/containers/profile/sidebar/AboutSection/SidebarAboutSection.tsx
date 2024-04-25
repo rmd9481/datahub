@@ -37,7 +37,7 @@ export const SidebarAboutSection = ({ properties, readOnly }: Props) => {
                     hasContent &&
                     !readOnly && (
                         <Button
-                            onClick={() => routeToTab({ tabName: 'Documentation', tabParams: { editing: true } })}
+                            onClick={() => routeToTab({ tabName: 'Overview', tabParams: { editing: true } })}
                             type="text"
                             shape="circle"
                         >
@@ -46,7 +46,7 @@ export const SidebarAboutSection = ({ properties, readOnly }: Props) => {
                     )
                 }
             />
-            {description && <DescriptionSection description={description} />}
+            {description && <DescriptionSection description={originalDescription || description} />}
             {!hasContent && <EmptyContentSection hideLinksButton={hideLinksButton} readOnly={readOnly} />}
             {hasContent && <LinksSection hideLinksButton={hideLinksButton} readOnly={readOnly} />}
             <SourceRefSection />

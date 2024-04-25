@@ -43,7 +43,7 @@ export const DocumentationTab = ({ properties }: { properties?: Props }) => {
         const editedDescriptions = (localStorageDictionary && JSON.parse(localStorageDictionary)) || {};
         if (editedDescriptions.hasOwnProperty(urn)) {
             routeToTab({
-                tabName: 'Documentation',
+                tabName: 'Overview',
                 tabParams: { editing: true, modal: !!showModal },
             });
         }
@@ -51,7 +51,7 @@ export const DocumentationTab = ({ properties }: { properties?: Props }) => {
 
     return isEditing && !showModal ? (
         <>
-            <DescriptionEditor onComplete={() => routeToTab({ tabName: 'Documentation' })} />
+            <DescriptionEditor onComplete={() => routeToTab({ tabName: 'Overview' })} />
         </>
     ) : (
         <>
@@ -62,7 +62,7 @@ export const DocumentationTab = ({ properties }: { properties?: Props }) => {
                             <Button
                                 data-testid="edit-documentation-button"
                                 type="text"
-                                onClick={() => routeToTab({ tabName: 'Documentation', tabParams: { editing: true } })}
+                                onClick={() => routeToTab({ tabName: 'Overview', tabParams: { editing: true } })}
                             >
                                 <EditOutlined /> Edit
                             </Button>
@@ -73,7 +73,7 @@ export const DocumentationTab = ({ properties }: { properties?: Props }) => {
                                 type="text"
                                 onClick={() =>
                                     routeToTab({
-                                        tabName: 'Documentation',
+                                        tabName: 'Overview',
                                         tabParams: { modal: true },
                                     })
                                 }
@@ -98,7 +98,7 @@ export const DocumentationTab = ({ properties }: { properties?: Props }) => {
                 </>
             ) : (
                 <EmptyTab tab="documentation">
-                    <Button onClick={() => routeToTab({ tabName: 'Documentation', tabParams: { editing: true } })}>
+                    <Button onClick={() => routeToTab({ tabName: 'Overview', tabParams: { editing: true } })}>
                         <EditOutlined /> Add Documentation
                     </Button>
                     {!hideLinksButton && <AddLinkModal refetch={refetch} />}
@@ -109,7 +109,7 @@ export const DocumentationTab = ({ properties }: { properties?: Props }) => {
                     editMode={(isEditing && true) || false}
                     description={description}
                     onClose={() => {
-                        routeToTab({ tabName: 'Documentation', tabParams: { editing: false } });
+                        routeToTab({ tabName: 'Overview', tabParams: { editing: false } });
                     }}
                 />
             )}

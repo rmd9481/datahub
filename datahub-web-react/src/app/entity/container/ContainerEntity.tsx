@@ -79,7 +79,7 @@ export class ContainerEntity implements Entity<Container> {
                     component: ContainerEntitiesTab,
                 },
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

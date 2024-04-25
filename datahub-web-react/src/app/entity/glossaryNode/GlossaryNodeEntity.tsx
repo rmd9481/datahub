@@ -66,7 +66,7 @@ class GlossaryNodeEntity implements Entity<GlossaryNode> {
                         component: ChildrenTab,
                     },
                     {
-                        name: 'Documentation',
+                        name: 'Overview',
                         component: DocumentationTab,
                         properties: {
                             hideLinksButton: true,

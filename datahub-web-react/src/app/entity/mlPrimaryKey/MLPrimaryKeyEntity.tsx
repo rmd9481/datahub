@@ -80,7 +80,7 @@ export class MLPrimaryKeyEntity implements Entity<MlPrimaryKey> {
                     component: FeatureTableTab,
                 },
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {

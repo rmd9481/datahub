@@ -46,7 +46,7 @@ export const EntityProfileOnboardingConfig: OnboardingStep[] = [
     },
     {
         id: ENTITY_PROFILE_DOCUMENTATION_ID,
-        selector: `[id^='rc-tabs'][id$='Documentation']`,
+        selector: `[id^='rc-tabs'][id$='Overview']`,
         title: 'Documentation Tab',
         content: (
             <Typography.Paragraph>

@@ -68,7 +68,7 @@ export class ERModelRelationshipEntity implements Entity<ErModelRelationship> {
                     component: ERModelRelationshipTab,
                 },
                 {
-                    name: 'Documentation',
+                    name: 'Overview',
                     component: DocumentationTab,
                 },
                 {
