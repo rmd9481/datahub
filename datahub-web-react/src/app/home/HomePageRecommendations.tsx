@@ -164,7 +164,7 @@ export const HomePageRecommendations = ({ user }: Props) => {
                     {domainRecommendationModule && (
                         <>
                             <DomainsRecomendationContainer id={HOME_PAGE_DOMAINS_ID}>
-                                <RecommendationTitle level={4}>Analytics Groups</RecommendationTitle>
+                                <RecommendationTitle level={4}>Analytic Groups</RecommendationTitle>
                                 <ThinDivider />
                                 <RecommendationModule
                                     module={domainRecommendationModule as RecommendationModuleType}
