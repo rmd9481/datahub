@@ -54,7 +54,7 @@ export class ContainerEntity implements Entity<Container> {
 
     isBrowseEnabled = () => false;
 
-    isLineageEnabled = () => false;
+    isLineageEnabled = () => true;
 
     getAutoCompleteFieldName = () => 'name';
 
