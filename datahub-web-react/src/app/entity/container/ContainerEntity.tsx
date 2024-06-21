@@ -86,6 +86,13 @@ export class ContainerEntity implements Entity<Container> {
                     name: 'Properties',
                     component: PropertiesTab,
                 },
+                {
+                    name: 'Lineage',
+                    component: LineageTab,
+                    properties: {
+                        defaultDirection: LineageDirection.Upstream,
+                    },
+                }
             ]}
             sidebarSections={this.getSidebarSections()}
         />
