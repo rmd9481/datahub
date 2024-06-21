@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FolderOutlined } from '@ant-design/icons';
-import { Container, EntityType, SearchResult } from '../../../types.generated';
+import { Container, EntityType, SearchResult, LineageDirection } from '../../../types.generated';
 import { Entity, EntityCapabilityType, IconStyleType, PreviewType } from '../Entity';
 import { Preview } from './preview/Preview';
 import { EntityProfile } from '../shared/containers/profile/EntityProfile';
@@ -8,6 +8,7 @@ import { DocumentationTab } from '../shared/tabs/Documentation/DocumentationTab'
 import { SidebarAboutSection } from '../shared/containers/profile/sidebar/AboutSection/SidebarAboutSection';
 import { SidebarOwnerSection } from '../shared/containers/profile/sidebar/Ownership/sidebar/SidebarOwnerSection';
 import { getDataForEntityType } from '../shared/containers/profile/utils';
+import { LineageTab } from '../shared/tabs/Lineage/LineageTab';
 import { useGetContainerQuery } from '../../../graphql/container.generated';
 import { ContainerEntitiesTab } from './ContainerEntitiesTab';
 import { SidebarTagsSection } from '../shared/containers/profile/sidebar/SidebarTagsSection';
@@ -173,6 +174,18 @@ export class ContainerEntity implements Entity<Container> {
                 paths={(result as any).paths}
             />
         );
+    };
+
+    getLineageVizConfig = (entity: Container) => {
+        return {
+            urn: entity?.urn,
+            name: entity.properties?.name || entity.urn,
+            type: EntityType.Container,
+            subtype: entity?.subTypes?.typeNames?.[0] || undefined,
+            icon: entity?.platform?.properties?.logoUrl || undefined,
+            platform: entity?.platform,
+            health: entity?.health || undefined,
+        };
     };
 
     displayName = (data: Container) => {
