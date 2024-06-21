@@ -75,12 +75,12 @@ export class ContainerEntity implements Entity<Container> {
             getOverrideProperties={this.getOverridePropertiesFromEntity}
             tabs={[
                 {
-                    name: 'Entities',
-                    component: ContainerEntitiesTab,
-                },
-                {
                     name: 'Overview',
                     component: DocumentationTab,
+                },
+                {
+                    name: 'Entities',
+                    component: ContainerEntitiesTab,
                 },
                 {
                     name: 'Properties',
