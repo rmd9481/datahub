@@ -28,7 +28,6 @@ import com.datahub.plugins.loader.PluginPermissionManagerImpl;
 import com.google.common.collect.ImmutableMap;
 import com.linkedin.gms.factory.config.ConfigurationProvider;
 import com.linkedin.metadata.entity.EntityService;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -48,6 +47,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -58,13 +58,13 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 @Slf4j
 public class AuthenticationFilter implements Filter {
 
-  @Inject private ConfigurationProvider configurationProvider;
+  @Autowired private ConfigurationProvider configurationProvider;
 
-  @Inject
+  @Autowired
   @Named("entityService")
-  private EntityService _entityService;
+  private EntityService<?> _entityService;
 
-  @Inject
+  @Autowired
   @Named("dataHubTokenService")
   private StatefulTokenService _tokenService;
 
@@ -77,6 +77,7 @@ public class AuthenticationFilter implements Filter {
   public void init(FilterConfig filterConfig) throws ServletException {
     SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
     buildAuthenticatorChain();
+    log.info("AuthenticationFilter initialized.");
   }
 
   @Override
@@ -92,16 +93,17 @@ public class AuthenticationFilter implements Filter {
           "Failed to authenticate request. Received an AuthenticationExpiredException from authenticator chain.",
           e);
       ((HttpServletResponse) response)
-          .sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+          .sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized to perform this action.");
       return;
     }
 
     if (authentication != null) {
+      String actorUrnStr = authentication.getActor().toUrnStr();
       // Successfully authenticated.
       log.debug(
-          String.format(
-              "Successfully authenticated request for Actor with type: %s, id: %s",
-              authentication.getActor().getType(), authentication.getActor().getId()));
+          "Successfully authenticated request for Actor with type: {}, id: {}",
+          authentication.getActor().getType(),
+          authentication.getActor().getId());
       AuthenticationContext.setAuthentication(authentication);
       chain.doFilter(request, response);
     } else {
@@ -109,7 +111,9 @@ public class AuthenticationFilter implements Filter {
       log.debug(
           "Failed to authenticate request. Received 'null' Authentication value from authenticator chain.");
       ((HttpServletResponse) response)
-          .sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized to perform this action.");
+          .sendError(
+              HttpServletResponse.SC_UNAUTHORIZED,
+              "Unauthorized to perform this action due to expired auth.");
       return;
     }
     AuthenticationContext.remove();
@@ -252,7 +256,7 @@ public class AuthenticationFilter implements Filter {
     authenticatorChain.register(
         systemAuthenticator); // Always register authenticator for internal system.
 
-    // Register authenticator define in application.yml
+    // Register authenticator define in application.yaml
     final List<AuthenticatorConfiguration> authenticatorConfigurations =
         this.configurationProvider.getAuthentication().getAuthenticators();
     for (AuthenticatorConfiguration internalAuthenticatorConfig : authenticatorConfigurations) {

@@ -10,6 +10,7 @@ import com.linkedin.datahub.upgrade.UpgradeStep;
 import com.linkedin.datahub.upgrade.UpgradeStepResult;
 import com.linkedin.datahub.upgrade.impl.DefaultUpgradeStepResult;
 import com.linkedin.metadata.Constants;
+import com.linkedin.metadata.aspect.utils.DefaultAspectsUtil;
 import com.linkedin.metadata.entity.EntityService;
 import com.linkedin.metadata.entity.ebean.EbeanAspectV1;
 import com.linkedin.metadata.entity.ebean.EbeanAspectV2;
@@ -17,6 +18,7 @@ import com.linkedin.metadata.models.AspectSpec;
 import com.linkedin.metadata.models.EntitySpec;
 import com.linkedin.metadata.models.registry.EntityRegistry;
 import com.linkedin.metadata.utils.PegasusUtils;
+import com.linkedin.upgrade.DataHubUpgradeState;
 import com.linkedin.util.Pair;
 import io.ebean.Database;
 import io.ebean.PagedList;
@@ -99,7 +101,7 @@ public class DataMigrationStep implements UpgradeStep {
                         "Failed to convert aspect with name %s into a RecordTemplate class",
                         oldAspectName),
                     e);
-            return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+            return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
           }
 
           // 2. Extract an Entity type from the entity Urn
@@ -126,7 +128,7 @@ public class DataMigrationStep implements UpgradeStep {
                     String.format(
                         "Failed to find Entity with name %s in Entity Registry", entityName),
                     e);
-            return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+            return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
           }
 
           // 4. Extract new aspect name from Aspect schema
@@ -141,7 +143,7 @@ public class DataMigrationStep implements UpgradeStep {
                         "Failed to retrieve @Aspect name from schema %s, urn %s",
                         aspectRecord.schema().getFullName(), entityName),
                     e);
-            return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+            return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
           }
 
           // 5. Verify that the aspect is a valid aspect associated with the entity
@@ -156,13 +158,17 @@ public class DataMigrationStep implements UpgradeStep {
                         "Failed to find aspect spec with name %s associated with entity named %s",
                         newAspectName, entityName),
                     e);
-            return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+            return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
           }
 
           // 6. Write the row back using the EntityService
           boolean emitMae = oldAspect.getKey().getVersion() == 0L;
           _entityService.ingestAspects(
-              urn, List.of(Pair.of(newAspectName, aspectRecord)), toAuditStamp(oldAspect), null);
+              context.opContext(),
+              urn,
+              List.of(Pair.of(newAspectName, aspectRecord)),
+              toAuditStamp(oldAspect),
+              null);
 
           // 7. If necessary, emit a browse path aspect.
           if (entitySpec.getAspectSpecMap().containsKey(BROWSE_PATHS_ASPECT_NAME)
@@ -170,13 +176,16 @@ public class DataMigrationStep implements UpgradeStep {
             // Emit a browse path aspect.
             final BrowsePaths browsePaths;
             try {
-              browsePaths = _entityService.buildDefaultBrowsePath(urn);
+              browsePaths =
+                  DefaultAspectsUtil.buildDefaultBrowsePath(
+                      context.opContext(), urn, _entityService);
 
               final AuditStamp browsePathsStamp = new AuditStamp();
               browsePathsStamp.setActor(Urn.createFromString(Constants.SYSTEM_ACTOR));
               browsePathsStamp.setTime(System.currentTimeMillis());
 
               _entityService.ingestAspects(
+                  context.opContext(),
                   urn,
                   List.of(Pair.of(BROWSE_PATHS_ASPECT_NAME, browsePaths)),
                   browsePathsStamp,
@@ -206,9 +215,9 @@ public class DataMigrationStep implements UpgradeStep {
                 String.format(
                     "Number of rows migrated %s does not equal the number of input rows %s...",
                     totalRowsMigrated, rowCount));
-        return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+        return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
       }
-      return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.SUCCEEDED);
+      return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.SUCCEEDED);
     };
   }
 

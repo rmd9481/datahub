@@ -13,12 +13,14 @@ query getDomain($urn: String!) {
         ownership {
             ...ownershipFields
         }
+        privileges {
+            ...entityPrivileges
+        }
         institutionalMemory {
             elements {
                 url
-                author {
-                    urn
-                    username
+                actor {
+                    ...resolvedActorFields
                 }
                 description
                 created {
@@ -26,6 +28,17 @@ query getDomain($urn: String!) {
                     time
                 }
             }
+        }
+        autoRenderAspects: aspects(input: { autoRenderOnly: true }) {
+            ...autoRenderAspectFields
+        }
+        structuredProperties {
+            properties {
+                ...structuredPropertiesFields
+            }
+        }
+        forms {
+            ...formsFields
         }
         ...domainEntitiesFields
     }

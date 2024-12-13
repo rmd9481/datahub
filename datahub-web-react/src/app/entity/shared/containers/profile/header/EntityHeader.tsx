@@ -17,6 +17,8 @@ import { capitalizeFirstLetterOnly } from '../../../../../shared/textUtil';
 import { useUserContext } from '../../../../../context/useUserContext';
 import { useEntityRegistry } from '../../../../../useEntityRegistry';
 import EntityHeaderLoadingSection from './EntityHeaderLoadingSection';
+import { useIsEditableDatasetNameEnabled } from '../../../../../useAppConfig';
+import StructuredPropertyBadge from './StructuredPropertyBadge';
 
 const TitleWrapper = styled.div`
     display: flex;
@@ -59,6 +61,7 @@ const TopButtonsWrapper = styled.div`
 export function getCanEditName(
     entityType: EntityType,
     entityData: GenericEntityProperties | null,
+    isEditableDatasetNameEnabled: boolean,
     privileges?: PlatformPrivileges,
 ) {
     switch (entityType) {
@@ -69,6 +72,10 @@ export function getCanEditName(
             return privileges?.manageDomains;
         case EntityType.DataProduct:
             return true; // TODO: add permissions for data products
+        case EntityType.BusinessAttribute:
+            return privileges?.manageBusinessAttributes;
+        case EntityType.Dataset:
+            return isEditableDatasetNameEnabled && entityData?.privileges?.canEditProperties;
         default:
             return false;
     }
@@ -92,8 +99,15 @@ export const EntityHeader = ({ headerDropdownItems, headerActionItems, isNameEdi
     const entityName = entityData?.name;
     const subType = capitalizeFirstLetterOnly(entityData?.subTypes?.typeNames?.[0]) || undefined;
 
+    const isEditableDatasetNameEnabled = useIsEditableDatasetNameEnabled();
     const canEditName =
-        isNameEditable && getCanEditName(entityType, entityData, me?.platformPrivileges as PlatformPrivileges);
+        isNameEditable &&
+        getCanEditName(
+            entityType,
+            entityData,
+            isEditableDatasetNameEnabled,
+            me?.platformPrivileges as PlatformPrivileges,
+        );
     const entityRegistry = useEntityRegistry();
 
     return (
@@ -104,7 +118,7 @@ export const EntityHeader = ({ headerDropdownItems, headerActionItems, isNameEdi
                         <>
                             <PlatformContent />
                             <TitleWrapper>
-                                <EntityName isNameEditable={canEditName} />
+                                <EntityName isNameEditable={canEditName || false} />
                                 {entityData?.deprecation?.deprecated && (
                                     <DeprecationPill
                                         urn={urn}
@@ -119,6 +133,7 @@ export const EntityHeader = ({ headerDropdownItems, headerActionItems, isNameEdi
                                         baseUrl={entityRegistry.getEntityUrl(entityType, urn)}
                                     />
                                 )}
+                                <StructuredPropertyBadge structuredProperties={entityData?.structuredProperties} />
                             </TitleWrapper>
                             <EntityCount
                                 entityCount={entityCount}

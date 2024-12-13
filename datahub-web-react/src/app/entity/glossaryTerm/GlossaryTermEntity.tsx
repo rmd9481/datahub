@@ -17,6 +17,8 @@ import { SidebarAboutSection } from '../shared/containers/profile/sidebar/AboutS
 import { EntityMenuItems } from '../shared/EntityDropdown/EntityDropdown';
 import { EntityActionItem } from '../shared/entity/EntityActions';
 import { SidebarDomainSection } from '../shared/containers/profile/sidebar/Domain/SidebarDomainSection';
+import { PageRoutes } from '../../../conf/Global';
+import SidebarStructuredPropsSection from '../shared/containers/profile/sidebar/StructuredProperties/SidebarStructuredPropsSection';
 
 /**
  * Definition of the DataHub Dataset entity.
@@ -56,6 +58,10 @@ export class GlossaryTermEntity implements Entity<GlossaryTerm> {
     getCollectionName = () => 'Glossary Terms';
 
     getEntityName = () => 'Glossary Term';
+
+    useEntityQuery = useGetGlossaryTermQuery;
+
+    getCustomCardUrlPath = () => PageRoutes.GLOSSARY;
 
     renderProfile = (urn) => {
         return (
@@ -105,24 +111,29 @@ export class GlossaryTermEntity implements Entity<GlossaryTerm> {
                         component: PropertiesTab,
                     },
                 ]}
-                sidebarSections={[
-                    {
-                        component: SidebarAboutSection,
-                    },
-                    {
-                        component: SidebarOwnerSection,
-                    },
-                    {
-                        component: SidebarDomainSection,
-                        properties: {
-                            hideOwnerType: true,
-                        },
-                    },
-                ]}
+                sidebarSections={this.getSidebarSections()}
                 getOverrideProperties={this.getOverridePropertiesFromEntity}
             />
         );
     };
+
+    getSidebarSections = () => [
+        {
+            component: SidebarAboutSection,
+        },
+        {
+            component: SidebarOwnerSection,
+        },
+        {
+            component: SidebarDomainSection,
+            properties: {
+                hideOwnerType: true,
+            },
+        },
+        {
+            component: SidebarStructuredPropsSection,
+        },
+    ];
 
     getOverridePropertiesFromEntity = (glossaryTerm?: GlossaryTerm | null): GenericEntityProperties => {
         // if dataset has subTypes filled out, pick the most specific subtype and return it
@@ -172,4 +183,6 @@ export class GlossaryTermEntity implements Entity<GlossaryTerm> {
             EntityCapabilityType.SOFT_DELETE,
         ]);
     };
+
+    getGraphName = () => this.getPathName();
 }

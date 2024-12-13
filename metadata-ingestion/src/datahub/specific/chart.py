@@ -1,11 +1,11 @@
-import time
-from typing import Dict, List, Optional, TypeVar, Union
-from urllib.parse import quote
+from typing import Dict, List, Optional, Union
 
 from datahub.emitter.mcp_patch_builder import MetadataPatchProposal
 from datahub.metadata.schema_classes import (
-    AuditStampClass,
+    AccessLevelClass,
+    ChangeAuditStampsClass,
     ChartInfoClass as ChartInfo,
+    ChartTypeClass,
     EdgeClass as Edge,
     GlobalTagsClass as GlobalTags,
     GlossaryTermAssociationClass as Term,
@@ -20,8 +20,6 @@ from datahub.specific.custom_properties import CustomPropertiesPatchHelper
 from datahub.specific.ownership import OwnershipPatchHelper
 from datahub.utilities.urns.tag_urn import TagUrn
 from datahub.utilities.urns.urn import Urn
-
-T = TypeVar("T", bound=MetadataPatchProposal)
 
 
 class ChartPatchBuilder(MetadataPatchProposal):
@@ -40,49 +38,12 @@ class ChartPatchBuilder(MetadataPatchProposal):
             audit_header: The Kafka audit header of the chart (optional).
         """
         super().__init__(
-            urn, "chart", system_metadata=system_metadata, audit_header=audit_header
+            urn, system_metadata=system_metadata, audit_header=audit_header
         )
         self.custom_properties_patch_helper = CustomPropertiesPatchHelper(
             self, ChartInfo.ASPECT_NAME
         )
         self.ownership_patch_helper = OwnershipPatchHelper(self)
-
-    def _mint_auditstamp(self, message: Optional[str] = None) -> AuditStampClass:
-        """
-        Creates an AuditStampClass instance with the current timestamp and other default values.
-
-        Args:
-            message: The message associated with the audit stamp (optional).
-
-        Returns:
-            An instance of AuditStampClass.
-        """
-        return AuditStampClass(
-            time=int(time.time() * 1000.0),
-            actor="urn:li:corpuser:datahub",
-            message=message,
-        )
-
-    def _ensure_urn_type(
-        self, entity_type: str, edges: List[Edge], context: str
-    ) -> None:
-        """
-        Ensures that the destination URNs in the given edges have the specified entity type.
-
-        Args:
-            entity_type: The entity type to check against.
-            edges: A list of Edge objects.
-            context: The context or description of the operation.
-
-        Raises:
-            ValueError: If any of the destination URNs is not of the specified entity type.
-        """
-        for e in edges:
-            urn = Urn.create_from_string(e.destinationUrn)
-            if not urn.get_type() == entity_type:
-                raise ValueError(
-                    f"{context}: {e.destinationUrn} is not of type {entity_type}"
-                )
 
     def add_owner(self, owner: Owner) -> "ChartPatchBuilder":
         """
@@ -159,7 +120,7 @@ class ChartPatchBuilder(MetadataPatchProposal):
         self._add_patch(
             ChartInfo.ASPECT_NAME,
             "add",
-            path=f"/inputEdges/{quote(input_urn, safe='')}",
+            path=f"/inputEdges/{self.quote(input_urn)}",
             value=input_urn,
         )
         return self
@@ -177,7 +138,7 @@ class ChartPatchBuilder(MetadataPatchProposal):
         self._add_patch(
             ChartInfo.ASPECT_NAME,
             "remove",
-            path=f"/inputEdges/{input}",
+            path=f"/inputEdges/{self.quote(str(input))}",
             value={},
         )
         return self
@@ -313,4 +274,109 @@ class ChartPatchBuilder(MetadataPatchProposal):
             The ChartPatchBuilder instance.
         """
         self.custom_properties_patch_helper.remove_property(key)
+        return self
+
+    def set_title(self, title: str) -> "ChartPatchBuilder":
+        assert title, "ChartInfo title should not be None"
+        self._add_patch(
+            ChartInfo.ASPECT_NAME,
+            "add",
+            path="/title",
+            value=title,
+        )
+
+        return self
+
+    def set_description(self, description: str) -> "ChartPatchBuilder":
+        assert description, "DashboardInfo description should not be None"
+        self._add_patch(
+            ChartInfo.ASPECT_NAME,
+            "add",
+            path="/description",
+            value=description,
+        )
+
+        return self
+
+    def set_last_refreshed(self, last_refreshed: Optional[int]) -> "ChartPatchBuilder":
+        if last_refreshed:
+            self._add_patch(
+                ChartInfo.ASPECT_NAME,
+                "add",
+                path="/lastRefreshed",
+                value=last_refreshed,
+            )
+
+        return self
+
+    def set_last_modified(
+        self, last_modified: "ChangeAuditStampsClass"
+    ) -> "ChartPatchBuilder":
+        if last_modified:
+            self._add_patch(
+                ChartInfo.ASPECT_NAME,
+                "add",
+                path="/lastModified",
+                value=last_modified,
+            )
+
+        return self
+
+    def set_external_url(self, external_url: Optional[str]) -> "ChartPatchBuilder":
+        if external_url:
+            self._add_patch(
+                ChartInfo.ASPECT_NAME,
+                "add",
+                path="/externalUrl",
+                value=external_url,
+            )
+        return self
+
+    def set_chart_url(self, dashboard_url: Optional[str]) -> "ChartPatchBuilder":
+        if dashboard_url:
+            self._add_patch(
+                ChartInfo.ASPECT_NAME,
+                "add",
+                path="/chartUrl",
+                value=dashboard_url,
+            )
+
+        return self
+
+    def set_type(
+        self, type: Union[None, Union[str, "ChartTypeClass"]] = None
+    ) -> "ChartPatchBuilder":
+        if type:
+            self._add_patch(
+                ChartInfo.ASPECT_NAME,
+                "add",
+                path="/type",
+                value=type,
+            )
+
+        return self
+
+    def set_access(
+        self, access: Union[None, Union[str, "AccessLevelClass"]] = None
+    ) -> "ChartPatchBuilder":
+        if access:
+            self._add_patch(
+                ChartInfo.ASPECT_NAME,
+                "add",
+                path="/access",
+                value=access,
+            )
+
+        return self
+
+    def add_inputs(self, input_urns: Optional[List[str]]) -> "ChartPatchBuilder":
+        if input_urns:
+            for urn in input_urns:
+                self._add_patch(
+                    aspect_name=ChartInfo.ASPECT_NAME,
+                    op="add",
+                    path=f"/inputs/{urn}",
+                    value=urn,
+                )
+
         return self

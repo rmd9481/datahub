@@ -1,5 +1,7 @@
 package config;
 
+import com.datahub.authorization.AuthorizationConfiguration;
+import com.linkedin.metadata.config.VisualConfiguration;
 import com.linkedin.metadata.config.cache.CacheConfiguration;
 import com.linkedin.metadata.config.kafka.KafkaConfiguration;
 import com.linkedin.metadata.spring.YamlPropertySourceFactory;
@@ -13,7 +15,7 @@ import org.springframework.context.annotation.PropertySource;
  * transitive dependencies.
  */
 @EnableConfigurationProperties
-@PropertySource(value = "application.yml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:/application.yaml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties
 @Data
 public class ConfigurationProvider {
@@ -22,4 +24,10 @@ public class ConfigurationProvider {
 
   /** Configuration for caching */
   private CacheConfiguration cache;
+
+  /** Configuration for the view layer */
+  private VisualConfiguration visualConfig;
+
+  /** Configuration for authorization */
+  private AuthorizationConfiguration authorization;
 }

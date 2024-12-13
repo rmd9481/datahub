@@ -7,7 +7,6 @@ import airflow
 from airflow.lineage import PIPELINE_OUTLETS
 from airflow.models.baseoperator import BaseOperator
 from airflow.utils.module_loading import import_string
-from cattr import structure
 from datahub.api.entities.dataprocess.dataprocess_instance import InstanceRunResult
 from datahub.telemetry import telemetry
 
@@ -52,6 +51,7 @@ def get_task_inlets_advanced(task: BaseOperator, context: Any) -> Iterable[Any]:
         )
 
         from airflow.lineage import AUTO
+        from cattr import structure
 
         # pick up unique direct upstream task_ids if AUTO is specified
         if AUTO.upper() in task_inlets or AUTO.lower() in task_inlets:
@@ -106,10 +106,8 @@ def datahub_task_status_callback(context, status):
     )
 
     dataflow = AirflowGenerator.generate_dataflow(
-        cluster=config.cluster,
+        config=config,
         dag=dag,
-        capture_tags=config.capture_tags_info,
-        capture_owner=config.capture_ownership_info,
     )
     task.log.info(f"Emitting Datahub Dataflow: {dataflow}")
     dataflow.emit(emitter, callback=_make_emit_callback(task.log))
@@ -120,6 +118,7 @@ def datahub_task_status_callback(context, status):
         dag=dag,
         capture_tags=config.capture_tags_info,
         capture_owner=config.capture_ownership_info,
+        config=config,
     )
     datajob.inlets.extend(
         entities_to_dataset_urn_list([let.urn for let in task_inlets])
@@ -132,12 +131,13 @@ def datahub_task_status_callback(context, status):
     )
 
     task.log.info(f"Emitting Datahub Datajob: {datajob}")
-    datajob.emit(emitter, callback=_make_emit_callback(task.log))
+    for mcp in datajob.generate_mcp(materialize_iolets=config.materialize_iolets):
+        emitter.emit(mcp, _make_emit_callback(task.log))
 
     if config.capture_executions:
         dpi = AirflowGenerator.run_datajob(
             emitter=emitter,
-            cluster=config.cluster,
+            config=config,
             ti=ti,
             dag=dag,
             dag_run=context["dag_run"],
@@ -185,6 +185,7 @@ def datahub_pre_execution(context):
         dag=dag,
         capture_tags=config.capture_tags_info,
         capture_owner=config.capture_ownership_info,
+        config=config,
     )
     datajob.inlets.extend(
         entities_to_dataset_urn_list([let.urn for let in task_inlets])
@@ -197,12 +198,13 @@ def datahub_pre_execution(context):
     )
 
     task.log.info(f"Emitting Datahub dataJob {datajob}")
-    datajob.emit(emitter, callback=_make_emit_callback(task.log))
+    for mcp in datajob.generate_mcp(materialize_iolets=config.materialize_iolets):
+        emitter.emit(mcp, _make_emit_callback(task.log))
 
     if config.capture_executions:
         dpi = AirflowGenerator.run_datajob(
             emitter=emitter,
-            cluster=config.cluster,
+            config=config,
             ti=ti,
             dag=dag,
             dag_run=context["dag_run"],

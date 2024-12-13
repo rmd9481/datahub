@@ -1,26 +1,28 @@
 package com.linkedin.datahub.graphql.resolvers;
 
+import static com.linkedin.datahub.graphql.resolvers.search.SearchUtils.*;
 import static com.linkedin.metadata.Constants.*;
+import static com.linkedin.metadata.utils.CriterionUtils.buildCriterion;
 
 import com.datahub.authentication.Authentication;
 import com.fasterxml.jackson.core.StreamReadConstraints;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableSet;
-import com.linkedin.common.urn.Urn;
-import com.linkedin.data.template.StringArray;
+import com.linkedin.common.urn.UrnUtils;
 import com.linkedin.datahub.graphql.QueryContext;
 import com.linkedin.datahub.graphql.exception.ValidationException;
 import com.linkedin.datahub.graphql.generated.AndFilterInput;
 import com.linkedin.datahub.graphql.generated.FacetFilterInput;
+import com.linkedin.datahub.graphql.resolvers.search.SearchUtils;
 import com.linkedin.metadata.query.filter.Condition;
 import com.linkedin.metadata.query.filter.ConjunctiveCriterion;
 import com.linkedin.metadata.query.filter.ConjunctiveCriterionArray;
 import com.linkedin.metadata.query.filter.Criterion;
 import com.linkedin.metadata.query.filter.CriterionArray;
 import com.linkedin.metadata.query.filter.Filter;
-import com.linkedin.metadata.search.utils.ESUtils;
-import com.linkedin.metadata.search.utils.QueryUtils;
+import com.linkedin.metadata.service.ViewService;
+import com.linkedin.view.DataHubViewInfo;
 import graphql.schema.DataFetchingEnvironment;
+import io.datahubproject.metadata.context.OperationContext;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +36,6 @@ import org.slf4j.LoggerFactory;
 
 public class ResolverUtils {
 
-  private static final Set<String> KEYWORD_EXCLUDED_FILTERS =
-      ImmutableSet.of("runId", "_entityType");
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
   static {
@@ -65,7 +65,7 @@ public class ResolverUtils {
   @Nonnull
   public static String escapeForwardSlash(@Nonnull String input) {
     if (input.contains("/")) {
-      input = input.replace("/", "\\\\/");
+      input = input.replace("/", "\\/");
     }
     return input;
   }
@@ -152,78 +152,51 @@ public class ResolverUtils {
                 new ConjunctiveCriterion().setAnd(new CriterionArray(andCriterions))));
   }
 
+  // Translates a FacetFilterInput (graphql input class) into Criterion (our internal model)
   public static Criterion criterionFromFilter(final FacetFilterInput filter) {
-    return criterionFromFilter(filter, false);
+
+    final Condition condition;
+    if (filter.getCondition() != null) {
+      condition = Condition.valueOf(filter.getCondition().toString());
+    } else {
+      condition = Condition.EQUAL;
+    }
+
+    final List<String> values;
+    if (filter.getValues() == null && filter.getValue() != null) {
+      values = Collections.singletonList(filter.getValue());
+    } else {
+      values = filter.getValues();
+    }
+
+    return buildCriterion(filter.getField(), condition, filter.getNegated(), values);
   }
 
-  // Translates a FacetFilterInput (graphql input class) into Criterion (our internal model)
-  public static Criterion criterionFromFilter(
-      final FacetFilterInput filter, final Boolean skipKeywordSuffix) {
-    Criterion result = new Criterion();
-
-    if (skipKeywordSuffix) {
-      result.setField(filter.getField());
-    } else {
-      result.setField(getFilterField(filter.getField(), skipKeywordSuffix));
+  public static Filter viewFilter(
+      OperationContext opContext, ViewService viewService, String viewUrn) {
+    if (viewUrn == null) {
+      return null;
     }
-
-    // `value` is deprecated in place of `values`- this is to support old query patterns. If values
-    // is provided,
-    // this statement will be skipped
-    if (filter.getValues() == null && filter.getValue() != null) {
-      result.setValues(new StringArray(filter.getValue()));
-      result.setValue(filter.getValue());
-    } else if (filter.getValues() != null) {
-      result.setValues(new StringArray(filter.getValues()));
-      if (!filter.getValues().isEmpty()) {
-        result.setValue(filter.getValues().get(0));
-      } else {
-        result.setValue("");
-      }
-    } else {
-      result.setValues(new StringArray());
-      result.setValue("");
+    DataHubViewInfo viewInfo = resolveView(opContext, viewService, UrnUtils.getUrn(viewUrn));
+    if (viewInfo == null) {
+      return null;
     }
-
-    if (filter.getCondition() != null) {
-      result.setCondition(Condition.valueOf(filter.getCondition().toString()));
-    } else {
-      result.setCondition(Condition.EQUAL);
-    }
-
-    if (filter.getNegated() != null) {
-      result.setNegated(filter.getNegated());
-    }
-
+    Filter result = SearchUtils.combineFilters(null, viewInfo.getDefinition().getFilter());
     return result;
   }
 
-  private static String getFilterField(
-      final String originalField, final boolean skipKeywordSuffix) {
-    if (KEYWORD_EXCLUDED_FILTERS.contains(originalField)) {
-      return originalField;
+  /**
+   * Simply resolves the end time filter for the search across lineage query. If the start time is
+   * provided, but end time is not provided, we will default to the current time.
+   */
+  public static Long getLineageEndTimeMillis(
+      @Nullable Long startTimeMillis, @Nullable Long endTimeMillis) {
+    if (endTimeMillis != null) {
+      return endTimeMillis;
     }
-    return ESUtils.toKeywordField(originalField, skipKeywordSuffix);
-  }
-
-  public static Filter buildFilterWithUrns(@Nonnull Set<Urn> urns, @Nullable Filter inputFilters) {
-    Criterion urnMatchCriterion =
-        new Criterion()
-            .setField("urn")
-            .setValue("")
-            .setValues(
-                new StringArray(urns.stream().map(Object::toString).collect(Collectors.toList())));
-    if (inputFilters == null) {
-      return QueryUtils.newFilter(urnMatchCriterion);
+    if (startTimeMillis != null) {
+      return System.currentTimeMillis();
     }
-
-    // Add urn match criterion to each or clause
-    if (inputFilters.getOr() != null && !inputFilters.getOr().isEmpty()) {
-      for (ConjunctiveCriterion conjunctiveCriterion : inputFilters.getOr()) {
-        conjunctiveCriterion.getAnd().add(urnMatchCriterion);
-      }
-      return inputFilters;
-    }
-    return QueryUtils.newFilter(urnMatchCriterion);
+    return null;
   }
 }

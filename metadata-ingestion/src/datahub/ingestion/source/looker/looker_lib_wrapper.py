@@ -17,6 +17,7 @@ from looker_sdk.sdk.api40.models import (
     Look,
     LookmlModel,
     LookmlModelExplore,
+    LookWithQuery,
     Query,
     User,
     WriteQuery,
@@ -64,6 +65,7 @@ class LookerAPIStats(BaseModel):
     all_looks_calls: int = 0
     all_models_calls: int = 0
     get_query_calls: int = 0
+    get_look_calls: int = 0
     search_looks_calls: int = 0
     search_dashboards_calls: int = 0
 
@@ -102,9 +104,11 @@ class LookerAPI:
         # (since it's possible to initialize an invalid client without any complaints)
         try:
             self.me = self.client.me(
-                transport_options=self.transport_options
-                if config.transport_options is not None
-                else None
+                transport_options=(
+                    self.transport_options
+                    if config.transport_options is not None
+                    else None
+                )
             )
         except SDKError as e:
             raise ConfigurationError(
@@ -187,14 +191,30 @@ class LookerAPI:
 
     @lru_cache(maxsize=1000)
     def folder_ancestors(
-        self, folder_id: str, fields: Union[str, List[str]] = "name"
+        self,
+        folder_id: str,
+        fields: Union[str, List[str]] = ["id", "name", "parent_id"],
     ) -> Sequence[Folder]:
         self.client_stats.folder_calls += 1
-        return self.client.folder_ancestors(
-            folder_id,
-            self.__fields_mapper(fields),
-            transport_options=self.transport_options,
-        )
+        try:
+            return self.client.folder_ancestors(
+                folder_id,
+                self.__fields_mapper(fields),
+                transport_options=self.transport_options,
+            )
+        except SDKError as e:
+            if "Looker Not Found (404)" in str(e):
+                # Folder ancestors not found
+                logger.info(
+                    f"Could not find ancestors for folder with id {folder_id}: 404 error"
+                )
+            else:
+                logger.warning(
+                    f"Could not find ancestors for folder with id {folder_id}"
+                )
+                logger.warning(f"Failure was {e}")
+        # Folder ancestors not found
+        return []
 
     def all_connections(self):
         self.client_stats.all_connections_calls += 1
@@ -251,6 +271,14 @@ class LookerAPI:
         self.client_stats.get_query_calls += 1
         return self.client.query(
             query_id=query_id,
+            fields=self.__fields_mapper(fields),
+            transport_options=self.transport_options,
+        )
+
+    def get_look(self, look_id: str, fields: Union[str, List[str]]) -> LookWithQuery:
+        self.client_stats.get_look_calls += 1
+        return self.client.look(
+            look_id=look_id,
             fields=self.__fields_mapper(fields),
             transport_options=self.transport_options,
         )

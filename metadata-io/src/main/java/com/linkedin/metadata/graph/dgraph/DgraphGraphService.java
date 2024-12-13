@@ -7,16 +7,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import com.linkedin.common.urn.Urn;
-import com.linkedin.metadata.graph.Edge;
+import com.linkedin.metadata.aspect.models.graph.Edge;
+import com.linkedin.metadata.aspect.models.graph.RelatedEntitiesScrollResult;
+import com.linkedin.metadata.aspect.models.graph.RelatedEntity;
 import com.linkedin.metadata.graph.GraphService;
 import com.linkedin.metadata.graph.RelatedEntitiesResult;
-import com.linkedin.metadata.graph.RelatedEntity;
 import com.linkedin.metadata.models.registry.LineageRegistry;
 import com.linkedin.metadata.query.filter.Criterion;
 import com.linkedin.metadata.query.filter.CriterionArray;
 import com.linkedin.metadata.query.filter.Filter;
 import com.linkedin.metadata.query.filter.RelationshipDirection;
 import com.linkedin.metadata.query.filter.RelationshipFilter;
+import com.linkedin.metadata.query.filter.SortCriterion;
+import io.datahubproject.metadata.context.OperationContext;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphProto.Mutation;
 import io.dgraph.DgraphProto.NQuad;
@@ -364,7 +367,7 @@ public class DgraphGraphService implements GraphService {
                 filters.add(
                     String.format(
                         "%s as var(func: eq(<%s>, \"%s\"))",
-                        sourceFilterName, criterion.getField(), criterion.getValue()));
+                        sourceFilterName, criterion.getField(), criterion.getValues().get(0)));
               });
     }
 
@@ -381,7 +384,7 @@ public class DgraphGraphService implements GraphService {
                 filters.add(
                     String.format(
                         "%s as var(func: eq(<%s>, \"%s\"))",
-                        sourceFilterName, criterion.getField(), criterion.getValue()));
+                        sourceFilterName, criterion.getField(), criterion.getValues().get(0)));
               });
     }
 
@@ -451,6 +454,7 @@ public class DgraphGraphService implements GraphService {
   @Nonnull
   @Override
   public RelatedEntitiesResult findRelatedEntities(
+      @Nonnull final OperationContext opContext,
       @Nullable List<String> sourceTypes,
       @Nonnull Filter sourceEntityFilter,
       @Nullable List<String> destinationTypes,
@@ -651,7 +655,7 @@ public class DgraphGraphService implements GraphService {
                         })
                     // for undirected we get duplicate relationships
                     .distinct()
-                    .map(relationship -> new RelatedEntity(relationship, urn));
+                    .map(relationship -> new RelatedEntity(relationship, urn, null));
               }
 
               return Stream.empty();
@@ -660,7 +664,7 @@ public class DgraphGraphService implements GraphService {
   }
 
   @Override
-  public void removeNode(@Nonnull Urn urn) {
+  public void removeNode(@Nonnull final OperationContext opContext, @Nonnull Urn urn) {
     String query = String.format("query {\n" + " node as var(func: eq(urn, \"%s\"))\n" + "}", urn);
     String deletion = "uid(node) * * .";
 
@@ -677,6 +681,7 @@ public class DgraphGraphService implements GraphService {
 
   @Override
   public void removeEdgesFromNode(
+      @Nonnull final OperationContext opContext,
       @Nonnull Urn urn,
       @Nonnull List<String> relationshipTypes,
       @Nonnull RelationshipFilter relationshipFilter) {
@@ -764,9 +769,6 @@ public class DgraphGraphService implements GraphService {
   }
 
   @Override
-  public void configure() {}
-
-  @Override
   public void clear() {
     log.debug("dropping Dgraph data");
 
@@ -778,5 +780,23 @@ public class DgraphGraphService implements GraphService {
 
     // setup urn, type and key relationships
     getSchema();
+  }
+
+  @Nonnull
+  @Override
+  public RelatedEntitiesScrollResult scrollRelatedEntities(
+      @Nonnull OperationContext opContext,
+      @Nullable List<String> sourceTypes,
+      @Nonnull Filter sourceEntityFilter,
+      @Nullable List<String> destinationTypes,
+      @Nonnull Filter destinationEntityFilter,
+      @Nonnull List<String> relationshipTypes,
+      @Nonnull RelationshipFilter relationshipFilter,
+      @Nonnull List<SortCriterion> sortCriteria,
+      @Nullable String scrollId,
+      int count,
+      @Nullable Long startTimeMillis,
+      @Nullable Long endTimeMillis) {
+    throw new IllegalArgumentException("Not implemented");
   }
 }

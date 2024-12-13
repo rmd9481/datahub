@@ -4,6 +4,7 @@ import static com.linkedin.datahub.upgrade.system.elasticsearch.util.IndexUtils.
 import static com.linkedin.datahub.upgrade.system.elasticsearch.util.IndexUtils.getAllReindexConfigs;
 
 import com.google.common.collect.ImmutableMap;
+import com.linkedin.common.urn.Urn;
 import com.linkedin.datahub.upgrade.UpgradeContext;
 import com.linkedin.datahub.upgrade.UpgradeStep;
 import com.linkedin.datahub.upgrade.UpgradeStepResult;
@@ -13,9 +14,13 @@ import com.linkedin.gms.factory.config.ConfigurationProvider;
 import com.linkedin.gms.factory.search.BaseElasticSearchComponentsFactory;
 import com.linkedin.metadata.search.elasticsearch.indexbuilder.ReindexConfig;
 import com.linkedin.metadata.shared.ElasticSearchIndexed;
+import com.linkedin.structured.StructuredPropertyDefinition;
+import com.linkedin.upgrade.DataHubUpgradeState;
+import com.linkedin.util.Pair;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +33,10 @@ import org.opensearch.client.indices.ResizeRequest;
 @RequiredArgsConstructor
 @Slf4j
 public class BuildIndicesPreStep implements UpgradeStep {
-  private final BaseElasticSearchComponentsFactory.BaseElasticSearchComponents _esComponents;
-  private final List<ElasticSearchIndexed> _services;
-  private final ConfigurationProvider _configurationProvider;
+  private final BaseElasticSearchComponentsFactory.BaseElasticSearchComponents esComponents;
+  private final List<ElasticSearchIndexed> services;
+  private final ConfigurationProvider configurationProvider;
+  private final Set<Pair<Urn, StructuredPropertyDefinition>> structuredProperties;
 
   @Override
   public String id() {
@@ -46,30 +52,33 @@ public class BuildIndicesPreStep implements UpgradeStep {
   public Function<UpgradeContext, UpgradeStepResult> executable() {
     return (context) -> {
       try {
+        final List<ReindexConfig> reindexConfigs =
+            getAllReindexConfigs(services, structuredProperties);
+
         // Get indices to update
         List<ReindexConfig> indexConfigs =
-            getAllReindexConfigs(_services).stream()
+            reindexConfigs.stream()
                 .filter(ReindexConfig::requiresReindex)
                 .collect(Collectors.toList());
 
         for (ReindexConfig indexConfig : indexConfigs) {
           String indexName =
-              IndexUtils.resolveAlias(_esComponents.getSearchClient(), indexConfig.name());
+              IndexUtils.resolveAlias(esComponents.getSearchClient(), indexConfig.name());
 
           boolean ack = blockWrites(indexName);
           if (!ack) {
             log.error(
                 "Partial index settings update, some indices may still be blocking writes."
                     + " Please fix the error and re-run the BuildIndices upgrade job.");
-            return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+            return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
           }
 
           // Clone indices
-          if (_configurationProvider.getElasticSearch().getBuildIndices().isCloneIndices()) {
+          if (configurationProvider.getElasticSearch().getBuildIndices().isCloneIndices()) {
             String clonedName = indexConfig.name() + "_clone_" + System.currentTimeMillis();
             ResizeRequest resizeRequest = new ResizeRequest(clonedName, indexName);
             boolean cloneAck =
-                _esComponents
+                esComponents
                     .getSearchClient()
                     .indices()
                     .clone(resizeRequest, RequestOptions.DEFAULT)
@@ -79,15 +88,15 @@ public class BuildIndicesPreStep implements UpgradeStep {
               log.error(
                   "Partial index settings update, cloned indices may need to be cleaned up: {}",
                   clonedName);
-              return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+              return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
             }
           }
         }
       } catch (Exception e) {
         log.error("BuildIndicesPreStep failed.", e);
-        return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.FAILED);
+        return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.FAILED);
       }
-      return new DefaultUpgradeStepResult(id(), UpgradeStepResult.Result.SUCCEEDED);
+      return new DefaultUpgradeStepResult(id(), DataHubUpgradeState.SUCCEEDED);
     };
   }
 
@@ -99,7 +108,7 @@ public class BuildIndicesPreStep implements UpgradeStep {
     boolean ack;
     try {
       ack =
-          _esComponents
+          esComponents
               .getSearchClient()
               .indices()
               .putSettings(request, RequestOptions.DEFAULT)
@@ -123,7 +132,7 @@ public class BuildIndicesPreStep implements UpgradeStep {
     }
 
     if (ack) {
-      ack = IndexUtils.validateWriteBlock(_esComponents.getSearchClient(), indexName, true);
+      ack = IndexUtils.validateWriteBlock(esComponents.getSearchClient(), indexName, true);
       log.info(
           "Validated index {} with new settings. Settings: {}, Acknowledged: {}",
           indexName,

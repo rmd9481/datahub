@@ -29,15 +29,24 @@ jobs:
                 "swaroopjagadish",
                 "treff7es",
                 "yoonhyejin",
-                "eboneil",
-                "ethan-cartwright",
                 "gabe-lyons",
                 "hsheth2",
                 "jjoyce0510",
                 "maggiehays",
-                "mrjefflewis",
                 "pedro93",
-                "RyanHolstien"
+                "RyanHolstien",
+                "sakethvarma397",
+                "purnimagarg1",
+                "sagar-salvi-apptware",
+                "kushagra-apptware",
+                "Salman-Apptware",
+                "mayurinehate",
+                "noggi",
+                "skrydal",
+                "kevinkarchacryl",
+                "sgomezvillamor",
+                "acrylJonny",
+                "chakru-r"
               ]'), 
               github.actor
             ) 
@@ -52,20 +61,15 @@ jobs:
           ${{ 
             contains(
               fromJson('[
-                "skrydal",
                 "siladitya2",
-                "sgomezvillamor",
-                "ngamanda",
-                "HarveyLeo",
-                "frsann",
                 "bossenti",
-                "nikolakasev",
                 "PatrickfBraz",
                 "cuong-pham",
                 "sudhakarast",
                 "tkdrahn",
                 "rtekal",
-                "sgm44"
+                "mikeburke24",
+                "DSchmidtDev"
               ]'), 
               github.actor
             ) 

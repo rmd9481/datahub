@@ -1,10 +1,9 @@
-import time
-from typing import Dict, List, Optional, TypeVar, Union
-from urllib.parse import quote
+from typing import Dict, List, Optional, Union
 
 from datahub.emitter.mcp_patch_builder import MetadataPatchProposal
 from datahub.metadata.schema_classes import (
-    AuditStampClass,
+    AccessLevelClass,
+    ChangeAuditStampsClass,
     DashboardInfoClass as DashboardInfo,
     EdgeClass as Edge,
     GlobalTagsClass as GlobalTags,
@@ -20,8 +19,6 @@ from datahub.specific.custom_properties import CustomPropertiesPatchHelper
 from datahub.specific.ownership import OwnershipPatchHelper
 from datahub.utilities.urns.tag_urn import TagUrn
 from datahub.utilities.urns.urn import Urn
-
-T = TypeVar("T", bound=MetadataPatchProposal)
 
 
 class DashboardPatchBuilder(MetadataPatchProposal):
@@ -40,49 +37,12 @@ class DashboardPatchBuilder(MetadataPatchProposal):
             audit_header: The Kafka audit header of the dashboard (optional).
         """
         super().__init__(
-            urn, "dashboard", system_metadata=system_metadata, audit_header=audit_header
+            urn, system_metadata=system_metadata, audit_header=audit_header
         )
         self.custom_properties_patch_helper = CustomPropertiesPatchHelper(
             self, DashboardInfo.ASPECT_NAME
         )
         self.ownership_patch_helper = OwnershipPatchHelper(self)
-
-    def _mint_auditstamp(self, message: Optional[str] = None) -> AuditStampClass:
-        """
-        Creates an AuditStampClass instance with the current timestamp and other default values.
-
-        Args:
-            message: The message associated with the audit stamp (optional).
-
-        Returns:
-            An instance of AuditStampClass.
-        """
-        return AuditStampClass(
-            time=int(time.time() * 1000.0),
-            actor="urn:li:corpuser:datahub",
-            message=message,
-        )
-
-    def _ensure_urn_type(
-        self, entity_type: str, edges: List[Edge], context: str
-    ) -> None:
-        """
-        Ensures that the destination URNs in the given edges have the specified entity type.
-
-        Args:
-            entity_type: The entity type to check against.
-            edges: A list of Edge objects.
-            context: The context or description of the operation.
-
-        Raises:
-            ValueError: If any of the destination URNs is not of the specified entity type.
-        """
-        for e in edges:
-            urn = Urn.create_from_string(e.destinationUrn)
-            if not urn.get_type() == entity_type:
-                raise ValueError(
-                    f"{context}: {e.destinationUrn} is not of type {entity_type}"
-                )
 
     def add_owner(self, owner: Owner) -> "DashboardPatchBuilder":
         """
@@ -166,7 +126,7 @@ class DashboardPatchBuilder(MetadataPatchProposal):
         self._add_patch(
             DashboardInfo.ASPECT_NAME,
             "add",
-            path=f"/datasetEdges/{quote(dataset_urn, safe='')}",
+            path=f"/datasetEdges/{self.quote(dataset_urn)}",
             value=dataset_edge,
         )
         return self
@@ -249,7 +209,7 @@ class DashboardPatchBuilder(MetadataPatchProposal):
         self._add_patch(
             DashboardInfo.ASPECT_NAME,
             "add",
-            path=f"/chartEdges/{quote(chart_urn, safe='')}",
+            path=f"/chartEdges/{self.quote(chart_urn)}",
             value=chart_edge,
         )
         return self
@@ -407,4 +367,123 @@ class DashboardPatchBuilder(MetadataPatchProposal):
             The DashboardPatchBuilder instance.
         """
         self.custom_properties_patch_helper.remove_property(key)
+        return self
+
+    def set_title(self, title: str) -> "DashboardPatchBuilder":
+        assert title, "DashboardInfo title should not be None"
+        self._add_patch(
+            DashboardInfo.ASPECT_NAME,
+            "add",
+            path="/title",
+            value=title,
+        )
+
+        return self
+
+    def set_description(self, description: str) -> "DashboardPatchBuilder":
+        assert description, "DashboardInfo description should not be None"
+        self._add_patch(
+            DashboardInfo.ASPECT_NAME,
+            "add",
+            path="/description",
+            value=description,
+        )
+
+        return self
+
+    def add_custom_properties(
+        self, custom_properties: Optional[Dict[str, str]] = None
+    ) -> "DashboardPatchBuilder":
+        if custom_properties:
+            for key, value in custom_properties.items():
+                self.custom_properties_patch_helper.add_property(key, value)
+
+        return self
+
+    def set_external_url(self, external_url: Optional[str]) -> "DashboardPatchBuilder":
+        if external_url:
+            self._add_patch(
+                DashboardInfo.ASPECT_NAME,
+                "add",
+                path="/externalUrl",
+                value=external_url,
+            )
+        return self
+
+    def add_charts(self, chart_urns: Optional[List[str]]) -> "DashboardPatchBuilder":
+        if chart_urns:
+            for urn in chart_urns:
+                self._add_patch(
+                    aspect_name=DashboardInfo.ASPECT_NAME,
+                    op="add",
+                    path=f"/charts/{urn}",
+                    value=urn,
+                )
+
+        return self
+
+    def add_datasets(
+        self, dataset_urns: Optional[List[str]]
+    ) -> "DashboardPatchBuilder":
+        if dataset_urns:
+            for urn in dataset_urns:
+                self._add_patch(
+                    aspect_name=DashboardInfo.ASPECT_NAME,
+                    op="add",
+                    path=f"/datasets/{urn}",
+                    value=urn,
+                )
+
+        return self
+
+    def set_dashboard_url(
+        self, dashboard_url: Optional[str]
+    ) -> "DashboardPatchBuilder":
+        if dashboard_url:
+            self._add_patch(
+                DashboardInfo.ASPECT_NAME,
+                "add",
+                path="/dashboardUrl",
+                value=dashboard_url,
+            )
+
+        return self
+
+    def set_access(
+        self, access: Union[None, Union[str, "AccessLevelClass"]] = None
+    ) -> "DashboardPatchBuilder":
+        if access:
+            self._add_patch(
+                DashboardInfo.ASPECT_NAME,
+                "add",
+                path="/access",
+                value=access,
+            )
+
+        return self
+
+    def set_last_refreshed(
+        self, last_refreshed: Optional[int]
+    ) -> "DashboardPatchBuilder":
+        if last_refreshed:
+            self._add_patch(
+                DashboardInfo.ASPECT_NAME,
+                "add",
+                path="/lastRefreshed",
+                value=last_refreshed,
+            )
+
+        return self
+
+    def set_last_modified(
+        self, last_modified: "ChangeAuditStampsClass"
+    ) -> "DashboardPatchBuilder":
+        if last_modified:
+            self._add_patch(
+                DashboardInfo.ASPECT_NAME,
+                "add",
+                path="/lastModified",
+                value=last_modified,
+            )
+
         return self

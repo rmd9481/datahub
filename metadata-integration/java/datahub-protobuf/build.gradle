@@ -3,12 +3,12 @@ plugins {
     id "application"
 }
 apply plugin: 'java'
-apply plugin: 'jacoco'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'signing'
 apply plugin: 'io.codearte.nexus-staging'
 apply plugin: 'maven-publish'
 apply from: '../versioning.gradle'
+apply from: '../../../gradle/coverage/java-coverage.gradle'
 
 jar.enabled = false // Since we only want to build shadow jars, disabling the regular jar creation
 
@@ -29,7 +29,7 @@ dependencies {
     implementation externalDependency.jgrapht
     implementation externalDependency.gson
     implementation externalDependency.commonsCli
-    implementation externalDependency.httpAsyncClient
+    implementation externalDependency.httpClient
     implementation externalDependency.slf4jApi
     implementation externalDependency.jacksonCore
     compileOnly externalDependency.lombok
@@ -57,13 +57,6 @@ task compileProtobuf {
     }
 }
 
-jacocoTestReport {
-    dependsOn test // tests are required to run before generating the report
-}
-
-test.finalizedBy jacocoTestReport
-
-
 task checkShadowJar(type: Exec) {
    commandLine 'sh', '-c', 'scripts/check_jar.sh'
 }
@@ -88,7 +81,6 @@ shadowJar {
                 it.name
             }
   dependencies {
-
     exclude(dependency {
             exclude_modules.contains(it.name)
         })
@@ -115,6 +107,7 @@ shadowJar {
     relocate 'org.jgrapht', 'datahub.shaded.org.jgrapht'
     relocate 'org.jheaps', 'datahub.shaded.org.jheaps'
     relocate 'ch.randelshofer', 'datahub.shaded.ch.randelshofer'
+    relocate 'org.apache.hc', 'datahub.shaded.org.apache.hc'
  
   finalizedBy checkShadowJar
 }

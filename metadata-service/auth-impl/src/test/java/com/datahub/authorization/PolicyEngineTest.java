@@ -5,7 +5,6 @@ import static com.linkedin.metadata.authorization.PoliciesConfig.*;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
-import com.datahub.authentication.Authentication;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -24,9 +23,9 @@ import com.linkedin.entity.EnvelopedAspectMap;
 import com.linkedin.entity.client.EntityClient;
 import com.linkedin.identity.RoleMembership;
 import com.linkedin.metadata.Constants;
-import com.linkedin.policy.DataHubActorFilter;
-import com.linkedin.policy.DataHubPolicyInfo;
-import com.linkedin.policy.DataHubResourceFilter;
+import com.linkedin.policy.*;
+import io.datahubproject.metadata.context.OperationContext;
+import io.datahubproject.test.metadata.context.TestOperationContexts;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
@@ -44,11 +43,13 @@ public class PolicyEngineTest {
   private static final String AUTHORIZED_GROUP = "urn:li:corpGroup:authorizedGroup";
   private static final String RESOURCE_URN = "urn:li:dataset:test";
   private static final String DOMAIN_URN = "urn:li:domain:domain1";
+  private static final String TAG_URN = "urn:li:tag:allowed";
   private static final String OWNERSHIP_TYPE_URN = "urn:li:ownershipType:__system__technical_owner";
   private static final String OTHER_OWNERSHIP_TYPE_URN =
       "urn:li:ownershipType:__system__data_steward";
 
   private EntityClient _entityClient;
+  private OperationContext systemOperationContext;
   private PolicyEngine _policyEngine;
 
   private Urn authorizedUserUrn;
@@ -60,7 +61,8 @@ public class PolicyEngineTest {
   @BeforeMethod
   public void setupTest() throws Exception {
     _entityClient = Mockito.mock(EntityClient.class);
-    _policyEngine = new PolicyEngine(Mockito.mock(Authentication.class), _entityClient);
+    systemOperationContext = TestOperationContexts.systemContextNoSearchAuthorization();
+    _policyEngine = new PolicyEngine(_entityClient);
 
     authorizedUserUrn = Urn.createFromString(AUTHORIZED_PRINCIPAL);
     resolvedAuthorizedUserSpec =
@@ -69,7 +71,8 @@ public class PolicyEngineTest {
             AUTHORIZED_PRINCIPAL,
             Collections.emptySet(),
             Collections.emptySet(),
-            Collections.singleton(AUTHORIZED_GROUP));
+            Collections.singleton(AUTHORIZED_GROUP),
+            Collections.emptySet());
     unauthorizedUserUrn = Urn.createFromString(UNAUTHORIZED_PRINCIPAL);
     resolvedUnauthorizedUserSpec =
         buildEntityResolvers(CORP_USER_ENTITY_NAME, UNAUTHORIZED_PRINCIPAL);
@@ -81,10 +84,14 @@ public class PolicyEngineTest {
     Map<Urn, EntityResponse> authorizedEntityResponseMap =
         Collections.singletonMap(authorizedUserUrn, authorizedEntityResponse);
     when(_entityClient.batchGetV2(
+            eq(systemOperationContext),
             eq(CORP_USER_ENTITY_NAME),
             eq(Collections.singleton(authorizedUserUrn)),
-            eq(Collections.singleton(ROLE_MEMBERSHIP_ASPECT_NAME)),
-            any()))
+            eq(
+                ImmutableSet.of(
+                    ROLE_MEMBERSHIP_ASPECT_NAME,
+                    GROUP_MEMBERSHIP_ASPECT_NAME,
+                    NATIVE_GROUP_MEMBERSHIP_ASPECT_NAME))))
         .thenReturn(authorizedEntityResponseMap);
 
     EntityResponse unauthorizedEntityResponse = createUnauthorizedEntityResponse();
@@ -92,10 +99,14 @@ public class PolicyEngineTest {
     Map<Urn, EntityResponse> unauthorizedEntityResponseMap =
         Collections.singletonMap(unauthorizedUserUrn, unauthorizedEntityResponse);
     when(_entityClient.batchGetV2(
+            eq(systemOperationContext),
             eq(CORP_USER_ENTITY_NAME),
             eq(Collections.singleton(unauthorizedUserUrn)),
-            eq(Collections.singleton(ROLE_MEMBERSHIP_ASPECT_NAME)),
-            any()))
+            eq(
+                ImmutableSet.of(
+                    ROLE_MEMBERSHIP_ASPECT_NAME,
+                    GROUP_MEMBERSHIP_ASPECT_NAME,
+                    NATIVE_GROUP_MEMBERSHIP_ASPECT_NAME))))
         .thenReturn(unauthorizedEntityResponseMap);
 
     // Init ownership type mocks.
@@ -108,10 +119,10 @@ public class PolicyEngineTest {
     entityResponse.setAspects(envelopedAspectMap);
     Map<Urn, EntityResponse> mockMap = mock(Map.class);
     when(_entityClient.batchGetV2(
+            eq(systemOperationContext),
             any(),
             eq(Collections.singleton(resourceUrn)),
-            eq(Collections.singleton(OWNERSHIP_ASPECT_NAME)),
-            any()))
+            eq(Collections.singleton(OWNERSHIP_ASPECT_NAME))))
         .thenReturn(mockMap);
     when(mockMap.get(eq(resourceUrn))).thenReturn(entityResponse);
   }
@@ -142,6 +153,7 @@ public class PolicyEngineTest {
     ResolvedEntitySpec resourceSpec = buildEntityResolvers("dataset", RESOURCE_URN);
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -174,6 +186,7 @@ public class PolicyEngineTest {
     ResolvedEntitySpec resourceSpec = buildEntityResolvers("dataset", RESOURCE_URN);
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_OWNERS",
@@ -202,7 +215,11 @@ public class PolicyEngineTest {
 
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
-            dataHubPolicyInfo, resolvedAuthorizedUserSpec, "MANAGE_POLICIES", Optional.empty());
+            systemOperationContext,
+            dataHubPolicyInfo,
+            resolvedAuthorizedUserSpec,
+            "MANAGE_POLICIES",
+            Optional.empty());
     assertTrue(result.isGranted());
 
     // Verify no network calls
@@ -238,6 +255,7 @@ public class PolicyEngineTest {
     // Assert Authorized user can edit entity tags.
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -278,6 +296,7 @@ public class PolicyEngineTest {
     // Assert unauthorized user cannot edit entity tags.
     PolicyEngine.PolicyEvaluationResult result2 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             buildEntityResolvers(CORP_USER_ENTITY_NAME, "urn:li:corpuser:test"),
             "EDIT_ENTITY_TAGS",
@@ -318,6 +337,7 @@ public class PolicyEngineTest {
     // Assert authorized user can edit entity tags, because of group membership.
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -357,6 +377,7 @@ public class PolicyEngineTest {
     // Assert unauthorized user cannot edit entity tags.
     PolicyEngine.PolicyEvaluationResult result2 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedUnauthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -397,6 +418,7 @@ public class PolicyEngineTest {
     // Assert authorized user can edit entity tags.
     PolicyEngine.PolicyEvaluationResult authorizedResult =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -407,7 +429,10 @@ public class PolicyEngineTest {
     // Verify we are only calling for roles during these requests.
     verify(_entityClient, times(1))
         .batchGetV2(
-            eq(CORP_USER_ENTITY_NAME), eq(Collections.singleton(authorizedUserUrn)), any(), any());
+            eq(systemOperationContext),
+            eq(CORP_USER_ENTITY_NAME),
+            eq(Collections.singleton(authorizedUserUrn)),
+            any());
   }
 
   @Test
@@ -440,6 +465,7 @@ public class PolicyEngineTest {
     // Assert authorized user can edit entity tags.
     PolicyEngine.PolicyEvaluationResult unauthorizedResult =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedUnauthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -450,9 +476,9 @@ public class PolicyEngineTest {
     // Verify we are only calling for roles during these requests.
     verify(_entityClient, times(1))
         .batchGetV2(
+            eq(systemOperationContext),
             eq(CORP_USER_ENTITY_NAME),
             eq(Collections.singleton(unauthorizedUserUrn)),
-            any(),
             any());
   }
 
@@ -482,6 +508,7 @@ public class PolicyEngineTest {
     // Assert authorized user can edit entity tags, because of group membership.
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -491,6 +518,7 @@ public class PolicyEngineTest {
     // Assert unauthorized user cannot edit entity tags.
     PolicyEngine.PolicyEvaluationResult result2 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedUnauthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -527,6 +555,7 @@ public class PolicyEngineTest {
     // Assert authorized user can edit entity tags, because of group membership.
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -536,6 +565,7 @@ public class PolicyEngineTest {
     // Assert unauthorized user cannot edit entity tags.
     PolicyEngine.PolicyEvaluationResult result2 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedUnauthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -575,10 +605,10 @@ public class PolicyEngineTest {
         new EnvelopedAspect().setValue(new Aspect(createOwnershipAspect(true, false).data())));
     entityResponse.setAspects(aspectMap);
     when(_entityClient.getV2(
+            eq(systemOperationContext),
             eq(resourceUrn.getEntityType()),
             eq(resourceUrn),
-            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME)),
-            any()))
+            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME))))
         .thenReturn(entityResponse);
 
     ResolvedEntitySpec resourceSpec =
@@ -587,10 +617,12 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             ImmutableSet.of(AUTHORIZED_PRINCIPAL),
             Collections.emptySet(),
+            Collections.emptySet(),
             Collections.emptySet());
     // Assert authorized user can edit entity tags, because he is a user owner.
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -633,10 +665,10 @@ public class PolicyEngineTest {
             .setValue(new Aspect(createOwnershipAspectWithTypeUrn(OWNERSHIP_TYPE_URN).data())));
     entityResponse.setAspects(aspectMap);
     when(_entityClient.getV2(
+            eq(systemOperationContext),
             eq(resourceUrn.getEntityType()),
             eq(resourceUrn),
-            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME)),
-            any()))
+            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME))))
         .thenReturn(entityResponse);
 
     ResolvedEntitySpec resourceSpec =
@@ -645,10 +677,12 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             ImmutableSet.of(AUTHORIZED_PRINCIPAL),
             Collections.emptySet(),
+            Collections.emptySet(),
             Collections.emptySet());
 
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -692,10 +726,10 @@ public class PolicyEngineTest {
                 new Aspect(createOwnershipAspectWithTypeUrn(OTHER_OWNERSHIP_TYPE_URN).data())));
     entityResponse.setAspects(aspectMap);
     when(_entityClient.getV2(
+            eq(systemOperationContext),
             eq(resourceUrn.getEntityType()),
             eq(resourceUrn),
-            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME)),
-            any()))
+            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME))))
         .thenReturn(entityResponse);
 
     ResolvedEntitySpec resourceSpec =
@@ -704,10 +738,12 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             ImmutableSet.of(AUTHORIZED_PRINCIPAL),
             Collections.emptySet(),
+            Collections.emptySet(),
             Collections.emptySet());
 
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -747,10 +783,10 @@ public class PolicyEngineTest {
         new EnvelopedAspect().setValue(new Aspect(createOwnershipAspect(false, true).data())));
     entityResponse.setAspects(aspectMap);
     when(_entityClient.getV2(
+            eq(systemOperationContext),
             eq(resourceUrn.getEntityType()),
             eq(resourceUrn),
-            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME)),
-            any()))
+            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME))))
         .thenReturn(entityResponse);
 
     ResolvedEntitySpec resourceSpec =
@@ -759,10 +795,12 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             ImmutableSet.of(AUTHORIZED_GROUP),
             Collections.emptySet(),
+            Collections.emptySet(),
             Collections.emptySet());
     // Assert authorized user can edit entity tags, because he is a user owner.
     PolicyEngine.PolicyEvaluationResult result1 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -798,6 +836,7 @@ public class PolicyEngineTest {
     // Assert unauthorized user cannot edit entity tags.
     PolicyEngine.PolicyEvaluationResult result2 =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedUnauthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -834,6 +873,7 @@ public class PolicyEngineTest {
             "dataset", "urn:li:dataset:random"); // A dataset Authorized principal _does not own_.
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -869,6 +909,7 @@ public class PolicyEngineTest {
         buildEntityResolvers("chart", RESOURCE_URN); // Notice: Not a dataset.
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -907,6 +948,7 @@ public class PolicyEngineTest {
     ResolvedEntitySpec resourceSpec = buildEntityResolvers("dataset", RESOURCE_URN);
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -946,6 +988,7 @@ public class PolicyEngineTest {
     ResolvedEntitySpec resourceSpec = buildEntityResolvers("dataset", RESOURCE_URN);
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -987,6 +1030,93 @@ public class PolicyEngineTest {
             "dataset", "urn:li:dataset:random"); // A resource not covered by the policy.
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
+            dataHubPolicyInfo,
+            resolvedAuthorizedUserSpec,
+            "EDIT_ENTITY_TAGS",
+            Optional.of(resourceSpec));
+    assertFalse(result.isGranted());
+
+    // Verify no network calls
+    verify(_entityClient, times(0)).batchGetV2(any(), any(), any(), any());
+  }
+
+  @Test
+  public void testEvaluatePolicyResourceFilterResourceUrnStartsWithMatch() throws Exception {
+    final DataHubPolicyInfo dataHubPolicyInfo = new DataHubPolicyInfo();
+    dataHubPolicyInfo.setType(METADATA_POLICY_TYPE);
+    dataHubPolicyInfo.setState(ACTIVE_POLICY_STATE);
+    dataHubPolicyInfo.setPrivileges(new StringArray("EDIT_ENTITY_TAGS"));
+    dataHubPolicyInfo.setDisplayName("My Test Display");
+    dataHubPolicyInfo.setDescription("My test display!");
+    dataHubPolicyInfo.setEditable(true);
+
+    final DataHubActorFilter actorFilter = new DataHubActorFilter();
+    actorFilter.setResourceOwners(true);
+    actorFilter.setAllUsers(true);
+    actorFilter.setAllGroups(true);
+    dataHubPolicyInfo.setActors(actorFilter);
+
+    final DataHubResourceFilter resourceFilter = new DataHubResourceFilter();
+    PolicyMatchCriterion policyMatchCriterion =
+        FilterUtils.newCriterion(
+            EntityFieldType.URN,
+            Collections.singletonList("urn:li:dataset:te"),
+            PolicyMatchCondition.STARTS_WITH);
+
+    resourceFilter.setFilter(
+        new PolicyMatchFilter()
+            .setCriteria(
+                new PolicyMatchCriterionArray(Collections.singleton(policyMatchCriterion))));
+    dataHubPolicyInfo.setResources(resourceFilter);
+
+    ResolvedEntitySpec resourceSpec = buildEntityResolvers("dataset", RESOURCE_URN);
+    PolicyEngine.PolicyEvaluationResult result =
+        _policyEngine.evaluatePolicy(
+            systemOperationContext,
+            dataHubPolicyInfo,
+            resolvedAuthorizedUserSpec,
+            "EDIT_ENTITY_TAGS",
+            Optional.of(resourceSpec));
+    assertTrue(result.isGranted());
+
+    // Verify no network calls
+    verify(_entityClient, times(0)).batchGetV2(any(), any(), any(), any());
+  }
+
+  @Test
+  public void testEvaluatePolicyResourceFilterResourceUrnStartsWithNoMatch() throws Exception {
+    final DataHubPolicyInfo dataHubPolicyInfo = new DataHubPolicyInfo();
+    dataHubPolicyInfo.setType(METADATA_POLICY_TYPE);
+    dataHubPolicyInfo.setState(ACTIVE_POLICY_STATE);
+    dataHubPolicyInfo.setPrivileges(new StringArray("EDIT_ENTITY_TAGS"));
+    dataHubPolicyInfo.setDisplayName("My Test Display");
+    dataHubPolicyInfo.setDescription("My test display!");
+    dataHubPolicyInfo.setEditable(true);
+
+    final DataHubActorFilter actorFilter = new DataHubActorFilter();
+    actorFilter.setResourceOwners(true);
+    actorFilter.setAllUsers(true);
+    actorFilter.setAllGroups(true);
+    dataHubPolicyInfo.setActors(actorFilter);
+
+    final DataHubResourceFilter resourceFilter = new DataHubResourceFilter();
+    PolicyMatchCriterion policyMatchCriterion =
+        FilterUtils.newCriterion(
+            EntityFieldType.URN,
+            Collections.singletonList("urn:li:dataset:other"),
+            PolicyMatchCondition.STARTS_WITH);
+
+    resourceFilter.setFilter(
+        new PolicyMatchFilter()
+            .setCriteria(
+                new PolicyMatchCriterionArray(Collections.singleton(policyMatchCriterion))));
+    dataHubPolicyInfo.setResources(resourceFilter);
+
+    ResolvedEntitySpec resourceSpec = buildEntityResolvers("dataset", RESOURCE_URN);
+    PolicyEngine.PolicyEvaluationResult result =
+        _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -1029,9 +1159,11 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             Collections.emptySet(),
             Collections.singleton(DOMAIN_URN),
+            Collections.emptySet(),
             Collections.emptySet());
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
@@ -1074,14 +1206,63 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             Collections.emptySet(),
             Collections.singleton("urn:li:domain:domain2"),
+            Collections.emptySet(),
             Collections.emptySet()); // Domain doesn't match
     PolicyEngine.PolicyEvaluationResult result =
         _policyEngine.evaluatePolicy(
+            systemOperationContext,
             dataHubPolicyInfo,
             resolvedAuthorizedUserSpec,
             "EDIT_ENTITY_TAGS",
             Optional.of(resourceSpec));
     assertFalse(result.isGranted());
+
+    // Verify no network calls
+    verify(_entityClient, times(0)).batchGetV2(any(), any(), any(), any());
+  }
+
+  @Test
+  public void testEvaluatePolicyResourceFilterSpecificResourceMatchTag() throws Exception {
+    final DataHubPolicyInfo dataHubPolicyInfo = new DataHubPolicyInfo();
+    dataHubPolicyInfo.setType(METADATA_POLICY_TYPE);
+    dataHubPolicyInfo.setState(ACTIVE_POLICY_STATE);
+    dataHubPolicyInfo.setPrivileges(new StringArray("VIEW_ENTITY_PAGE"));
+    dataHubPolicyInfo.setDisplayName("Tag-based policy");
+    dataHubPolicyInfo.setDescription("Allow viewing entity pages based on tags");
+    dataHubPolicyInfo.setEditable(true);
+
+    final DataHubActorFilter actorFilter = new DataHubActorFilter();
+    actorFilter.setResourceOwners(true);
+    actorFilter.setAllUsers(true);
+    actorFilter.setAllGroups(true);
+    dataHubPolicyInfo.setActors(actorFilter);
+
+    final DataHubResourceFilter resourceFilter = new DataHubResourceFilter();
+    resourceFilter.setFilter(
+        FilterUtils.newFilter(
+            ImmutableMap.of(
+                EntityFieldType.TYPE,
+                Collections.singletonList("dataset"),
+                EntityFieldType.TAG,
+                Collections.singletonList(TAG_URN))));
+    dataHubPolicyInfo.setResources(resourceFilter);
+
+    ResolvedEntitySpec resourceSpec =
+        buildEntityResolvers(
+            "dataset",
+            RESOURCE_URN,
+            Collections.emptySet(),
+            Collections.emptySet(),
+            Collections.emptySet(),
+            Collections.singleton(TAG_URN));
+    PolicyEngine.PolicyEvaluationResult result =
+        _policyEngine.evaluatePolicy(
+            systemOperationContext,
+            dataHubPolicyInfo,
+            resolvedAuthorizedUserSpec,
+            "VIEW_ENTITY_PAGE",
+            Optional.of(resourceSpec));
+    assertTrue(result.isGranted());
 
     // Verify no network calls
     verify(_entityClient, times(0)).batchGetV2(any(), any(), any(), any());
@@ -1163,7 +1344,8 @@ public class PolicyEngineTest {
         ImmutableList.of(dataHubPolicyInfo1, dataHubPolicyInfo2, dataHubPolicyInfo3);
 
     assertEquals(
-        _policyEngine.getGrantedPrivileges(policies, resolvedAuthorizedUserSpec, Optional.empty()),
+        _policyEngine.getGrantedPrivileges(
+            systemOperationContext, policies, resolvedAuthorizedUserSpec, Optional.empty()),
         Collections.emptyList());
 
     ResolvedEntitySpec resourceSpec =
@@ -1172,10 +1354,14 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             Collections.emptySet(),
             Collections.singleton(DOMAIN_URN),
+            Collections.emptySet(),
             Collections.emptySet()); // Everything matches
     assertEquals(
         _policyEngine.getGrantedPrivileges(
-            policies, resolvedAuthorizedUserSpec, Optional.of(resourceSpec)),
+            systemOperationContext,
+            policies,
+            resolvedAuthorizedUserSpec,
+            Optional.of(resourceSpec)),
         ImmutableList.of("PRIVILEGE_1", "PRIVILEGE_2_1", "PRIVILEGE_2_2"));
 
     resourceSpec =
@@ -1184,10 +1370,14 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             Collections.emptySet(),
             Collections.singleton("urn:li:domain:domain2"),
+            Collections.emptySet(),
             Collections.emptySet()); // Domain doesn't match
     assertEquals(
         _policyEngine.getGrantedPrivileges(
-            policies, resolvedAuthorizedUserSpec, Optional.of(resourceSpec)),
+            systemOperationContext,
+            policies,
+            resolvedAuthorizedUserSpec,
+            Optional.of(resourceSpec)),
         ImmutableList.of("PRIVILEGE_2_1", "PRIVILEGE_2_2"));
 
     resourceSpec =
@@ -1196,10 +1386,14 @@ public class PolicyEngineTest {
             "urn:li:dataset:random",
             Collections.emptySet(),
             Collections.singleton(DOMAIN_URN),
+            Collections.emptySet(),
             Collections.emptySet()); // Resource doesn't match
     assertEquals(
         _policyEngine.getGrantedPrivileges(
-            policies, resolvedAuthorizedUserSpec, Optional.of(resourceSpec)),
+            systemOperationContext,
+            policies,
+            resolvedAuthorizedUserSpec,
+            Optional.of(resourceSpec)),
         ImmutableList.of("PRIVILEGE_1"));
 
     final EntityResponse entityResponse = new EntityResponse();
@@ -1209,10 +1403,10 @@ public class PolicyEngineTest {
         new EnvelopedAspect().setValue(new Aspect(createOwnershipAspect(true, false).data())));
     entityResponse.setAspects(aspectMap);
     when(_entityClient.getV2(
+            eq(systemOperationContext),
             eq(resourceUrn.getEntityType()),
             eq(resourceUrn),
-            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME)),
-            any()))
+            eq(Collections.singleton(Constants.OWNERSHIP_ASPECT_NAME))))
         .thenReturn(entityResponse);
     resourceSpec =
         buildEntityResolvers(
@@ -1220,10 +1414,14 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             Collections.singleton(AUTHORIZED_PRINCIPAL),
             Collections.singleton(DOMAIN_URN),
+            Collections.emptySet(),
             Collections.emptySet()); // Is owner
     assertEquals(
         _policyEngine.getGrantedPrivileges(
-            policies, resolvedAuthorizedUserSpec, Optional.of(resourceSpec)),
+            systemOperationContext,
+            policies,
+            resolvedAuthorizedUserSpec,
+            Optional.of(resourceSpec)),
         ImmutableList.of("PRIVILEGE_1", "PRIVILEGE_2_1", "PRIVILEGE_2_2", "PRIVILEGE_3"));
 
     resourceSpec =
@@ -1232,10 +1430,14 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             Collections.singleton(AUTHORIZED_PRINCIPAL),
             Collections.singleton(DOMAIN_URN),
+            Collections.emptySet(),
             Collections.emptySet()); // Resource type doesn't match
     assertEquals(
         _policyEngine.getGrantedPrivileges(
-            policies, resolvedAuthorizedUserSpec, Optional.of(resourceSpec)),
+            systemOperationContext,
+            policies,
+            resolvedAuthorizedUserSpec,
+            Optional.of(resourceSpec)),
         Collections.emptyList());
   }
 
@@ -1281,6 +1483,7 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             ImmutableSet.of(AUTHORIZED_PRINCIPAL, AUTHORIZED_GROUP),
             Collections.emptySet(),
+            Collections.emptySet(),
             Collections.emptySet());
     PolicyEngine.PolicyActors actors =
         _policyEngine.getMatchingActors(dataHubPolicyInfo, Optional.of(resourceSpec));
@@ -1309,10 +1512,10 @@ public class PolicyEngineTest {
     // Verify aspect client called, entity client not called.
     verify(_entityClient, times(0))
         .batchGetV2(
+            eq(systemOperationContext),
             eq(CORP_USER_ENTITY_NAME),
             eq(Collections.singleton(authorizedUserUrn)),
-            eq(null),
-            any());
+            eq(null));
   }
 
   @Test
@@ -1398,6 +1601,7 @@ public class PolicyEngineTest {
             RESOURCE_URN,
             ImmutableSet.of(),
             Collections.emptySet(),
+            Collections.emptySet(),
             Collections.emptySet());
 
     PolicyEngine.PolicyActors actors =
@@ -1414,10 +1618,10 @@ public class PolicyEngineTest {
     // Verify aspect client called, entity client not called.
     verify(_entityClient, times(0))
         .batchGetV2(
+            eq(systemOperationContext),
             eq(CORP_USER_ENTITY_NAME),
             eq(Collections.singleton(authorizedUserUrn)),
-            eq(null),
-            any());
+            eq(null));
   }
 
   private Ownership createOwnershipAspect(final Boolean addUserOwner, final Boolean addGroupOwner)
@@ -1498,6 +1702,7 @@ public class PolicyEngineTest {
         entityUrn,
         Collections.emptySet(),
         Collections.emptySet(),
+        Collections.emptySet(),
         Collections.emptySet());
   }
 
@@ -1506,7 +1711,8 @@ public class PolicyEngineTest {
       String entityUrn,
       Set<String> owners,
       Set<String> domains,
-      Set<String> groups) {
+      Set<String> groups,
+      Set<String> tags) {
     return new ResolvedEntitySpec(
         new EntitySpec(entityType, entityUrn),
         ImmutableMap.of(
@@ -1519,6 +1725,8 @@ public class PolicyEngineTest {
             EntityFieldType.DOMAIN,
             FieldResolver.getResolverFromValues(domains),
             EntityFieldType.GROUP_MEMBERSHIP,
-            FieldResolver.getResolverFromValues(groups)));
+            FieldResolver.getResolverFromValues(groups),
+            EntityFieldType.TAG,
+            FieldResolver.getResolverFromValues(tags)));
   }
 }

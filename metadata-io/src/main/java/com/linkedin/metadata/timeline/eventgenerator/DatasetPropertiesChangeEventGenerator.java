@@ -4,7 +4,7 @@ import static com.linkedin.metadata.Constants.*;
 import static com.linkedin.metadata.timeline.eventgenerator.EditableDatasetPropertiesChangeEventGenerator.*;
 
 import com.datahub.util.RecordUtils;
-import com.github.fge.jsonpatch.JsonPatch;
+import com.google.common.collect.ImmutableMap;
 import com.linkedin.common.AuditStamp;
 import com.linkedin.common.urn.Urn;
 import com.linkedin.dataset.DatasetProperties;
@@ -14,6 +14,7 @@ import com.linkedin.metadata.timeline.data.ChangeEvent;
 import com.linkedin.metadata.timeline.data.ChangeOperation;
 import com.linkedin.metadata.timeline.data.ChangeTransaction;
 import com.linkedin.metadata.timeline.data.SemanticChangeType;
+import jakarta.json.JsonPatch;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +23,7 @@ import javax.annotation.Nullable;
 
 public class DatasetPropertiesChangeEventGenerator
     extends EntityChangeEventGenerator<DatasetProperties> {
+
   private static List<ChangeEvent> computeDiffs(
       DatasetProperties baseDatasetProperties,
       @Nonnull DatasetProperties targetDatasetProperties,
@@ -42,6 +44,7 @@ public class DatasetPropertiesChangeEventGenerator
               .operation(ChangeOperation.ADD)
               .semVerChange(SemanticChangeType.MINOR)
               .description(String.format(DESCRIPTION_ADDED, entityUrn, targetDescription))
+              .parameters(ImmutableMap.of("description", targetDescription))
               .auditStamp(auditStamp)
               .build());
     } else if (baseDescription != null && targetDescription == null) {
@@ -53,6 +56,7 @@ public class DatasetPropertiesChangeEventGenerator
               .operation(ChangeOperation.REMOVE)
               .semVerChange(SemanticChangeType.MINOR)
               .description(String.format(DESCRIPTION_REMOVED, entityUrn, baseDescription))
+              .parameters(ImmutableMap.of("description", baseDescription))
               .auditStamp(auditStamp)
               .build());
     } else if (baseDescription != null
@@ -67,6 +71,7 @@ public class DatasetPropertiesChangeEventGenerator
               .semVerChange(SemanticChangeType.MINOR)
               .description(
                   String.format(DESCRIPTION_CHANGED, entityUrn, baseDescription, targetDescription))
+              .parameters(ImmutableMap.of("description", targetDescription))
               .auditStamp(auditStamp)
               .build());
     }

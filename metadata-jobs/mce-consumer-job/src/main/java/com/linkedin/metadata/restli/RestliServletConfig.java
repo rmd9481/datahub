@@ -1,12 +1,10 @@
 package com.linkedin.metadata.restli;
 
 import com.datahub.auth.authentication.filter.AuthenticationFilter;
-import com.linkedin.entity.client.RestliEntityClient;
 import com.linkedin.gms.factory.auth.SystemAuthenticationFactory;
-import com.linkedin.parseq.retry.backoff.ExponentialBackoff;
-import com.linkedin.restli.client.Client;
+import com.linkedin.r2.transport.http.server.RAPJakartaServlet;
 import com.linkedin.restli.server.RestliHandlerServlet;
-import java.net.URI;
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -14,7 +12,6 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 
 @Configuration
 @Import({SystemAuthenticationFactory.class})
@@ -29,14 +26,6 @@ public class RestliServletConfig {
   @Value("${entityClient.numRetries:3}")
   private int numRetries;
 
-  @Bean("restliEntityClient")
-  @Primary
-  public RestliEntityClient restliEntityClient() {
-    String selfUri = String.format("http://localhost:%s/gms/", configuredPort);
-    final Client restClient = DefaultRestliClientFactory.getRestLiClient(URI.create(selfUri), null);
-    return new RestliEntityClient(restClient, new ExponentialBackoff(retryInterval), numRetries);
-  }
-
   @Bean("restliServletRegistration")
   public ServletRegistrationBean<RestliHandlerServlet> restliServletRegistration(
       RestliHandlerServlet servlet) {
@@ -48,25 +37,25 @@ public class RestliServletConfig {
   }
 
   @Bean("restliHandlerServlet")
-  public RestliHandlerServlet restliHandlerServlet() {
-    return new RestliHandlerServlet();
+  public RestliHandlerServlet restliHandlerServlet(final RAPJakartaServlet r2Servlet) {
+    return new RestliHandlerServlet(r2Servlet);
   }
 
   @Bean
   public FilterRegistrationBean<AuthenticationFilter> authenticationFilterRegistrationBean(
-      @Qualifier("restliServletRegistration")
-          ServletRegistrationBean<RestliHandlerServlet> servlet) {
+      @Qualifier("restliServletRegistration") ServletRegistrationBean<RestliHandlerServlet> servlet,
+      AuthenticationFilter authenticationFilter) {
     FilterRegistrationBean<AuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
-    registrationBean.addServletRegistrationBeans(servlet);
+    registrationBean.setServletRegistrationBeans(Collections.singletonList(servlet));
+    registrationBean.setUrlPatterns(Collections.singletonList("/gms/*"));
+    registrationBean.setServletNames(Collections.singletonList(servlet.getServletName()));
     registrationBean.setOrder(1);
+    registrationBean.setFilter(authenticationFilter);
     return registrationBean;
   }
 
   @Bean
-  public AuthenticationFilter authenticationFilter(
-      FilterRegistrationBean<AuthenticationFilter> filterReg) {
-    AuthenticationFilter filter = new AuthenticationFilter();
-    filterReg.setFilter(filter);
-    return filter;
+  public AuthenticationFilter authenticationFilter() {
+    return new AuthenticationFilter();
   }
 }

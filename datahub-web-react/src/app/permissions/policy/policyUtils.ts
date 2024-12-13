@@ -114,7 +114,31 @@ export const convertLegacyResourceFilter = (resourceFilter: Maybe<ResourceFilter
     };
 };
 
-export const getFieldValues = (filter: Maybe<PolicyMatchFilter> | undefined, resourceFieldType: string) => {
+export const getFieldValues = (
+    filter: Maybe<PolicyMatchFilter> | undefined,
+    resourceFieldType: string,
+    alternateResourceFieldType?: string,
+) => {
+    return (
+        filter?.criteria?.find((criterion) => criterion.field === resourceFieldType)?.values ||
+        filter?.criteria?.find((criterion) => criterion.field === alternateResourceFieldType)?.values ||
+        []
+    );
+};
+
+export const getFieldCondition = (
+    filter: Maybe<PolicyMatchFilter> | undefined,
+    resourceFieldType: string,
+    alternateResourceFieldType?: string,
+) => {
+    return (
+        filter?.criteria?.find((criterion) => criterion.field === resourceFieldType)?.condition ||
+        filter?.criteria?.find((criterion) => criterion.field === alternateResourceFieldType)?.condition ||
+        null
+    );
+};
+
+export const getFieldValuesOfTags = (filter: Maybe<PolicyMatchFilter> | undefined, resourceFieldType: string) => {
     return filter?.criteria?.find((criterion) => criterion.field === resourceFieldType)?.values || [];
 };
 
@@ -175,7 +199,6 @@ export const updateListPoliciesCache = (client, policies, pageSize) => {
             },
         },
         data: {
-            
             listPolicies: {
                 __typename: 'ListPoliciesResult',
                 start: 0,

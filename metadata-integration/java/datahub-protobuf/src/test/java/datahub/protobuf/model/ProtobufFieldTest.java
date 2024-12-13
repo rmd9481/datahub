@@ -323,4 +323,60 @@ public class ProtobufFieldTest {
 
     assertEquals("Zip code, alphanumeric", addressField.getDescription());
   }
+
+  @Test
+  public void nestedTypeReservedFieldsTest() throws IOException {
+    ProtobufDataset test = getTestProtobufDataset("extended_protobuf", "messageD");
+    SchemaMetadata testMetadata = test.getSchemaMetadata();
+
+    SchemaField msg3Field13 =
+        testMetadata.getFields().stream()
+            .filter(
+                v ->
+                    v.getFieldPath()
+                        .equals(
+                            "[version=2.0].[type=extended_protobuf_MyMsg]."
+                                + "[type=extended_protobuf_MyMsg_Msg3].field3.[type=google_protobuf_StringValue].msg3_13"))
+            .findFirst()
+            .orElseThrow();
+
+    assertEquals("test comment 13", msg3Field13.getDescription());
+
+    SchemaField msg3Field14 =
+        testMetadata.getFields().stream()
+            .filter(
+                v ->
+                    v.getFieldPath()
+                        .equals(
+                            "[version=2.0].[type=extended_protobuf_MyMsg]."
+                                + "[type=extended_protobuf_MyMsg_Msg3].field3.[type=google_protobuf_StringValue].msg3_14"))
+            .findFirst()
+            .orElseThrow();
+
+    assertEquals("test comment 14", msg3Field14.getDescription());
+  }
+
+  @Test
+  public void timestampUnitEnumDescriptionTest() throws IOException {
+    ProtobufDataset test = getTestProtobufDataset("extended_protobuf", "messageE");
+    SchemaMetadata testMetadata = test.getSchemaMetadata();
+
+    SchemaField timestampField =
+        testMetadata.getFields().stream()
+            .filter(
+                v ->
+                    v.getFieldPath()
+                        .equals(
+                            "[version=2.0].[type=extended_protobuf_TimestampUnitMessage].[type=enum].timestamp_unit_type"))
+            .findFirst()
+            .orElseThrow();
+
+    assertEquals(
+        "timestamp unit\n"
+            + "\n"
+            + "0: MILLISECOND - 10^-3 seconds\n"
+            + "1: MICROSECOND - 10^-6 seconds\n"
+            + "2: NANOSECOND - 10^-9 seconds\n",
+        timestampField.getDescription());
+  }
 }

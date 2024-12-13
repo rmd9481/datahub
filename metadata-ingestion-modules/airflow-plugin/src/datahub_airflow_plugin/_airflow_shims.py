@@ -32,6 +32,9 @@ PLUGGY_VERSION = packaging.version.parse(pluggy.__version__)
 HAS_AIRFLOW_STANDALONE_CMD = AIRFLOW_VERSION >= packaging.version.parse("2.2.0.dev0")
 HAS_AIRFLOW_LISTENER_API = AIRFLOW_VERSION >= packaging.version.parse("2.3.0.dev0")
 HAS_AIRFLOW_DAG_LISTENER_API = AIRFLOW_VERSION >= packaging.version.parse("2.5.0.dev0")
+HAS_AIRFLOW_DATASET_LISTENER_API = AIRFLOW_VERSION >= packaging.version.parse(
+    "2.8.0.dev0"
+)
 NEEDS_AIRFLOW_LISTENER_MODULE = AIRFLOW_VERSION < packaging.version.parse(
     "2.5.0.dev0"
 ) or PLUGGY_VERSION <= packaging.version.parse("1.0.0")
@@ -43,7 +46,7 @@ def get_task_inlets(operator: "Operator") -> List:
         return operator._inlets  # type: ignore[attr-defined, union-attr]
     if hasattr(operator, "get_inlet_defs"):
         return operator.get_inlet_defs()  # type: ignore[attr-defined]
-    return operator.inlets
+    return operator.inlets or []
 
 
 def get_task_outlets(operator: "Operator") -> List:
@@ -53,7 +56,7 @@ def get_task_outlets(operator: "Operator") -> List:
         return operator._outlets  # type: ignore[attr-defined, union-attr]
     if hasattr(operator, "get_outlet_defs"):
         return operator.get_outlet_defs()
-    return operator.outlets
+    return operator.outlets or []
 
 
 __all__ = [

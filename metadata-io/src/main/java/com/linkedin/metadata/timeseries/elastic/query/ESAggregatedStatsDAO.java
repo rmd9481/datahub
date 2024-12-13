@@ -5,21 +5,22 @@ import com.google.common.collect.ImmutableList;
 import com.linkedin.data.schema.DataSchema;
 import com.linkedin.data.template.StringArray;
 import com.linkedin.data.template.StringArrayArray;
+import com.linkedin.metadata.aspect.AspectRetriever;
 import com.linkedin.metadata.models.AspectSpec;
 import com.linkedin.metadata.models.EntitySpec;
 import com.linkedin.metadata.models.TimeseriesFieldCollectionSpec;
 import com.linkedin.metadata.models.TimeseriesFieldSpec;
-import com.linkedin.metadata.models.registry.EntityRegistry;
 import com.linkedin.metadata.query.filter.Filter;
+import com.linkedin.metadata.search.elasticsearch.query.filter.QueryFilterRewriteChain;
 import com.linkedin.metadata.search.utils.ESUtils;
 import com.linkedin.metadata.timeseries.elastic.indexbuilder.MappingsBuilder;
-import com.linkedin.metadata.utils.elasticsearch.IndexConvention;
 import com.linkedin.timeseries.AggregationSpec;
 import com.linkedin.timeseries.GenericTable;
 import com.linkedin.timeseries.GroupingBucket;
 import com.linkedin.timeseries.GroupingBucketType;
 import com.linkedin.timeseries.TimeWindowSize;
 import com.linkedin.util.Pair;
+import io.datahubproject.metadata.context.OperationContext;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,18 +61,14 @@ public class ESAggregatedStatsDAO {
   private static final String ES_AGG_MAX_TIMESTAMP =
       ES_AGGREGATION_PREFIX + ES_MAX_AGGREGATION_PREFIX + ES_FIELD_TIMESTAMP;
   private static final int MAX_TERM_BUCKETS = 24 * 60; // minutes in a day.
-
-  private final IndexConvention _indexConvention;
-  private final RestHighLevelClient _searchClient;
-  private final EntityRegistry _entityRegistry;
+  private final RestHighLevelClient searchClient;
+  @Nonnull private final QueryFilterRewriteChain queryFilterRewriteChain;
 
   public ESAggregatedStatsDAO(
-      @Nonnull IndexConvention indexConvention,
       @Nonnull RestHighLevelClient searchClient,
-      @Nonnull EntityRegistry entityRegistry) {
-    _indexConvention = indexConvention;
-    _searchClient = searchClient;
-    _entityRegistry = entityRegistry;
+      @Nonnull QueryFilterRewriteChain queryFilterRewriteChain) {
+    this.searchClient = searchClient;
+    this.queryFilterRewriteChain = queryFilterRewriteChain;
   }
 
   private static String toEsAggName(final String aggName) {
@@ -352,8 +349,8 @@ public class ESAggregatedStatsDAO {
   }
 
   private AspectSpec getTimeseriesAspectSpec(
-      @Nonnull String entityName, @Nonnull String aspectName) {
-    EntitySpec entitySpec = _entityRegistry.getEntitySpec(entityName);
+      @Nonnull OperationContext opContext, @Nonnull String entityName, @Nonnull String aspectName) {
+    EntitySpec entitySpec = opContext.getEntityRegistry().getEntitySpec(entityName);
     AspectSpec aspectSpec = entitySpec.getAspectSpec(aspectName);
     if (aspectSpec == null) {
       new IllegalArgumentException(
@@ -370,6 +367,7 @@ public class ESAggregatedStatsDAO {
   /** Get the aggregated metrics for the given dataset or column from a time series aspect. */
   @Nonnull
   public GenericTable getAggregatedStats(
+      @Nonnull OperationContext opContext,
       @Nonnull String entityName,
       @Nonnull String aspectName,
       @Nonnull AggregationSpec[] aggregationSpecs,
@@ -377,12 +375,19 @@ public class ESAggregatedStatsDAO {
       @Nullable GroupingBucket[] groupingBuckets) {
 
     // Setup the filter query builder using the input filter provided.
-    final BoolQueryBuilder filterQueryBuilder = ESUtils.buildFilterQuery(filter, true);
+    final BoolQueryBuilder filterQueryBuilder =
+        ESUtils.buildFilterQuery(
+            filter,
+            true,
+            opContext.getEntityRegistry().getEntitySpec(entityName).getSearchableFieldTypes(),
+            opContext,
+            queryFilterRewriteChain);
 
-    AspectSpec aspectSpec = getTimeseriesAspectSpec(entityName, aspectName);
+    AspectSpec aspectSpec = getTimeseriesAspectSpec(opContext, entityName, aspectName);
     // Build and attach the grouping aggregations
     final Pair<AggregationBuilder, AggregationBuilder> topAndBottomAggregations =
-        makeGroupingAggregationBuilder(aspectSpec, null, groupingBuckets);
+        makeGroupingAggregationBuilder(
+            aspectSpec, null, groupingBuckets, opContext.getAspectRetriever());
     AggregationBuilder rootAggregationBuilder = topAndBottomAggregations.getFirst();
     AggregationBuilder mostNested = topAndBottomAggregations.getSecond();
 
@@ -400,14 +405,18 @@ public class ESAggregatedStatsDAO {
     final SearchRequest searchRequest = new SearchRequest();
     searchRequest.source(searchSourceBuilder);
 
-    final String indexName = _indexConvention.getTimeseriesAspectIndexName(entityName, aspectName);
+    final String indexName =
+        opContext
+            .getSearchContext()
+            .getIndexConvention()
+            .getTimeseriesAspectIndexName(entityName, aspectName);
     searchRequest.indices(indexName);
 
     log.debug("Search request is: " + searchRequest);
 
     try {
       final SearchResponse searchResponse =
-          _searchClient.search(searchRequest, RequestOptions.DEFAULT);
+          searchClient.search(searchRequest, RequestOptions.DEFAULT);
       return generateResponseFromElastic(
           searchResponse, groupingBuckets, aggregationSpecs, aspectSpec);
     } catch (Exception e) {
@@ -461,7 +470,8 @@ public class ESAggregatedStatsDAO {
   private Pair<AggregationBuilder, AggregationBuilder> makeGroupingAggregationBuilder(
       AspectSpec aspectSpec,
       @Nullable AggregationBuilder baseAggregationBuilder,
-      @Nullable GroupingBucket[] groupingBuckets) {
+      @Nullable GroupingBucket[] groupingBuckets,
+      @Nonnull AspectRetriever aspectRetriever) {
 
     AggregationBuilder firstAggregationBuilder = baseAggregationBuilder;
     AggregationBuilder lastAggregationBuilder = baseAggregationBuilder;
@@ -480,7 +490,8 @@ public class ESAggregatedStatsDAO {
         } else if (curGroupingBucket.getType() == GroupingBucketType.STRING_GROUPING_BUCKET) {
           // Process the string grouping bucket using the 'terms' aggregation.
           // The field can be Keyword, Numeric, ip, boolean, or binary.
-          String fieldName = ESUtils.toKeywordField(curGroupingBucket.getKey(), true);
+          String fieldName =
+              ESUtils.toKeywordField(curGroupingBucket.getKey(), true, aspectRetriever);
           DataSchema.Type fieldType = getGroupingBucketKeyType(aspectSpec, curGroupingBucket);
           curAggregationBuilder =
               AggregationBuilders.terms(getGroupingBucketAggName(curGroupingBucket))

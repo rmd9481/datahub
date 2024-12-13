@@ -1,12 +1,13 @@
-import doctest
 import os
 
 import pytest
 from pydantic import SecretStr
 
+import datahub.ingestion.source.git.git_import
 from datahub.configuration.common import ConfigurationWarning
 from datahub.configuration.git import GitInfo, GitReference
 from datahub.ingestion.source.git.git_import import GitClone
+from datahub.testing.doctest import assert_doctest
 
 LOOKML_TEST_SSH_KEY = os.environ.get("DATAHUB_LOOKML_GIT_TEST_SSH_KEY")
 
@@ -82,13 +83,8 @@ def test_github_branch():
     assert config.branch_for_clone == "main"
 
 
-def test_sanitize_repo_url():
-    import datahub.ingestion.source.git.git_import
-
-    assert doctest.testmod(datahub.ingestion.source.git.git_import) == (
-        0,
-        3,
-    )  # 0 failures, 3 tests
+def test_sanitize_repo_url() -> None:
+    assert_doctest(datahub.ingestion.source.git.git_import)
 
 
 def test_git_clone_public(tmp_path):
@@ -121,15 +117,13 @@ def test_git_clone_private(tmp_path):
         branch="d380a2b777ec6f4653626f39c68dba85893faa74",
     )
     assert checkout_dir.exists()
-    assert set(os.listdir(checkout_dir)) == set(
-        [
-            ".datahub",
-            "models",
-            "README.md",
-            ".github",
-            ".git",
-            "views",
-            "manifest_lock.lkml",
-            "manifest.lkml",
-        ]
-    )
+    assert set(os.listdir(checkout_dir)) == {
+        ".datahub",
+        "models",
+        "README.md",
+        ".github",
+        ".git",
+        "views",
+        "manifest_lock.lkml",
+        "manifest.lkml",
+    }

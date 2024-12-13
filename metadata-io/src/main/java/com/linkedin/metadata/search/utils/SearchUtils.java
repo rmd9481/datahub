@@ -1,7 +1,8 @@
 package com.linkedin.metadata.search.utils;
 
+import static com.linkedin.metadata.Constants.*;
+
 import com.linkedin.common.UrnArray;
-import com.linkedin.common.urn.Urn;
 import com.linkedin.data.template.LongMap;
 import com.linkedin.metadata.query.ListResult;
 import com.linkedin.metadata.query.SearchFlags;
@@ -17,11 +18,9 @@ import com.linkedin.metadata.search.SearchResult;
 import com.linkedin.metadata.utils.SearchUtil;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -37,15 +36,6 @@ public class SearchUtils {
 
   private SearchUtils() {}
 
-  public static Optional<String> getDocId(@Nonnull Urn urn) {
-    try {
-      return Optional.of(URLEncoder.encode(urn.toString(), "UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      log.error("Failed to encode the urn with error: {}", e.toString());
-      return Optional.empty();
-    }
-  }
-
   /**
    * Validates the request params and create a request map out of it.
    *
@@ -53,7 +43,7 @@ public class SearchUtils {
    * @return a request map
    */
   @Nonnull
-  public static Map<String, String> getRequestMap(@Nullable Filter requestParams) {
+  public static Map<String, List<String>> getRequestMap(@Nullable Filter requestParams) {
     if (requestParams == null) {
       return Collections.emptyMap();
     }
@@ -78,7 +68,7 @@ public class SearchUtils {
         });
 
     return criterionArray.stream()
-        .collect(Collectors.toMap(Criterion::getField, Criterion::getValue));
+        .collect(Collectors.toMap(Criterion::getField, Criterion::getValues));
   }
 
   public static boolean isUrn(@Nonnull String value) {
@@ -196,6 +186,36 @@ public class SearchUtils {
     if (!finalSearchFlags.hasSkipCache() || finalSearchFlags.isSkipCache() == null) {
       finalSearchFlags.setSkipCache(defaultFlags.isSkipCache());
     }
+    if (!finalSearchFlags.hasIncludeSoftDeleted()
+        || finalSearchFlags.isIncludeSoftDeleted() == null) {
+      finalSearchFlags.setIncludeSoftDeleted(defaultFlags.isIncludeSoftDeleted());
+    }
+    if (!finalSearchFlags.hasIncludeRestricted()
+        || finalSearchFlags.isIncludeRestricted() == null) {
+      finalSearchFlags.setIncludeRestricted(defaultFlags.isIncludeRestricted());
+    }
+    if ((!finalSearchFlags.hasGroupingSpec() || finalSearchFlags.getGroupingSpec() == null)
+        && (defaultFlags.getGroupingSpec() != null)) {
+      finalSearchFlags.setGroupingSpec(defaultFlags.getGroupingSpec());
+    }
     return finalSearchFlags;
+  }
+
+  /**
+   * Returns true if the search flags contain a grouping spec that requires conversion of schema
+   * field entity to dataset entity.
+   *
+   * @param searchFlags the search flags
+   * @return true if the search flags contain a grouping spec that requires conversion of schema
+   *     field entity to dataset entity.
+   */
+  public static boolean convertSchemaFieldToDataset(@Nullable SearchFlags searchFlags) {
+    return (searchFlags != null)
+        && (searchFlags.getGroupingSpec() != null)
+        && (searchFlags.getGroupingSpec().getGroupingCriteria().stream()
+            .anyMatch(
+                grouping ->
+                    grouping.getBaseEntityType().equals(SCHEMA_FIELD_ENTITY_NAME)
+                        && grouping.getGroupingEntityType().equals(DATASET_ENTITY_NAME)));
   }
 }

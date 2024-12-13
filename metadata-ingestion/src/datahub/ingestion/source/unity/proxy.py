@@ -1,6 +1,7 @@
 """
 Manage the communication with DataBricks Server and provide equivalent dataclasses for dependent modules
 """
+
 import dataclasses
 import logging
 from datetime import datetime, timezone
@@ -108,7 +109,7 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
         self.hive_metastore_proxy = hive_metastore_proxy
 
     def check_basic_connectivity(self) -> bool:
-        return bool(self._workspace_client.catalogs.list())
+        return bool(self._workspace_client.catalogs.list(include_browse=True))
 
     def assigned_metastore(self) -> Optional[Metastore]:
         response = self._workspace_client.metastores.summary()
@@ -118,10 +119,10 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
         if self.hive_metastore_proxy:
             yield self.hive_metastore_proxy.hive_metastore_catalog(metastore)
 
-        response = self._workspace_client.catalogs.list()
+        response = self._workspace_client.catalogs.list(include_browse=True)
         if not response:
             logger.info("Catalogs not found")
-            return []
+            return
         for catalog in response:
             optional_catalog = self._create_catalog(metastore, catalog)
             if optional_catalog:
@@ -130,7 +131,9 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
     def catalog(
         self, catalog_name: str, metastore: Optional[Metastore]
     ) -> Optional[Catalog]:
-        response = self._workspace_client.catalogs.get(catalog_name)
+        response = self._workspace_client.catalogs.get(
+            catalog_name, include_browse=True
+        )
         if not response:
             logger.info(f"Catalog {catalog_name} not found")
             return None
@@ -147,10 +150,12 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
         ):
             yield from self.hive_metastore_proxy.hive_metastore_schemas(catalog)
             return
-        response = self._workspace_client.schemas.list(catalog_name=catalog.name)
+        response = self._workspace_client.schemas.list(
+            catalog_name=catalog.name, include_browse=True
+        )
         if not response:
             logger.info(f"Schemas not found for catalog {catalog.id}")
-            return []
+            return
         for schema in response:
             optional_schema = self._create_schema(catalog, schema)
             if optional_schema:
@@ -165,11 +170,13 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
             return
         with patch("databricks.sdk.service.catalog.TableInfo", TableInfoWithGeneration):
             response = self._workspace_client.tables.list(
-                catalog_name=schema.catalog.name, schema_name=schema.name
+                catalog_name=schema.catalog.name,
+                schema_name=schema.name,
+                include_browse=True,
             )
             if not response:
                 logger.info(f"Tables not found for schema {schema.id}")
-                return []
+                return
             for table in response:
                 try:
                     optional_table = self._create_table(
@@ -187,6 +194,16 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
             if optional_sp:
                 yield optional_sp
 
+    def groups(self):
+        """
+        fetch the list of the groups belongs to the workspace, using the workspace client
+        create the list of group's display name, iterating through the list of groups fetched by the workspace client
+        """
+        group_list: List[Optional[str]] = []
+        for group in self._workspace_client.groups.list():
+            group_list.append(group.display_name)
+        return group_list
+
     def workspace_notebooks(self) -> Iterable[Notebook]:
         for obj in self._workspace_client.workspace.list("/", recursive=True):
             if obj.object_type == ObjectType.NOTEBOOK and obj.object_id and obj.path:
@@ -194,16 +211,16 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
                     id=obj.object_id,
                     path=obj.path,
                     language=obj.language,
-                    created_at=datetime.fromtimestamp(
-                        obj.created_at / 1000, tz=timezone.utc
-                    )
-                    if obj.created_at
-                    else None,
-                    modified_at=datetime.fromtimestamp(
-                        obj.modified_at / 1000, tz=timezone.utc
-                    )
-                    if obj.modified_at
-                    else None,
+                    created_at=(
+                        datetime.fromtimestamp(obj.created_at / 1000, tz=timezone.utc)
+                        if obj.created_at
+                        else None
+                    ),
+                    modified_at=(
+                        datetime.fromtimestamp(obj.modified_at / 1000, tz=timezone.utc)
+                        if obj.modified_at
+                        else None
+                    ),
                 )
 
     def query_history(
@@ -258,12 +275,14 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
         response: dict = self._workspace_client.api_client.do(  # type: ignore
             method, path, body={**body, "filter_by": filter_by.as_dict()}
         )
-        # we use default raw=False in above request, therefore will always get dict
+        # we use default raw=False(default) in above request, therefore will always get dict
         while True:
             if "res" not in response or not response["res"]:
                 return
             for v in response["res"]:
                 yield QueryInfo.from_dict(v)
+            if not response.get("next_page_token"):  # last page
+                return
             response = self._workspace_client.api_client.do(  # type: ignore
                 method, path, body={**body, "page_token": response["next_page_token"]}
             )
@@ -424,22 +443,26 @@ class UnityCatalogApiProxy(UnityCatalogProxyProfilingMixin):
             schema=schema,
             storage_location=obj.storage_location,
             data_source_format=obj.data_source_format,
-            columns=list(self._extract_columns(obj.columns, table_id))
-            if obj.columns
-            else [],
+            columns=(
+                list(self._extract_columns(obj.columns, table_id))
+                if obj.columns
+                else []
+            ),
             view_definition=obj.view_definition or None,
             properties=obj.properties or {},
             owner=obj.owner,
             generation=obj.generation,
-            created_at=datetime.fromtimestamp(obj.created_at / 1000, tz=timezone.utc)
-            if obj.created_at
-            else None,
+            created_at=(
+                datetime.fromtimestamp(obj.created_at / 1000, tz=timezone.utc)
+                if obj.created_at
+                else None
+            ),
             created_by=obj.created_by,
-            updated_at=datetime.fromtimestamp(obj.updated_at / 1000, tz=timezone.utc)
-            if obj.updated_at
-            else None
-            if obj.updated_at
-            else None,
+            updated_at=(
+                datetime.fromtimestamp(obj.updated_at / 1000, tz=timezone.utc)
+                if obj.updated_at
+                else None
+            ),
             updated_by=obj.updated_by,
             table_id=obj.table_id,
             comment=obj.comment,

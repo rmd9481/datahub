@@ -4,6 +4,7 @@ plugins {
     id 'com.palantir.docker'
 }
 
+apply from: '../../gradle/coverage/java-coverage.gradle'
 apply from: "../../gradle/versioning/versioning.gradle"
 
 ext {
@@ -15,6 +16,7 @@ dependencies {
     implementation project(':metadata-service:auth-filter')
     implementation project(':metadata-jobs:mce-consumer')
     implementation project(':entity-registry')
+    implementation project(':metadata-jobs:common')
 
     implementation(externalDependency.springBootStarterWeb) {
         exclude module: "spring-boot-starter-tomcat"
@@ -37,6 +39,7 @@ dependencies {
     annotationProcessor externalDependency.lombok
 
     testImplementation project(':metadata-dao-impl:kafka-producer')
+    testImplementation project(':metadata-service:restli-client')
     testImplementation externalDependency.springBootTest
     testImplementation externalDependency.mockito
     testImplementation externalDependency.testng

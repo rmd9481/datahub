@@ -19,7 +19,12 @@ import GlossaryNodeEntity from './entity/glossaryNode/GlossaryNodeEntity';
 import { DataPlatformEntity } from './entity/dataPlatform/DataPlatformEntity';
 import { DataProductEntity } from './entity/dataProduct/DataProductEntity';
 import { DataPlatformInstanceEntity } from './entity/dataPlatformInstance/DataPlatformInstanceEntity';
+import { ERModelRelationshipEntity } from './entity/ermodelrelationships/ERModelRelationshipEntity';
 import { RoleEntity } from './entity/Access/RoleEntity';
+import { RestrictedEntity } from './entity/restricted/RestrictedEntity';
+import { BusinessAttributeEntity } from './entity/businessAttribute/BusinessAttributeEntity';
+import { SchemaFieldPropertiesEntity } from './entity/schemaField/SchemaFieldPropertiesEntity';
+import { StructuredPropertyEntity } from './entity/structuredProperty/StructuredPropertyEntity';
 
 export default function buildEntityRegistry() {
     const registry = new EntityRegistry();
@@ -44,5 +49,10 @@ export default function buildEntityRegistry() {
     registry.register(new DataPlatformEntity());
     registry.register(new DataProductEntity());
     registry.register(new DataPlatformInstanceEntity());
+    registry.register(new ERModelRelationshipEntity());
+    registry.register(new RestrictedEntity());
+    registry.register(new BusinessAttributeEntity());
+    registry.register(new SchemaFieldPropertiesEntity());
+    registry.register(new StructuredPropertyEntity());
     return registry;
 }

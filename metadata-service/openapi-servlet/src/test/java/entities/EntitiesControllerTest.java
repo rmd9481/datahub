@@ -11,14 +11,14 @@ import com.datahub.authentication.AuthenticationContext;
 import com.datahub.authorization.AuthorizationResult;
 import com.datahub.authorization.AuthorizerChain;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.linkedin.metadata.aspect.batch.AspectsBatch;
 import com.linkedin.metadata.config.PreProcessHooks;
 import com.linkedin.metadata.entity.AspectDao;
+import com.linkedin.metadata.entity.TransactionContext;
 import com.linkedin.metadata.entity.UpdateAspectResult;
 import com.linkedin.metadata.event.EventProducer;
-import com.linkedin.metadata.models.registry.EntityRegistry;
-import com.linkedin.metadata.service.UpdateIndicesService;
+import io.datahubproject.metadata.context.OperationContext;
 import io.datahubproject.openapi.dto.UpsertAspectRequest;
-import io.datahubproject.openapi.entities.EntitiesController;
 import io.datahubproject.openapi.generated.AuditStamp;
 import io.datahubproject.openapi.generated.DatasetFieldProfile;
 import io.datahubproject.openapi.generated.DatasetKey;
@@ -36,13 +36,14 @@ import io.datahubproject.openapi.generated.StringType;
 import io.datahubproject.openapi.generated.SubTypes;
 import io.datahubproject.openapi.generated.TagAssociation;
 import io.datahubproject.openapi.generated.ViewProperties;
+import io.datahubproject.openapi.v1.entities.EntitiesController;
+import io.datahubproject.test.metadata.context.TestOperationContexts;
 import io.ebean.Transaction;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import mock.MockEntityRegistry;
 import mock.MockEntityService;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -65,30 +66,27 @@ public class EntitiesControllerTest {
           InvocationTargetException,
           InstantiationException,
           IllegalAccessException {
-    EntityRegistry mockEntityRegistry = new MockEntityRegistry();
+
+    OperationContext opContext = TestOperationContexts.systemContextNoSearchAuthorization();
     AspectDao aspectDao = Mockito.mock(AspectDao.class);
-    Mockito.when(
-            aspectDao.runInTransactionWithRetry(
-                ArgumentMatchers.<Function<Transaction, UpdateAspectResult>>any(), any(), anyInt()))
+    when(aspectDao.runInTransactionWithRetry(
+            ArgumentMatchers.<Function<TransactionContext, List<UpdateAspectResult>>>any(),
+            any(AspectsBatch.class),
+            anyInt()))
         .thenAnswer(
             i ->
-                ((Function<Transaction, UpdateAspectResult>) i.getArgument(0))
-                    .apply(Mockito.mock(Transaction.class)));
+                List.of(
+                    ((Function<TransactionContext, List<UpdateAspectResult>>) i.getArgument(0))
+                        .apply(TransactionContext.empty(Mockito.mock(Transaction.class), 0))));
 
     EventProducer mockEntityEventProducer = Mockito.mock(EventProducer.class);
-    UpdateIndicesService mockUpdateIndicesService = mock(UpdateIndicesService.class);
     PreProcessHooks preProcessHooks = new PreProcessHooks();
     preProcessHooks.setUiEnabled(true);
     MockEntityService mockEntityService =
-        new MockEntityService(
-            aspectDao,
-            mockEntityEventProducer,
-            mockEntityRegistry,
-            mockUpdateIndicesService,
-            preProcessHooks);
+        new MockEntityService(aspectDao, mockEntityEventProducer, preProcessHooks);
     AuthorizerChain authorizerChain = Mockito.mock(AuthorizerChain.class);
     _entitiesController =
-        new EntitiesController(mockEntityService, new ObjectMapper(), authorizerChain);
+        new EntitiesController(opContext, mockEntityService, new ObjectMapper(), authorizerChain);
     Authentication authentication = Mockito.mock(Authentication.class);
     when(authentication.getActor()).thenReturn(new Actor(ActorType.USER, "datahub"));
     when(authorizerChain.authorize(any()))
@@ -217,7 +215,7 @@ public class EntitiesControllerTest {
             .build();
     datasetAspects.add(glossaryTerms);
 
-    _entitiesController.postEntities(datasetAspects, false);
+    _entitiesController.postEntities(null, datasetAspects, false, false, false);
   }
 
   //  @Test

@@ -11,6 +11,7 @@ import { decodeUrn } from '../shared/utils';
 import UserInfoSideBar from './UserInfoSideBar';
 import { useEntityRegistry } from '../../useEntityRegistry';
 import { ErrorSection } from '../../shared/error/ErrorSection';
+import NonExistentEntityPage from '../shared/entity/NonExistentEntityPage';
 
 export interface Props {
     onTabChange: (selectedTab: string) => void;
@@ -64,9 +65,9 @@ export default function UserProfile() {
     const castedCorpUser = data?.corpUser as any;
 
     const userGroups: Array<EntityRelationship> =
-        castedCorpUser?.groups?.relationships.map((relationship) => relationship as EntityRelationship) || [];
+        castedCorpUser?.groups?.relationships?.map((relationship) => relationship as EntityRelationship) || [];
     const userRoles: Array<EntityRelationship> =
-        castedCorpUser?.roles?.relationships.map((relationship) => relationship as EntityRelationship) || [];
+        castedCorpUser?.roles?.relationships?.map((relationship) => relationship as EntityRelationship) || [];
 
     // Routed Tabs Constants
     const getTabs = () => {
@@ -114,6 +115,11 @@ export default function UserProfile() {
         dataHubRoles: userRoles,
         urn,
     };
+
+    if (data?.corpUser?.exists === false) {
+        return <NonExistentEntityPage />;
+    }
+
     return (
         <>
             {error && <ErrorSection />}

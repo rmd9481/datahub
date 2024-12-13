@@ -148,11 +148,27 @@ def merge_schemas(schemas_obj: List[dict]) -> str:
     # Combine schemas as a "union" of all of the types.
     merged = ["null"] + schemas_obj
 
+    # Check that we don't have the same class name in multiple namespaces.
+    names_to_spaces: Dict[str, str] = {}
+
     # Patch add_name method to NOT complain about duplicate names.
     class NamesWithDups(avro.schema.Names):
         def add_name(self, name_attr, space_attr, new_schema):
+
             to_add = avro.schema.Name(name_attr, space_attr, self.default_namespace)
+            assert to_add.name
+            assert to_add.space
             assert to_add.fullname
+
+            if to_add.name in names_to_spaces:
+                if names_to_spaces[to_add.name] != to_add.space:
+                    raise ValueError(
+                        f"Duplicate name {to_add.name} in namespaces {names_to_spaces[to_add.name]} and {to_add.space}. "
+                        "This will cause conflicts in the generated code."
+                    )
+            else:
+                names_to_spaces[to_add.name] = to_add.space
+
             self.names[to_add.fullname] = new_schema
             return to_add
 
@@ -172,6 +188,7 @@ autogen_header = """# mypy: ignore-errors
 
 # pylint: skip-file
 # fmt: off
+# isort: skip_file
 """
 autogen_footer = """
 # fmt: on
@@ -344,9 +361,6 @@ deprecated = functools.partial(_sphinx_deprecated, version="0.12.0.2")
 
     for aspect in key_aspects:
         entity_type = aspect["Aspect"]["keyForEntity"]
-        if aspect["Aspect"]["entityCategory"] == "internal":
-            continue
-
         code += generate_urn_class(entity_type, aspect)
 
     (urn_dir / "urn_defs.py").write_text(code)
@@ -563,7 +577,7 @@ def generate_urn_class(entity_type: str, key_aspect: dict) -> str:
     init_coercion = ""
     init_validation = ""
     for field in fields:
-        init_validation += f'if not {field_name(field)}:\n    raise InvalidUrnError("{field_name(field)} cannot be empty")\n'
+        init_validation += f'if not {field_name(field)}:\n    raise InvalidUrnError("{class_name} {field_name(field)} cannot be empty")\n'
 
         # Generalized mechanism for validating embedded urns.
         field_urn_type_class = None
@@ -583,7 +597,8 @@ def generate_urn_class(entity_type: str, key_aspect: dict) -> str:
             )
         else:
             init_validation += (
-                f"assert not UrnEncoder.contains_reserved_char({field_name(field)})\n"
+                f"if UrnEncoder.contains_reserved_char({field_name(field)}):\n"
+                f"    raise InvalidUrnError(f'{class_name} {field_name(field)} contains reserved characters')\n"
             )
 
         if field_name(field) == "env":
@@ -754,7 +769,7 @@ def generate(
 import importlib
 from typing import TYPE_CHECKING
 
-from datahub._codegen.aspect import _Aspect
+from datahub._codegen.aspect import _Aspect as _Aspect
 from datahub.utilities.docs_build import IS_SPHINX_BUILD
 from datahub.utilities._custom_package_loader import get_custom_models_package
 
@@ -787,7 +802,7 @@ from typing import TYPE_CHECKING
 
 from datahub.utilities.docs_build import IS_SPHINX_BUILD
 from datahub.utilities._custom_package_loader import get_custom_urns_package
-from datahub.utilities.urns._urn_base import Urn  # noqa: F401
+from datahub.utilities.urns._urn_base import Urn as Urn  # noqa: F401
 
 _custom_package_path = get_custom_urns_package()
 
